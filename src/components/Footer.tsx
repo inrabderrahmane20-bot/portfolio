@@ -3,48 +3,86 @@ import { contactData } from '@/lib/content';
 
 export default function Footer() {
   return (
-    <footer style={{ backgroundColor: '#DDD2C3', borderTop: '1px solid #CBB8A0', padding: '4rem 0 2.5rem' }}>
+    <footer
+      style={{
+        background: 'linear-gradient(160deg, #07071a 0%, #030308 100%)',
+        borderTop: '1px solid rgba(255,255,255,0.07)',
+        padding: '4.5rem 0 2.5rem',
+      }}
+    >
       <div className="container">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-10 mb-12">
+          {/* Brand */}
           <div>
-            <p className="font-display font-bold text-[0.7rem] uppercase tracking-[0.42em] mb-4"
-              style={{ color: '#FFFFFF' }}>AC.</p>
-            <p className="font-sans text-sm leading-6 max-w-xs" style={{ color: '#8A8178' }}>
+            <p
+              className="font-display font-black text-[0.72rem] uppercase tracking-[0.42em] mb-4"
+              style={{
+                background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
+              AC.
+            </p>
+            <p className="font-sans text-sm leading-6 max-w-xs" style={{ color: 'rgba(255,255,255,0.40)' }}>
               Software engineer &amp; product designer crafting elegant digital systems.
             </p>
           </div>
 
+          {/* Links */}
           <div className="flex gap-16">
             <div>
-              <p className="font-sans text-[0.62rem] uppercase tracking-[0.28em] mb-5" style={{ color: '#8A8178' }}>Navigation</p>
+              <p className="font-mono text-[0.60rem] uppercase tracking-[0.28em] mb-5" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                Navigation
+              </p>
               <div className="flex flex-col gap-3">
                 {[['Work', '/work'], ['About', '/about'], ['Contact', '/contact']].map(([label, href]) => (
-                  <Link key={href} href={href}
-                    className="font-sans text-sm transition-colors hover:opacity-70"
-                    style={{ color: '#6E5846' }}>
+                  <Link
+                    key={href}
+                    href={href}
+                    className="font-sans text-sm transition-all"
+                    style={{ color: 'rgba(255,255,255,0.50)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = '#818cf8')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.50)')}
+                  >
                     {label}
                   </Link>
                 ))}
               </div>
             </div>
+
             <div>
-              <p className="font-sans text-[0.62rem] uppercase tracking-[0.28em] mb-5" style={{ color: '#8A8178' }}>Contact</p>
+              <p className="font-mono text-[0.60rem] uppercase tracking-[0.28em] mb-5" style={{ color: 'rgba(255,255,255,0.28)' }}>
+                Contact
+              </p>
               <div className="flex flex-col gap-3">
-                <a href={`mailto:${contactData.email}`}
-                  className="font-sans text-sm transition-colors hover:opacity-70"
-                  style={{ color: '#6E5846' }}>{contactData.email}</a>
-                <p className="font-sans text-sm" style={{ color: '#8A8178' }}>{contactData.location}</p>
+                <a
+                  href={`mailto:${contactData.email}`}
+                  className="font-sans text-sm transition-all"
+                  style={{ color: 'rgba(255,255,255,0.50)' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#38bdf8')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.50)')}
+                >
+                  {contactData.email}
+                </a>
+                <p className="font-sans text-sm" style={{ color: 'rgba(255,255,255,0.32)' }}>
+                  {contactData.location}
+                </p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6"
-          style={{ borderTop: '1px solid #CBB8A0' }}>
-          <p className="font-sans text-[0.65rem] uppercase tracking-[0.2em]" style={{ color: '#8A8178' }}>
+        {/* Bottom bar */}
+        <div
+          className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+        >
+          <p className="font-mono text-[0.62rem] uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.25)' }}>
             © {new Date().getFullYear()} Abderrahmane Charak
           </p>
-          <p className="font-sans text-[0.65rem] uppercase tracking-[0.2em]" style={{ color: '#8A8178' }}>
+          <p className="font-mono text-[0.62rem] uppercase tracking-[0.2em]" style={{ color: 'rgba(255,255,255,0.25)' }}>
             Designed &amp; built with precision
           </p>
         </div>

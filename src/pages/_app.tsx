@@ -115,11 +115,11 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <div className="relative min-h-screen" style={{ backgroundColor: '#F3EFE7', color: '#FFFFFF' }}>
-      {/* Accent progress bar */}
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-px overflow-hidden bg-divider">
+    <div className="relative min-h-screen" style={{ backgroundColor: '#030308', color: '#ffffff' }}>
+      {/* Gradient progress bar */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-px overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
         <div
-          className="scroll-progress h-full bg-accent"
+          className="scroll-progress h-full"
           style={{ transform: `scaleX(${scrollProgress})`, transformOrigin: 'left' }}
         />
       </div>

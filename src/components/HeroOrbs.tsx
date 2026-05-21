@@ -1,152 +1,326 @@
 import { useEffect, useRef } from 'react';
 
-/* ── Config ──────────────────────────────────────────────────────────── */
-const ORBITALS: {
-  r: number; size: number; dur: number;
-  tiltX: number; startZ: number; delay: number; dir: 1 | -1;
-}[] = [
-  { r: 230, size: 12, dur: 10,   tiltX: 72,  startZ: 15,   delay: 0,    dir:  1 },
-  { r: 310, size: 8,  dur: 15,   tiltX: 60,  startZ: -30,  delay: 1.6,  dir: -1 },
-  { r: 168, size: 16, dur: 7.5,  tiltX: 82,  startZ: 52,   delay: 0.7,  dir:  1 },
-  { r: 400, size: 6,  dur: 20,   tiltX: 50,  startZ: -8,   delay: 3.1,  dir: -1 },
-  { r: 275, size: 10, dur: 12,   tiltX: 68,  startZ: 74,   delay: 2.2,  dir:  1 },
-  { r: 145, size: 6,  dur: 5.5,  tiltX: 86,  startZ: -48,  delay: 0.4,  dir: -1 },
-  { r: 460, size: 5,  dur: 25,   tiltX: 44,  startZ: 20,   delay: 4,    dir:  1 },
-];
+/* ── Types ───────────────────────────────────────────────────────────── */
+type RGB = readonly [number, number, number];
+const rgba = (c: RGB, a: number) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
 
-const KEYFRAMES = ORBITALS.map(({ tiltX, startZ, dir }, i) => `
-  @keyframes __orb_${i} {
-    from { transform: rotateX(${tiltX}deg) rotateZ(${startZ}deg); }
-    to   { transform: rotateX(${tiltX}deg) rotateZ(${startZ + dir * 360}deg); }
+/* ── Sphere palettes ─────────────────────────────────────────────────── */
+const BEIGE = {
+  hi:  [248, 240, 226] as const,  // bright highlight — warm parchment
+  mid: [218, 200, 176] as const,  // main body — warm beige
+  shd: [178, 158, 132] as const,  // shadow side
+  rim: [138, 118,  96] as const,  // deep rim shadow
+};
+const BLANC = {
+  hi:  [252, 248, 242] as const,  // bright highlight — near-white
+  mid: [236, 230, 220] as const,  // body — blanc cassé
+  shd: [202, 196, 186] as const,  // shadow
+  rim: [162, 156, 148] as const,  // rim
+};
+
+/* ── Particle colors ─────────────────────────────────────────────────── */
+const P_AMBER: RGB = [230, 188,  98];  // warm amber — orbiting B1
+const P_CREAM: RGB = [212, 206, 194];  // cool cream — orbiting B2
+
+/* ── Sphere palette type ─────────────────────────────────────────────── */
+type Pal = { hi: RGB; mid: RGB; shd: RGB; rim: RGB };
+
+/* ── Draw a realistic sphere (clipped to canvas bounds naturally) ────── */
+function drawSphere(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, r: number,
+  pal: Pal,
+  glowColor: RGB,
+) {
+  /* 1. Wide atmospheric glow */
+  const glow = ctx.createRadialGradient(cx, cy, r * 0.75, cx, cy, r * 2.8);
+  glow.addColorStop(0,   rgba(glowColor, 0.10));
+  glow.addColorStop(0.5, rgba(glowColor, 0.04));
+  glow.addColorStop(1,   rgba(glowColor, 0));
+  ctx.save();
+  ctx.fillStyle = glow;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 2.8, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  /* 2. Main sphere shading — light source top-left */
+  const hx = cx - r * 0.28, hy = cy - r * 0.26;
+  const g = ctx.createRadialGradient(hx, hy, r * 0.02, cx, cy, r);
+  g.addColorStop(0,    rgba(pal.hi,  0.98));
+  g.addColorStop(0.26, rgba(pal.mid, 0.95));
+  g.addColorStop(0.58, rgba(pal.shd, 0.90));
+  g.addColorStop(0.82, rgba(pal.rim, 0.84));
+  g.addColorStop(1,    rgba([Math.max(0, pal.rim[0] - 30), Math.max(0, pal.rim[1] - 30), Math.max(0, pal.rim[2] - 25)] as unknown as RGB, 0.72));
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.restore();
+
+  /* 3. Specular highlight — sharp, offset from centre */
+  const sh = ctx.createRadialGradient(
+    cx - r * 0.40, cy - r * 0.40, 0,
+    cx - r * 0.28, cy - r * 0.28, r * 0.52,
+  );
+  sh.addColorStop(0, 'rgba(255,252,248,0.62)');
+  sh.addColorStop(1, 'rgba(255,252,248,0)');
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = sh;
+  ctx.fill();
+  ctx.restore();
+
+  /* 4. Ambient-occlusion rim darkening */
+  const rim = ctx.createRadialGradient(cx, cy, r * 0.80, cx, cy, r);
+  rim.addColorStop(0, 'rgba(0,0,0,0)');
+  rim.addColorStop(1, 'rgba(0,0,0,0.28)');
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = rim;
+  ctx.fill();
+  ctx.restore();
+}
+
+/*
+ * Snake-climbing-tree-branch orbital particles.
+ *
+ * "branch"  = the orbital ellipse around the massive sphere.
+ * "snake"   = N particles trailing the lead particle along that ellipse, each
+ *             displaced PERPENDICULAR to the local tangent by a sinusoidal
+ *             envelope — exactly the weaving motion of a snake on a branch.
+ *
+ * `side`: 'back' draws particles above sphere centre (behind it in 3-D),
+ *         'front' draws particles below sphere centre (in front of it).
+ */
+function drawSnake(
+  ctx: CanvasRenderingContext2D,
+  /* orbit ellipse */
+  cx: number, cy: number, rx: number, ry: number,
+  /* lead angle of orbit */
+  leadAngle: number,
+  /* animation time */
+  t: number,
+  /* colours */
+  col: RGB, glow: RGB,
+  /* sphere radius (for sizing) */
+  sphereR: number,
+  /* depth pass */
+  side: 'back' | 'front',
+) {
+  const N      = 32;
+  const TRAIL  = 1.85;           // radians of orbit the snake spans
+  const WAVES  = 2.6;             // sine cycles across the trail
+  const AMP    = sphereR * 0.055; // perpendicular oscillation amplitude
+
+  for (let i = N; i >= 0; i--) {
+    const frac = i / N;
+    const a    = leadAngle - frac * TRAIL;
+
+    const bx  = cx + rx * Math.cos(a);
+    const by  = cy + ry * Math.sin(a);
+
+    /* depth filter — only render appropriate half */
+    if (side === 'back'  && by >= cy) continue;
+    if (side === 'front' && by < cy)  continue;
+
+    /* tangent of ellipse at angle a */
+    const dtx  = -rx * Math.sin(a);
+    const dty  =  ry * Math.cos(a);
+    const tlen = Math.sqrt(dtx * dtx + dty * dty) || 1;
+    const tnx  = dtx / tlen;
+    const tny  = dty / tlen;
+
+    /* normal = 90° rotation of tangent */
+    const nx = tny, ny = -tnx;
+
+    /* snake wave */
+    const env    = Math.sin(frac * Math.PI);
+    const phase  = t * 2.2 + frac * WAVES * Math.PI * 2;
+    const offset = AMP * env * Math.sin(phase);
+
+    const px = bx + offset * nx;
+    const py = by + offset * ny;
+
+    const fade  = Math.pow(1 - frac, 0.55);
+    const pSize = sphereR * 0.018 * Math.pow(fade, 0.65) + 0.6;
+    const alpha = 0.90 * fade;
+    if (alpha < 0.02 || pSize < 0.3) continue;
+
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.shadowBlur  = pSize * 5;
+    ctx.shadowColor = rgba(glow, 0.85);
+
+    const pg = ctx.createRadialGradient(px, py, 0, px, py, pSize * 2.2);
+    pg.addColorStop(0, rgba(glow, 1));
+    pg.addColorStop(0.5, rgba(col, 0.8));
+    pg.addColorStop(1, rgba(col, 0));
+    ctx.fillStyle = pg;
+    ctx.beginPath();
+    ctx.arc(px, py, pSize * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
   }
-`).join('');
+}
 
-/* Sphere gradients — light with warm depth tones */
-const ORB1_BG = [
-  /* main sphere: light with warm edge highlight */
-  'radial-gradient(circle at 28% 26%, rgba(203,184,160,0.40) 0%, rgba(221,210,195,0.50) 30%, rgba(243,239,231,0.95) 65%, transparent 85%)',
-  /* subtle rim light */
-  'radial-gradient(circle at 72% 72%, rgba(30,30,30,0.08) 0%, transparent 45%)',
-].join(', ');
+/* Faint elliptical orbit ring visible in the arc that crosses the screen */
+function drawOrbitRing(
+  ctx: CanvasRenderingContext2D,
+  cx: number, cy: number, rx: number, ry: number,
+) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 18]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+}
 
-const ORB2_BG = [
-  'radial-gradient(circle at 32% 30%, rgba(203,184,160,0.35) 0%, rgba(221,210,195,0.50) 30%, rgba(243,239,231,0.95) 65%, transparent 85%)',
-  'radial-gradient(circle at 65% 65%, rgba(30,30,30,0.08) 0%, transparent 40%)',
-].join(', ');
+/* Background star field */
+function drawStars(
+  ctx: CanvasRenderingContext2D, W: number, H: number,
+  stars: Array<{ x: number; y: number; r: number; phase: number; spd: number }>,
+  t: number,
+) {
+  for (const s of stars) {
+    const a = 0.06 + 0.07 * Math.sin(t * s.spd + s.phase);
+    ctx.save();
+    ctx.globalAlpha = a;
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
 
+/* ── Component ───────────────────────────────────────────────────────── */
 export default function HeroOrbs() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const orb1Ref      = useRef<HTMLDivElement>(null);
-  const orb2Ref      = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const scrollRef = useRef(0);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    let tl: any;
+    const canvas = canvasRef.current!;
+    const ctx    = canvas.getContext('2d')!;
+    let animId: number;
 
+    const resize = () => {
+      canvas.width  = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    };
+    resize();
+    const ro = new ResizeObserver(resize);
+    ro.observe(canvas);
+
+    /* Star field */
+    const STARS = Array.from({ length: 70 }, () => ({
+      x: Math.random(), y: Math.random(),
+      r: Math.random() * 0.8 + 0.2,
+      phase: Math.random() * Math.PI * 2,
+      spd:   Math.random() * 0.4 + 0.2,
+    }));
+
+    /* ScrollTrigger — drives a small angular offset as user scrolls the combined section */
+    let stKill: (() => void) | null = null;
     Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
       ([{ gsap }, { ScrollTrigger }]) => {
         gsap.registerPlugin(ScrollTrigger);
-        const hero = containerRef.current?.closest('section');
-        if (!hero || !orb1Ref.current || !orb2Ref.current) return;
-
-        tl = gsap.timeline({
-          scrollTrigger: { trigger: hero, start: 'top top', end: 'bottom top', scrub: 2.5 },
-          defaults: { ease: 'sine.inOut' },
+        const wrapper = canvas.closest('[data-scene]') as HTMLElement | null;
+        if (!wrapper) return;
+        const st = ScrollTrigger.create({
+          trigger: wrapper,
+          start: 'top top',
+          end:   'bottom bottom',
+          onUpdate: (self: { progress: number }) => { scrollRef.current = self.progress; },
         });
-
-        /* Orb 1 — positive sine */
-        tl.to(orb1Ref.current, { x: '13vw', y: '-9vh',  scale: 0.88 }, 0)
-          .to(orb1Ref.current, { x: '-5vw', y:  '2vh',  scale: 1.06 })
-          .to(orb1Ref.current, { x:  '9vw', y: '11vh',  scale: 0.86 })
-          .to(orb1Ref.current, { x: '-3vw', y: '19vh',  scale: 1.0  });
-
-        /* Orb 2 — negative sine */
-        tl.to(orb2Ref.current, { x: '-13vw', y:  '9vh', scale: 0.86 }, 0)
-          .to(orb2Ref.current, { x:   '7vw', y: '-3vh', scale: 1.06 }, '<')
-          .to(orb2Ref.current, { x:  '-7vw', y:  '4vh', scale: 0.90 }, '<')
-          .to(orb2Ref.current, { x:   '4vw', y: '15vh', scale: 1.0  }, '<');
+        stKill = () => st.kill();
       },
     );
-    return () => tl?.kill();
+
+    /* ── Render loop ────────────────────────────────────────────────── */
+    const render = (time: number) => {
+      const W = canvas.width;
+      const H = canvas.height;
+      const t = time * 0.001;
+
+      ctx.clearRect(0, 0, W, H);
+
+      /* ── Ball geometry (fractions of W) ──
+       *
+       * Ball 1: large, beige — peeking from upper-right
+       *   radius = 0.46W
+       *   centre at x = W + R/3 → only ~1/3 of diameter visible from right
+       *   centre at y = 0.26W (upper third of hero)
+       *
+       * Ball 2: smaller, blanc cassé — peeking from lower-left
+       *   radius = 0.34W
+       *   centre at x = -R/3 → ~1/3 visible from left
+       *   centre at y = H − 0.28W (lower area, in services section)
+       */
+      const b1r  = W * 0.46;
+      const b1cx = W + b1r / 3;      // 1/3 diameter visible from right
+      const b1cy = W * 0.26;
+
+      const b2r  = W * 0.34;
+      const b2cx = -b2r / 3;         // 1/3 diameter visible from left
+      const b2cy = H - W * 0.28;     // lower section
+
+      /* Orbit ellipses — slightly outside the sphere radius, perspective-flattened */
+      const o1rx = b1r * 1.14;
+      const o1ry = o1rx * 0.28;
+
+      const o2rx = b2r * 1.14;
+      const o2ry = o2rx * 0.28;
+
+      /* Lead angle: slow constant rotation + subtle scroll push */
+      const scrollOffset = scrollRef.current * Math.PI * 0.6;
+      const lead1 = t * 0.18 + scrollOffset;
+      const lead2 = -(t * 0.14 + scrollOffset);  // counter-rotate
+
+      /* ── Draw ── */
+      drawStars(ctx, W, H, STARS, t);
+
+      /* Orbit rings (visible arc only — canvas clips naturally) */
+      drawOrbitRing(ctx, b1cx, b1cy, o1rx, o1ry);
+      drawOrbitRing(ctx, b2cx, b2cy, o2rx, o2ry);
+
+      /* Back-arc particles (behind spheres) */
+      drawSnake(ctx, b1cx, b1cy, o1rx, o1ry, lead1, t, P_AMBER, [255, 220, 150] as RGB, b1r, 'back');
+      drawSnake(ctx, b2cx, b2cy, o2rx, o2ry, lead2, t, P_CREAM, [240, 235, 225] as RGB, b2r, 'back');
+
+      /* Spheres (drawn after back-arc so front-arc overlaps) */
+      drawSphere(ctx, b1cx, b1cy, b1r, BEIGE, [220, 190, 145] as RGB);
+      drawSphere(ctx, b2cx, b2cy, b2r, BLANC, [232, 228, 218] as RGB);
+
+      /* Front-arc particles (in front of spheres) */
+      drawSnake(ctx, b1cx, b1cy, o1rx, o1ry, lead1, t, P_AMBER, [255, 220, 150] as RGB, b1r, 'front');
+      drawSnake(ctx, b2cx, b2cy, o2rx, o2ry, lead2, t, P_CREAM, [240, 235, 225] as RGB, b2r, 'front');
+
+      animId = requestAnimationFrame(render);
+    };
+
+    animId = requestAnimationFrame(render);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      ro.disconnect();
+      stKill?.();
+    };
   }, []);
 
   return (
-    <div
-      ref={containerRef}
+    <canvas
+      ref={canvasRef}
       aria-hidden
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-      style={{ perspective: '1100px' }}
-    >
-      <style>{KEYFRAMES}</style>
-
-      {/* ── Giant Orb 1 — dark charcoal sphere, subtle cool tint ── */}
-      <div
-        ref={orb1Ref}
-        style={{
-          position: 'absolute',
-          width: 'clamp(320px,40vw,640px)', height: 'clamp(320px,40vw,640px)',
-          top: '-14%', right: '-9%',
-          borderRadius: '50%',
-          background: ORB1_BG,
-          /* very subtle glow — barely visible */
-          boxShadow: '0 0 60px rgba(18,18,18,0.08), inset 0 0 50px rgba(30,30,30,0.08)',
-          willChange: 'transform',
-        }}
-      />
-
-      {/* ── Giant Orb 2 — darker steel sphere ─────────────────── */}
-      <div
-        ref={orb2Ref}
-        style={{
-          position: 'absolute',
-          width: 'clamp(260px,33vw,530px)', height: 'clamp(260px,33vw,530px)',
-          top: '8%', right: '3%',
-          borderRadius: '50%',
-          background: ORB2_BG,
-          boxShadow: '0 0 40px rgba(18,18,18,0.08), inset 0 0 35px rgba(30,30,30,0.08)',
-          willChange: 'transform',
-        }}
-      />
-
-      {/* ── Orbital ring system — small, subtle planets ────────── */}
-      <div style={{ position: 'absolute', top: '30%', right: '21%', transformStyle: 'preserve-3d' }}>
-        {ORBITALS.map((orb, i) => (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              width: orb.r * 2, height: orb.r * 2,
-              top: -orb.r, left: -orb.r,
-              borderRadius: '50%',
-              /* ring trace — almost invisible */
-              border: '1px solid rgba(30,30,30,0.04)',
-              transformStyle: 'preserve-3d',
-              animation: `__orb_${i} ${orb.dur}s linear ${orb.delay}s infinite`,
-            }}
-          >
-            {/* Planet dot */}
-            <div style={{
-              position: 'absolute',
-              width: orb.size, height: orb.size,
-              top: -(orb.size / 2),
-              left: `calc(50% - ${orb.size / 2}px)`,
-              borderRadius: '50%',
-              /* warm-toned, very subtle */
-              background: `radial-gradient(circle at 35% 35%, rgba(30,30,30,${0.12 + (i % 3) * 0.04}) 0%, transparent 70%)`,
-              boxShadow: `0 0 ${orb.size * 1.5}px rgba(30,30,30,0.08)`,
-            }} />
-          </div>
-        ))}
-      </div>
-
-      {/* ── One small accent dot — the ONLY use of #1E1E1E here ── */}
-      <div style={{
-        position: 'absolute', bottom: '37%', right: '24%',
-        width: 6, height: 6, borderRadius: '50%',
-        backgroundColor: '#1E1E1E',
-        boxShadow: '0 0 8px rgba(30,30,30,0.08)',
-        animation: '__orb_1 7s ease-in-out 1s infinite',
-      }} />
-    </div>
+      className="pointer-events-none absolute inset-0 w-full h-full"
+    />
   );
 }
