@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -39,17 +40,8 @@ export default function Navbar() {
       >
         <div className="container flex items-center justify-between py-6">
           {/* Logo */}
-          <Link
-            href="/"
-            className="font-display font-black text-[0.72rem] uppercase tracking-[0.42em] transition-all hover:opacity-70"
-            style={{
-              background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}
-          >
-            AC.
+          <Link href="/" className="flex items-center transition-all hover:opacity-80" aria-label="Home">
+            <Image src="/LOGO.png" alt="AC" width={44} height={36} className="h-8 w-auto object-contain" priority />
           </Link>
 
           {/* Desktop nav */}
@@ -105,18 +97,8 @@ export default function Navbar() {
           >
             {/* Top row */}
             <div className="flex items-center justify-between">
-              <Link
-                href="/"
-                onClick={() => setOpen(false)}
-                className="font-display font-black text-[0.72rem] uppercase tracking-[0.42em]"
-                style={{
-                  background: 'linear-gradient(135deg, #818cf8, #38bdf8)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
-              >
-                AC.
+              <Link href="/" onClick={() => setOpen(false)} aria-label="Home">
+                <Image src="/LOGO.png" alt="AC" width={44} height={36} className="h-8 w-auto object-contain" />
               </Link>
               <button
                 onClick={() => setOpen(false)}

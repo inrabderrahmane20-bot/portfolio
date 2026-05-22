@@ -1,6 +1,7 @@
 import type { AppProps } from 'next/app';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Head from 'next/head';
 import Lenis from 'lenis';
 import '../../styles/globals.css';
 import Navbar from '@/components/Navbar';
@@ -115,6 +116,29 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
+    <>
+    <Head>
+      <title>AC — Brand &amp; Web Design Specialist</title>
+      <meta name="description" content="Abderrahmane Charak — Software engineer and digital product designer crafting elegant web systems from Marrakech, Morocco." />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="icon" href="/favicon.ico" sizes="any" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+      <meta name="theme-color" content="#030308" />
+      {/* Open Graph */}
+      <meta property="og:type" content="website" />
+      <meta property="og:title" content="AC — Brand &amp; Web Design Specialist" />
+      <meta property="og:description" content="Software engineer and digital product designer crafting elegant web systems." />
+      <meta property="og:image" content="/android-chrome-512x512.png" />
+      <meta property="og:image:width" content="512" />
+      <meta property="og:image:height" content="512" />
+      {/* Twitter */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content="AC — Brand &amp; Web Design Specialist" />
+      <meta name="twitter:description" content="Software engineer and digital product designer crafting elegant web systems." />
+      <meta name="twitter:image" content="/android-chrome-512x512.png" />
+    </Head>
     <div className="relative min-h-screen" style={{ backgroundColor: '#030308', color: '#ffffff' }}>
       {/* Gradient progress bar */}
       <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-px overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
@@ -129,5 +153,6 @@ export default function App({ Component, pageProps }: AppProps) {
       <Component {...pageProps} />
       <Footer />
     </div>
+    </>
   );
 }
