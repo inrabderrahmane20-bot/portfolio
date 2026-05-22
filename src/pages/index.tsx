@@ -297,8 +297,8 @@ export default function Home() {
                 {/* Big headline */}
                 <div className="flex-1 flex items-center">
                   <h2
-                    className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
-                    style={{ fontSize: 'clamp(3rem,10vw,11rem)', whiteSpace: 'pre-line', color: TEXT }}
+                    className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em] break-words"
+                    style={{ fontSize: 'clamp(2.5rem,8.5vw,10rem)', whiteSpace: 'pre-line', overflowWrap: 'break-word', color: TEXT }}
                   >
                     {item.title}
                   </h2>
@@ -356,57 +356,59 @@ export default function Home() {
           style={{ width: 320, height: 320, background: 'radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 65%)' }} />
 
         <div className="container relative z-10">
-          {/* Mobile: single column stacked. Desktop: 2-col */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-end">
-            <div>
-              <p className="reveal font-mono text-[0.58rem] uppercase tracking-[0.32em] mb-6 sm:mb-8" style={{ color: ACCENT }}>
-                Ready to start?
-              </p>
-              <h2
-                className="reveal font-display font-black leading-[0.88] tracking-[-0.03em] uppercase mb-8 sm:mb-12"
-                style={{ fontSize: 'clamp(2.6rem,7vw,8rem)', color: TEXT }}
-              >
-                Let&apos;s Create<br />
-                <span className="text-gradient">Something</span><br />
-                Remarkable.
-              </h2>
+          {/* ── Heading — always full-width so it NEVER bleeds into contact details ── */}
+          <p className="reveal font-mono text-[0.58rem] uppercase tracking-[0.32em] mb-5 sm:mb-7" style={{ color: ACCENT }}>
+            Ready to start?
+          </p>
+          <h2
+            className="reveal font-display font-black leading-[0.88] tracking-[-0.03em] uppercase"
+            style={{ fontSize: 'clamp(2.4rem,5.5vw,7rem)', color: TEXT, wordBreak: 'break-word', overflowWrap: 'anywhere' }}
+          >
+            Let&apos;s Create<br />
+            <span className="text-gradient">Something</span><br />
+            Remarkable.
+          </h2>
 
-              {/* CTA button — full width on mobile */}
-              <Link
-                href="/contact"
-                className="reveal flex sm:inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full font-display font-bold uppercase tracking-[0.1em] transition-all"
-                style={{
-                  fontSize: 'clamp(0.68rem, 1.5vw, 0.75rem)',
-                  background: 'linear-gradient(135deg, #6366f1, #38bdf8)',
-                  color: '#fff',
-                  boxShadow: '0 0 32px rgba(99,102,241,0.35)',
-                }}
-                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 50px rgba(99,102,241,0.60)')}
-                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 32px rgba(99,102,241,0.35)')}
-              >
-                Start a Project <span className="text-base leading-none">↗</span>
-              </Link>
-            </div>
+          {/* ── Divider then button + contacts side-by-side — completely separate from heading ── */}
+          <div
+            className="reveal mt-8 sm:mt-12 pt-8 sm:pt-10 flex flex-col sm:flex-row sm:items-center gap-8 sm:gap-14"
+            style={{ borderTop: `1px solid ${BDR}` }}
+          >
+            {/* Button */}
+            <Link
+              href="/contact"
+              className="flex sm:inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full font-display font-bold uppercase tracking-[0.1em] transition-all flex-shrink-0"
+              style={{
+                fontSize: 'clamp(0.68rem,1.5vw,0.75rem)',
+                background: 'linear-gradient(135deg, #6366f1, #38bdf8)',
+                color: '#fff',
+                boxShadow: '0 0 32px rgba(99,102,241,0.35)',
+              }}
+              onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 50px rgba(99,102,241,0.60)')}
+              onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 32px rgba(99,102,241,0.35)')}
+            >
+              Start a Project <span className="text-base leading-none">↗</span>
+            </Link>
 
-            {/* Contact details */}
-            <div className="reveal flex flex-col gap-7 sm:gap-10">
+            {/* Contact details — grid so they never squish together */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-8 flex-1 min-w-0">
               {[
                 { label: 'Email',        val: contactData.email,        href: `mailto:${contactData.email}` },
-                { label: 'Location',     val: contactData.location },
-                { label: 'Availability', val: contactData.availability },
+                { label: 'Location',     val: contactData.location,     href: null },
+                { label: 'Availability', val: contactData.availability, href: null },
               ].map(({ label, val, href }) => (
-                <div key={label}>
-                  <p className="font-mono text-[0.56rem] uppercase tracking-[0.22em] mb-1.5" style={{ color: MUTED }}>{label}</p>
+                <div key={label} className="min-w-0">
+                  <p className="font-mono text-[0.55rem] uppercase tracking-[0.20em] mb-1.5" style={{ color: MUTED }}>{label}</p>
                   {href ? (
                     <a href={href}
-                      className="font-display font-semibold tracking-[-0.01em] transition-colors break-all sm:break-normal"
-                      style={{ fontSize: 'clamp(0.95rem,1.8vw,1.15rem)', color: TEXT }}
+                      className="font-sans text-sm font-medium transition-colors block truncate"
+                      style={{ color: TEXT2 }}
                       onMouseEnter={e => (e.currentTarget.style.color = ACCENT)}
-                      onMouseLeave={e => (e.currentTarget.style.color = TEXT)}
+                      onMouseLeave={e => (e.currentTarget.style.color = TEXT2)}
+                      title={val}
                     >{val}</a>
                   ) : (
-                    <p className="font-display font-semibold tracking-[-0.01em]"
-                      style={{ fontSize: 'clamp(0.95rem,1.8vw,1.15rem)', color: TEXT }}>{val}</p>
+                    <p className="font-sans text-sm font-medium" style={{ color: TEXT2 }}>{val}</p>
                   )}
                 </div>
               ))}

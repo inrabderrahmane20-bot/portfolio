@@ -27,12 +27,15 @@
 
 html {
   min-height: 100%;
+  max-width: 100vw;          /* hard cap so nothing can push past the viewport */
+  overflow-x: hidden;
   background: var(--bg);
   scroll-behavior: auto;
 }
 
 body {
   min-height: 100%;
+  max-width: 100%;           /* inherits the html cap */
   margin: 0; padding: 0;
   background: var(--bg);
   color: var(--text);
@@ -43,6 +46,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Every direct page wrapper must also respect this */
+#__next { max-width: 100%; overflow-x: hidden; }
 
 ::selection {
   background: rgba(129,140,248,0.25);
