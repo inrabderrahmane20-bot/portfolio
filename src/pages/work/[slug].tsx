@@ -194,7 +194,7 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
             <p className="font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>
               {nextItem ? 'Next project' : 'Back to portfolio'}
             </p>
-            <h2 className="font-display font-bold leading-[0.9] tracking-[-0.02em] uppercase break-words"
+            <h2 className="font-display font-bold leading-[0.9] tracking-[-0.02em]"
               style={{ fontSize: 'clamp(1.8rem,4.5vw,5rem)', color: T }}>
               {nextItem ? nextItem.title : 'View All Work'}
             </h2>

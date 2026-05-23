@@ -216,7 +216,7 @@ export default function About() {
         <div className="container relative z-10">
           <p className="reveal font-mono uppercase mb-5 sm:mb-7"
             style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>Let&apos;s work together</p>
-          <h2 className="reveal font-display font-black leading-[0.88] tracking-[-0.03em] uppercase mb-8 sm:mb-10 break-words"
+          <h2 className="reveal font-display font-black leading-[0.92] tracking-[-0.02em] mb-8 sm:mb-10"
             style={{ fontSize: 'clamp(2rem,5.5vw,7rem)', color: T }}>
             Ready to build<br /><span className="text-gradient">something great?</span>
           </h2>

@@ -268,7 +268,7 @@ export default function Home() {
 
                 {/* Big heading */}
                 <div className="flex-1 flex items-center overflow-hidden">
-                  <h2 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em] break-words"
+                  <h2 className="font-display font-black leading-[0.88] tracking-[-0.03em]"
                     style={{ fontSize: 'clamp(2.2rem,8vw,10rem)', whiteSpace: 'pre-line', color: T}}>
                     {item.title}
                   </h2>
@@ -331,7 +331,7 @@ export default function Home() {
             style={{ fontSize: 'clamp(1.8rem, 5.5vw, 7rem)', color: T }}>
             Let&apos;s Create<br />
             <span className="text-gradient">Something</span><br />
-            Remarkable.
+            Remarkable
           </h2>
 
           {/* Divider + button + contacts */}
