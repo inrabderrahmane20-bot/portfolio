@@ -135,7 +135,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
     <Head>
-      <title>AC — Brand &amp; Web Design Specialist</title>
+      <title>— Brand &amp; Web Design Specialist</title>
       <meta name="description" content="Abderrahmane Charak — Software engineer and digital product designer crafting elegant web systems from Marrakech, Morocco." />
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <link rel="icon" href="/favicon.ico" sizes="any" />

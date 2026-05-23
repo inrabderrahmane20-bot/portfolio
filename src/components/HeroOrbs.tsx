@@ -152,17 +152,48 @@ function drawRing(
   ctx.globalAlpha = 1;
 }
 
-/* Stars — minimal, no gradient */
-function drawStars(
+/* Falling stars — each streams downward and wraps at bottom */
+interface FStarSpec { xF: number; y0: number; spd: number; r: number; al: number; trailF: number; }
+
+function genFallingStars(n: number): FStarSpec[] {
+  return Array.from({ length: n }, () => ({
+    xF:    Math.random(),
+    y0:    Math.random(),                  /* initial y phase 0–1 */
+    spd:   0.04 + Math.random() * 0.14,   /* H-fraction per second */
+    r:     0.6 + Math.random() * 1.4,
+    al:    0.25 + Math.random() * 0.45,
+    trailF: 0.03 + Math.random() * 0.07,  /* trail length as fraction of H */
+  }));
+}
+
+function drawFallingStars(
   ctx: CanvasRenderingContext2D, W: number, H: number,
-  stars: Array<{ x: number; y: number; r: number; ph: number; spd: number }>,
-  t: number,
+  stars: FStarSpec[], t: number,
 ) {
   stars.forEach(s => {
-    ctx.globalAlpha = 0.05 + 0.07 * Math.sin(t * s.spd + s.ph);
+    const headY = ((s.y0 + s.spd * t) % 1.1) * H;
+    if (headY < 0) return;
+    const px      = s.xF * W;
+    const tailY   = Math.max(0, headY - s.trailF * H);
+
+    /* Gradient trail: transparent at tail → opaque at head */
+    const g = ctx.createLinearGradient(px, tailY, px, headY);
+    g.addColorStop(0, 'rgba(255,255,255,0)');
+    g.addColorStop(1, `rgba(255,255,255,${s.al})`);
+
+    ctx.beginPath();
+    ctx.moveTo(px, tailY);
+    ctx.lineTo(px, headY);
+    ctx.strokeStyle = g;
+    ctx.lineWidth   = s.r * 0.55;
+    ctx.lineCap     = 'round';
+    ctx.stroke();
+
+    /* Bright head dot */
+    ctx.globalAlpha = s.al;
     ctx.fillStyle   = '#fff';
     ctx.beginPath();
-    ctx.arc(s.x * W, s.y * H, s.r, 0, Math.PI * 2);
+    ctx.arc(px, headY, s.r * 0.65, 0, Math.PI * 2);
     ctx.fill();
   });
   ctx.globalAlpha = 1;
@@ -175,7 +206,7 @@ export default function HeroOrbs() {
   const p1Ref     = useRef<PSpec[]>([]);
   const p2Ref     = useRef<PSpec[]>([]);
   const ringRef   = useRef<RSpec[]>([]);
-  const starsRef  = useRef<Array<{ x: number; y: number; r: number; ph: number; spd: number }>>([]);
+  const starsRef  = useRef<FStarSpec[]>([]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -185,12 +216,7 @@ export default function HeroOrbs() {
     p1Ref.current    = genParticles(isMob ? 6 : 12);
     p2Ref.current    = genParticles(isMob ? 5 : 10);
     ringRef.current  = genRing(isMob ? 0 : 50);   /* no ring particles on mobile */
-    starsRef.current = Array.from({ length: isMob ? 25 : 55 }, () => ({
-      x: Math.random(), y: Math.random(),
-      r: Math.random() * 0.8 + 0.2,
-      ph:  Math.random() * Math.PI * 2,
-      spd: Math.random() * 0.4 + 0.2,
-    }));
+    starsRef.current = genFallingStars(isMob ? 22 : 50);
 
     const canvas = canvasRef.current!;
     const ctx    = canvas.getContext('2d', { alpha: true })!;
@@ -237,7 +263,7 @@ export default function HeroOrbs() {
       const scroll  = scrollRef.current * Math.PI * 0.5;
       const t1 = t * 0.10 + scroll;
 
-      drawStars(ctx, W, H, starsRef.current, t);
+      drawFallingStars(ctx, W, H, starsRef.current, t);
 
       /* Ball 1 — back particles, sphere, front particles */
       drawGlow(ctx, b1cx, b1cy, b1r * 3.5, BEIGE.mid);
