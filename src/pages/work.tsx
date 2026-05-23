@@ -129,7 +129,7 @@ export default function Work() {
                       <span className="font-mono uppercase inline-block px-2.5 py-0.5 rounded-full"
                         style={{ fontSize: FS_LABEL, letterSpacing: '0.18em',
                           color: col, border: `1px solid ${col}40`, background: `${col}0f` }}>
-                        {item.category}
+                        {item.categoryKey ? t(item.categoryKey) : item.category}
                       </span>
                       <span className="font-mono" style={{ fontSize: FS_LABEL, letterSpacing: '0.16em', color: MUT }}>
                         {item.year}
@@ -138,12 +138,12 @@ export default function Work() {
 
                     <h2 className="font-display font-bold tracking-[-0.02em] leading-[1.05] mb-3"
                       style={{ fontSize: 'clamp(1.15rem,2.5vw,2.2rem)', color: T }}>
-                      {item.title}
+                      {item.titleKey ? t(item.titleKey) : item.title}
                     </h2>
 
                     <p className="font-sans leading-7 font-light"
                       style={{ fontSize: FS_BODY, color: T2, maxWidth: isWide ? '72ch' : '50ch' }}>
-                      {item.summary}
+                      {item.summaryKey ? t(item.summaryKey) : item.summary}
                     </p>
                   </div>
                 </motion.article>

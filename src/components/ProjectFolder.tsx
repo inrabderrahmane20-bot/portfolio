@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { motion } from 'framer-motion';
 import { workItems } from '@/lib/content';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 /*
  * 3 landscape "document" cards peek out from the top of the folder —
@@ -148,6 +149,7 @@ export default function ProjectFolder() {
   const [isMobile, setIsMobile] = useState(false);
   const folderRef = useRef<HTMLDivElement>(null);
   const router    = useRouter();
+  const { t }     = useLanguage();
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 640);
@@ -240,7 +242,7 @@ export default function ProjectFolder() {
                 {/* Screenshot fills the card — landscape crop of the top */}
                 <img
                   src={item.image}
-                  alt={item.title}
+                  alt={item.titleKey ? t(item.titleKey) : item.title}
                   loading="lazy"
                   style={{
                     width:           '100%',
@@ -271,7 +273,7 @@ export default function ProjectFolder() {
                   whiteSpace: 'nowrap',
                   textOverflow: 'ellipsis',
                 }}>
-                  {item.title}
+                  {item.titleKey ? t(item.titleKey) : item.title}
                 </div>
               </motion.div>
             );
@@ -303,7 +305,7 @@ export default function ProjectFolder() {
               letterSpacing: '0.20em',
               color:         'rgba(129,140,248,0.88)',
               whiteSpace:    'nowrap',
-            }}>Selected Work</span>
+            }}>{t('folder.title')}</span>
           </div>
 
           {/* Glass body */}
@@ -339,14 +341,14 @@ export default function ProjectFolder() {
                 color:         'rgba(255,255,255,0.28)',
                 marginBottom:  '0.35rem',
               }}>
-                {items.length} Projects
+                {items.length} {t('folder.count')}
               </p>
               <p style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize:   isMobile ? '0.72rem' : '0.80rem',
                 color:      'rgba(255,255,255,0.55)',
               }}>
-                {hovered ? 'Click to open →' : 'Tap to open'}
+                {hovered ? t('folder.click') : t('folder.tap')}
               </p>
             </div>
             <FolderIcon open={hovered} />

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useEffect, useRef } from 'react';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { workItems, caseStudyContent } from '@/lib/content';
 import AuroraBackground from '@/components/AuroraBackground';
 
@@ -20,20 +21,21 @@ const FS_BODY  = '0.875rem';
 const SP       = 'clamp(2.5rem,5vw,5rem)';
 
 interface Props {
-  item:     { title:string; category:string; year:string; summary:string; gradient:string; image?:string };
-  details:  { intro:string; challenge:string; goal:string; process:string; result:string };
-  nextItem: { slug:string; title:string; gradient:string } | null;
+  item:     { title:string; titleKey?:string; category:string; categoryKey?:string; year:string; summary:string; summaryKey?:string; gradient:string; image?:string };
+  details:  { titleKey:string; introKey:string; challengeKey:string; goalKey:string; processKey:string; resultKey:string };
+  nextItem: { slug:string; title:string; titleKey?:string; gradient:string } | null;
 }
 
 const SECTIONS = [
-  { key:'challenge', label:'Challenge' },
-  { key:'goal',      label:'Goal'      },
-  { key:'process',   label:'Process'   },
-  { key:'result',    label:'Result'    },
+  { key:'challenge', label:'cs.challenge' },
+  { key:'goal',      label:'cs.goal'      },
+  { key:'process',   label:'cs.process'   },
+  { key:'result',    label:'cs.result'    },
 ] as const;
 
 export default function CaseStudy({ item, details, nextItem }: Props) {
   const heroRef = useRef<HTMLElement | null>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -64,15 +66,17 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
           <Link href="/work" className="font-mono uppercase transition-colors"
             style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}
             onMouseEnter={e => (e.currentTarget.style.color = T)}
-            onMouseLeave={e => (e.currentTarget.style.color = MUT)}>Work</Link>
+            onMouseLeave={e => (e.currentTarget.style.color = MUT)}>{t('nav.work')}</Link>
           <span style={{ color: MUT }}>/</span>
-          <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>{item.category}</span>
+          <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>
+            {item.categoryKey ? t(item.categoryKey) : item.category}
+          </span>
         </div>
 
         <div className="relative z-10 py-6 sm:py-8">
           <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
             style={{ fontSize: FS_HERO, color: T }}>
-            {item.title.split(' ').map(w => (
+            {(item.titleKey ? t(item.titleKey) : item.title).split(' ').map(w => (
               <div key={w} className="overflow-hidden">
                 <span className="hero-word block">{w}</span>
               </div>
@@ -81,9 +85,9 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
         </div>
 
         <div className="hero-meta relative z-10 flex flex-wrap gap-4 sm:gap-10">
-          {[{ label:'Category', value:item.category }, { label:'Year', value:item.year }].map(({ label, value }) => (
+          {[{ label:'cs.cat', value:item.categoryKey ? t(item.categoryKey) : item.category }, { label:'cs.year', value:item.year }].map(({ label, value }) => (
             <div key={label}>
-              <p className="font-mono uppercase mb-1" style={{ fontSize: '0.55rem', letterSpacing: '0.25em', color: MUT }}>{label}</p>
+              <p className="font-mono uppercase mb-1" style={{ fontSize: '0.55rem', letterSpacing: '0.25em', color: MUT }}>{t(label)}</p>
               <p className="font-display font-bold text-sm px-3 py-0.5 rounded-full"
                 style={{ letterSpacing: '0.04em', color: ACC, border: `1px solid ${BDG}`, background:'rgba(129,140,248,0.07)' }}>
                 {value}
@@ -98,7 +102,7 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
         <div className="relative overflow-hidden" style={{ aspectRatio: '21/8', width: '100%' }}>
           {item.image ? (
             <>
-              <img src={item.image} alt={item.title}
+              <img src={item.image} alt={item.titleKey ? t(item.titleKey) : item.title}
                 style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'top', display:'block' }} />
               <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
                 style={{ background: 'linear-gradient(to top, rgba(3,3,8,0.65), transparent)' }} />
@@ -115,12 +119,14 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
         padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
         <div className="container grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 sm:gap-14 lg:gap-20">
           <div className="reveal">
-            <p className="font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>Overview</p>
-            <p className="font-sans leading-7" style={{ fontSize: FS_BODY, color: T2 }}>{item.summary}</p>
+            <p className="font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>{t('cs.overview')}</p>
+            <p className="font-sans leading-7" style={{ fontSize: FS_BODY, color: T2 }}>
+              {item.summaryKey ? t(item.summaryKey) : item.summary}
+            </p>
           </div>
           <blockquote className="reveal font-display font-bold leading-[0.95] tracking-[-0.02em] break-words"
             style={{ fontSize: 'clamp(1.25rem,3vw,3rem)', color: T }}>
-            {details.intro}
+            {t(details.introKey)}
           </blockquote>
         </div>
       </section>
@@ -132,8 +138,8 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
             {SECTIONS.map(({ key, label }, idx) => (
               <div key={key} className="reveal-item py-7 sm:py-10 pr-0 sm:pr-10"
                 style={{ borderBottom:`1px solid ${BDR}`, borderRight: idx%2===0 ? `1px solid ${BDR}` : 'none' }}>
-                <p className="font-mono uppercase mb-4" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>{label}</p>
-                <p className="font-sans leading-8 font-light" style={{ fontSize: FS_BODY, color: T2 }}>{details[key]}</p>
+                <p className="font-mono uppercase mb-4" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>{t(label)}</p>
+                <p className="font-sans leading-8 font-light" style={{ fontSize: FS_BODY, color: T2 }}>{t(details[`${key}Key`])}</p>
               </div>
             ))}
           </div>
@@ -143,20 +149,20 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
       {/* Deliverables */}
       <section className="relative" style={{ zIndex: 1, backgroundColor: SURF, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
         <div className="container">
-          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>Deliverables</p>
+          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>{t('cs.deliver')}</p>
           <div className="reveal-group grid grid-cols-1 sm:grid-cols-3 gap-4">
             {[
-              { label:'Strategy & Direction', desc:'Brand architecture, user research, information hierarchy, and creative direction aligned to business goals.' },
-              { label:'Motion & Interaction', desc:'Scroll animations, micro-interactions, page transitions, and gesture-driven components for fluid UX.' },
-              { label:'Interface & Systems', desc:'Production-ready front-end, responsive layouts, design tokens, and accessible component library.' },
+              { label:'cs.d1.l', desc:'cs.d1.d' },
+              { label:'cs.d2.l', desc:'cs.d2.d' },
+              { label:'cs.d3.l', desc:'cs.d3.d' },
             ].map(({ label, desc }) => (
               <div key={label} className="reveal-item glass-card p-5 sm:p-7">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center mb-5"
                   style={{ border: `1px solid ${BDG}`, background: 'rgba(129,140,248,0.08)' }}>
                   <span style={{ color: ACC, fontSize: '0.75rem' }}>⬡</span>
                 </div>
-                <h3 className="font-display font-bold text-sm sm:text-base tracking-[-0.01em] mb-2.5" style={{ color: T }}>{label}</h3>
-                <p className="font-sans leading-6" style={{ fontSize: FS_BODY, color: T2 }}>{desc}</p>
+                <h3 className="font-display font-bold text-sm sm:text-base tracking-[-0.01em] mb-2.5" style={{ color: T }}>{t(label)}</h3>
+                <p className="font-sans leading-6" style={{ fontSize: FS_BODY, color: T2 }}>{t(desc)}</p>
               </div>
             ))}
           </div>
@@ -166,13 +172,13 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
       {/* Gallery */}
       <section className="relative" style={{ zIndex: 1, backgroundColor: BG, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
         <div className="container">
-          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>Visual Gallery</p>
+          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>{t('cs.gallery')}</p>
           <div className="reveal-group grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[0,1,2].map(i => (
               <div key={i} className={`reveal-item overflow-hidden rounded-xl ${i===0?'sm:col-span-2':''}`}
                 style={{ border: `1px solid ${BDR}` }}>
                 {item.image ? (
-                  <img src={item.image} alt={`${item.title} view ${i+1}`}
+                  <img src={item.image} alt={`${item.titleKey ? t(item.titleKey) : item.title} view ${i+1}`}
                     className={i===0?'aspect-[16/9]':'aspect-[4/5]'}
                     style={{ width:'100%', objectFit:'cover', objectPosition:'top', display:'block' }} />
                 ) : (
@@ -192,11 +198,11 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
         <div className="container relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
           <div>
             <p className="font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>
-              {nextItem ? 'Next project' : 'Back to portfolio'}
+              {nextItem ? t('cs.next') : t('cs.back')}
             </p>
             <h2 className="font-display font-bold leading-[0.9] tracking-[-0.02em]"
               style={{ fontSize: 'clamp(1.8rem,4.5vw,5rem)', color: T }}>
-              {nextItem ? nextItem.title : 'View All Work'}
+              {nextItem ? (nextItem.titleKey ? t(nextItem.titleKey) : nextItem.title) : t('cs.btn.a')}
             </h2>
           </div>
           <Link href={nextItem ? `/work/${nextItem.slug}` : '/work'}
@@ -205,7 +211,7 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
               color:'#fff', boxShadow:'0 0 28px rgba(99,102,241,0.30)' }}
             onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 46px rgba(99,102,241,0.55)')}
             onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 28px rgba(99,102,241,0.30)')}>
-            {nextItem ? 'Next Project' : 'All Projects'} <span className="text-base leading-none">↗</span>
+            {nextItem ? t('cs.btn.n') : t('cs.btn.a')} <span className="text-base leading-none">↗</span>
           </Link>
         </div>
       </section>
