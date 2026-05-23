@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
-import { services, whyItems, logoPartners, contactData } from '@/lib/content';
+import { services, whyItems, contactData } from '@/lib/content';
 import HeroOrbs from '@/components/HeroOrbs';
 import AuroraBackground from '@/components/AuroraBackground';
 import FlowArt, { FlowSection } from '@/components/ui/story-scroll';
@@ -286,28 +286,6 @@ export default function Home() {
           })}
         </FlowArt>
       </div>
-
-      {/* ─── BRANDS ────────────────────────────────────────────────── */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: BG,
-        padding: 'clamp(3rem,5vw,6rem) 0', borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <p className="reveal font-mono uppercase text-center mb-8 sm:mb-10 tracking-[0.32em]"
-            style={{ fontSize: FS_LABEL, color: MUT }}>
-            Trusted by studios &amp; companies
-          </p>
-          <div className="reveal-group flex flex-wrap justify-center gap-x-5 gap-y-3 sm:gap-x-10">
-            {logoPartners.map(name => (
-              <span key={name}
-                className="reveal-item font-display font-bold uppercase cursor-default transition-all duration-300"
-                style={{ fontSize: 'clamp(0.9rem,2.5vw,2rem)', letterSpacing: '-0.01em', color: MUT }}
-                onMouseEnter={e => { const el=e.currentTarget as HTMLElement; el.style.color=T; el.style.textShadow=`0 0 20px ${ACC}`; }}
-                onMouseLeave={e => { const el=e.currentTarget as HTMLElement; el.style.color=MUT; el.style.textShadow='none'; }}>
-                {name}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ─── CTA ───────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden" style={{ zIndex: 1, backgroundColor: SURF,
