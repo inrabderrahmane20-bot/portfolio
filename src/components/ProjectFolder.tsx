@@ -59,6 +59,8 @@ async function explodeShreds(el: HTMLElement, onDone: () => void) {
       'left:0', 'top:0',
       'border-radius:2px',
       'will-change:transform,opacity',
+      'backface-visibility:hidden',
+      'transform:translateZ(0)',
     ].join(';');
 
     if (Math.random() > 0.42 && srcs.length) {
@@ -74,11 +76,19 @@ async function explodeShreds(el: HTMLElement, onDone: () => void) {
     overlay.appendChild(d);
     shreds.push(d);
 
-    gsap.set(d, { x: cx - w/2, y: cy - h/2, rotation: (Math.random()-0.5)*40, opacity: 0 });
+    const randomRotation = (Math.random() - 0.5) * 40;
+    gsap.set(d, { 
+      x: cx - w/2, 
+      y: cy - h/2, 
+      rotation: randomRotation,
+      opacity: 0,
+      transformOrigin: '50% 50%',
+    });
+    
     gsap.to(d, {
       x:        Math.random() * W - w/2,
       y:        Math.random() * H - h/2,
-      rotation: (Math.random()-0.5)*70,
+      rotation: (Math.random() - 0.5) * 70,
       opacity:  0.88 + Math.random() * 0.12,
       duration: 0.26 + Math.random() * 0.18,
       delay:    Math.random() * 0.10,
@@ -91,11 +101,12 @@ async function explodeShreds(el: HTMLElement, onDone: () => void) {
     /* Fire navigation immediately so Next.js renders the new page behind */
     onDone();
 
-    /* All shreds drop simultaneously */
+    /* All shreds drop simultaneously with fade */
     gsap.to(shreds, {
       y:         `+=${H + 400}`,
-      duration:  0.52,
-      ease:      'power2.in',
+      opacity:   0,
+      duration:  0.56,
+      ease:      'power2.inOut',
       overwrite: true,
     });
 
@@ -105,9 +116,9 @@ async function explodeShreds(el: HTMLElement, onDone: () => void) {
       { clipPath: 'inset(0% 0% 0% 0%)' },
       {
         clipPath:   'inset(100% 0% 0% 0%)',
-        duration:   0.56,
-        delay:      0.04,
-        ease:       'power2.in',
+        duration:   0.58,
+        delay:      0.02,
+        ease:       'power2.inOut',
         onComplete: () => {
           if (document.body.contains(overlay)) document.body.removeChild(overlay);
         },
