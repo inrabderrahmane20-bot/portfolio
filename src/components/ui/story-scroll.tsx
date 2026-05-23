@@ -29,7 +29,7 @@ export const FlowSection: React.FC<FlowSectionProps> = ({
     <div
       data-flow-inner
       className={cx(
-        'flow-art-container relative flex min-h-screen w-full flex-col justify-between gap-6 px-[5vw] pt-[clamp(2rem,8vw,4vw)] pb-[4vw]',
+        'flow-art-container relative flex min-h-screen w-full flex-col justify-between gap-2 px-[5vw] pt-[clamp(1.5rem,6vw,3rem)] pb-[4vw]',
         'will-change-transform',
       )}
       style={{ transformOrigin: 'bottom left', ...style }}

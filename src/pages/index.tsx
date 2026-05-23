@@ -270,9 +270,8 @@ export default function Home() {
                   {t(`w${num}.title`)}
                 </h2>
               </div>
-              <hr style={{ border:'none', borderTop:`1px solid ${BDR}` }} />
               <p className="font-sans leading-7"
-                style={{ fontSize:'clamp(0.875rem,1.8vw,1.15rem)', color: T2, maxWidth:'55ch' }}>
+                style={{ fontSize:'clamp(1rem,2.2vw,1.35rem)', color: T2, maxWidth:'55ch' }}>
                 {t(`w${num}.detail`)}
               </p>
             </FlowSection>
