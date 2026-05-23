@@ -287,6 +287,25 @@ a[href^="mailto:"], a[href^="http"] {
   word-break: break-all;
 }
 
+/* ─── Body text justification ───────────────────────────────────────── */
+p {
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+}
+/* Preserve left-align for mono labels, nav items, and short UI strings */
+.font-mono,
+nav p,
+.text-center p,
+.text-left p,
+footer p,
+[class*="tracking-"] {
+  text-align: left !important;
+  hyphens: none;
+  -webkit-hyphens: none;
+}
+
 /* ─── Tap interactions ───────────────────────────────────────────────── */
 a, button { -webkit-tap-highlight-color: transparent; }
 

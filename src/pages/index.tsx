@@ -216,7 +216,7 @@ export default function Home() {
                       style={{ fontSize: FS_BODY, color: T2, textAlign:'justify', hyphens:'auto' }}>
                       {t(`s${svc.num}.detail`)}
                     </p>
-                    <span className="svc-arrow font-sans text-xl transition-transform duration-300 inline-block"
+                    <span className="svc-arrow font-sans text-xl transition-transform duration-300 inline-block self-end"
                       style={{ color: ACC }}>↗</span>
                   </div>
                 </div>
