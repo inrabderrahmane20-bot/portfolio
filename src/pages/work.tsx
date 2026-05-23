@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { workItems } from '@/lib/content';
+import { useLanguage } from '@/contexts/LanguageContext';
 import AuroraBackground from '@/components/AuroraBackground';
 
 const BG   = '#030308';
@@ -21,18 +22,17 @@ const BADGE = [ACC, ACC2, '#a78bfa', '#34d399', ACC];
 
 export default function Work() {
   const heroRef = useRef<HTMLElement | null>(null);
+  const { t }   = useLanguage();
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    /* Page-entrance: fade in from black (bridges the folder transition) */
     const curtain = document.createElement('div');
     curtain.style.cssText =
       'position:fixed;inset:0;background:#030308;z-index:9999;pointer-events:none;';
     document.body.appendChild(curtain);
 
     import('gsap').then(({ gsap }) => {
-      /* Fade out the black curtain smoothly */
       gsap.to(curtain, {
         opacity:    0,
         duration:   0.80,
@@ -41,9 +41,7 @@ export default function Work() {
         onComplete: () => { if (document.body.contains(curtain)) document.body.removeChild(curtain); },
       });
 
-      /* Then animate the hero words in */
-      let ctx: any;
-      ctx = gsap.context(() => {
+      const ctx: any = gsap.context(() => {
         gsap.from('.hero-word', { y: '110%', duration: 1.1, stagger: 0.08, ease: 'power4.out', delay: 0.30 });
         gsap.from('.hero-meta', { opacity: 0, y: 14, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: 0.70 });
       }, heroRef);
@@ -65,17 +63,19 @@ export default function Work() {
             background: 'radial-gradient(circle at 65% 25%, rgba(56,189,248,0.09), transparent 65%)' }} />
 
         <div className="hero-meta relative z-10 flex items-center gap-3 flex-wrap">
-          <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.32em', color: ACC2 }}>Portfolio</span>
+          <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.32em', color: ACC2 }}>
+            {t('work.label')}
+          </span>
           <span className="block w-5 h-px" style={{ backgroundColor: 'rgba(56,189,248,0.38)' }} />
           <span className="font-mono" style={{ fontSize: FS_LABEL, letterSpacing: '0.32em', color: MUT }}>
-            {workItems.length} Projects
+            {workItems.length} {t('nav.work')}
           </span>
         </div>
 
         <div className="relative z-10 py-6 sm:py-8">
           <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
             style={{ fontSize: FS_HERO, color: T }}>
-            {['Selected','Work'].map(w => (
+            {[t('work.h1'), t('work.h2')].map(w => (
               <div key={w} className="overflow-hidden">
                 <span className="hero-word block">{w}</span>
               </div>
@@ -85,7 +85,7 @@ export default function Work() {
 
         <p className="hero-meta relative z-10 font-sans leading-7 font-light max-w-lg"
           style={{ fontSize: FS_BODY, color: T2 }}>
-          A collection of real-world projects — designed and built from concept to launch.
+          {t('work.tag')}
         </p>
       </section>
 
@@ -108,7 +108,6 @@ export default function Work() {
                   viewport={{ once: true, amount: 0.10 }}
                   transition={{ duration: 0.70, ease: [0.16,1,0.3,1], delay: (i % 2) * 0.07 }}>
 
-                  {/* Screenshot */}
                   <div className={`relative overflow-hidden rounded-xl mb-4 ${isWide ? 'aspect-[21/8]' : 'aspect-[16/10]'}`}
                     style={{ border: `1px solid ${BDR}`, width: '100%' }}>
                     {imgSrc ? (
@@ -125,7 +124,6 @@ export default function Work() {
                       style={{ background: 'linear-gradient(to top, rgba(3,3,8,0.40), transparent)' }} />
                   </div>
 
-                  {/* Info */}
                   <div>
                     <div className="flex items-center justify-between mb-2.5">
                       <span className="font-mono uppercase inline-block px-2.5 py-0.5 rounded-full"
@@ -158,17 +156,17 @@ export default function Work() {
       {/* CTA */}
       <section className="relative overflow-hidden" style={{ zIndex: 1, backgroundColor: SURF,
         padding: 'clamp(3rem,5vw,6rem) 0', borderTop: `1px solid ${BDR}` }}>
-        <div aria-hidden className="pointer-events-none absolute -bottom-12 -right-12 rounded-full glow-orb-rev"
+        <div aria-hidden className="pointer-events-none absolute -bottom-12 -right-12 rounded-full"
           style={{ width: 'min(280px,60vw)', height: 'min(280px,60vw)',
             background: 'radial-gradient(circle, rgba(129,140,248,0.09), transparent 65%)' }} />
         <div className="container relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-7 sm:gap-8">
           <div>
             <p className="reveal font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>
-              Start a project
+              {t('work.cta.l')}
             </p>
             <h2 className="reveal font-display font-bold leading-[0.92] tracking-[-0.02em] break-words"
               style={{ fontSize: FS_H2, color: T }}>
-              Have a project<br />in mind?
+              {t('work.cta.h')}
             </h2>
           </div>
           <a href="/contact"
@@ -177,7 +175,7 @@ export default function Work() {
               color:'#fff', boxShadow:'0 0 30px rgba(99,102,241,0.35)' }}
             onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 48px rgba(99,102,241,0.60)')}
             onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 30px rgba(99,102,241,0.35)')}>
-            Get in Touch <span className="text-base leading-none">↗</span>
+            {t('work.cta.btn')} <span className="text-base leading-none">↗</span>
           </a>
         </div>
       </section>
