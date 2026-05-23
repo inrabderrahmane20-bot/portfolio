@@ -118,29 +118,21 @@ async function explodeShreds(el: HTMLElement, onDone: () => void) {
     );
   }
 
-  /* ── After ~1.1 s all papers have landed — darken them to black ── */
+  /* ── After ~1.0 s papers are landing — start darkening ── */
   setTimeout(() => {
     gsap.to(shreds, {
       backgroundColor: '#030308',
       backgroundImage: 'none',
       border:          'none',
-      duration:        0.30,
-      stagger:         { amount: 0.25, from: 'random' },
+      duration:        0.22,
+      stagger:         { amount: 0.18, from: 'random' },
       ease:            'power1.in',
     });
-  }, 1100);
+  }, 1000);
 
-  /* ── After ~1.7 s drop a solid black curtain over any gaps ── */
-  setTimeout(() => {
-    const curtain = document.createElement('div');
-    curtain.style.cssText =
-      'position:absolute;inset:0;background:#030308;z-index:10;opacity:0;';
-    overlay.appendChild(curtain);
-    gsap.to(curtain, { opacity: 1, duration: 0.12, ease: 'power2.in' });
-  }, 1700);
-
-  /* ── Navigate immediately after curtain appears (no visible black pause) ── */
-  setTimeout(onDone, 1702);
+  /* ── Navigate at 1050 ms — papers are mid-darken, screen is mostly black,
+        new page loads behind the shreds while they finish going dark ── */
+  setTimeout(onDone, 1050);
 
   /* ── Clean up shred DOM after page has changed ── */
   setTimeout(() => {
