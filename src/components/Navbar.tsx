@@ -42,47 +42,54 @@ export default function Navbar() {
           borderBottom:        scrolled ? '1px solid rgba(255,255,255,0.07)' : '1px solid transparent',
         }}
       >
-        <div className="container flex items-center justify-between py-5 sm:py-6">
-          {/* Logo */}
-          <Link href="/" className="flex items-center transition-all hover:opacity-80" aria-label="Home">
-            <Image src="/LOGO.png" alt="AC" width={44} height={36} className="h-7 sm:h-8 w-auto object-contain" priority />
-          </Link>
+        {/* Mobile: [hamburger | logo | flag]   Desktop: [logo | nav + lang] */}
+        <div className="container flex items-center py-5 sm:py-6">
 
-          {/* Desktop — nav links + language switcher */}
-          <div className="hidden md:flex items-center gap-8">
-            <nav className="flex items-center gap-8">
-              {navItems.map((item) => {
-                const active = pathname.startsWith(item.href);
-                return (
-                  <Link key={item.href} href={item.href}
-                    className="relative font-mono text-[0.65rem] uppercase tracking-[0.28em] transition-colors"
-                    style={{ color: active ? '#818cf8' : 'rgba(255,255,255,0.50)' }}
-                    onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#fff'; }}
-                    onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.50)'; }}
-                  >
-                    {t(item.key)}
-                    {active && (
-                      <span className="absolute -bottom-0.5 left-0 right-0 h-px"
-                        style={{ background: 'linear-gradient(90deg,#818cf8,#38bdf8)' }} />
-                    )}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Divider */}
-            <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,0.12)' }} aria-hidden />
-
-            {/* Language switcher — desktop */}
-            <LanguageSwitcher variant="nav" />
-          </div>
-
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger — left */}
           <button onClick={() => setOpen(true)} aria-label="Open menu"
-            className="md:hidden flex flex-col gap-[5px] py-1 px-1" style={{ touchAction: 'manipulation' }}>
+            className="md:hidden flex flex-col gap-[5px] py-1 px-1 mr-1" style={{ touchAction: 'manipulation' }}>
             <span className="block h-px w-6 bg-white" />
             <span className="block h-px w-4" style={{ background: 'rgba(255,255,255,0.40)' }} />
           </button>
+
+          {/* Logo — centered on mobile (flex-1 + justify-center), left on desktop */}
+          <div className="flex-1 flex justify-center md:justify-start md:flex-none md:mr-auto">
+            <Link href="/" className="flex items-center transition-all hover:opacity-80" aria-label="Home">
+              <Image src="/LOGO.png" alt="AC" width={44} height={36} className="h-7 sm:h-8 w-auto object-contain" priority />
+            </Link>
+          </div>
+
+          {/* Right side */}
+          <div className="flex items-center gap-3">
+            {/* Flag language switcher — mobile only */}
+            <LanguageSwitcher variant="flag" className="md:hidden" />
+
+            {/* Desktop nav + language switcher */}
+            <div className="hidden md:flex items-center gap-8">
+              <nav className="flex items-center gap-8">
+                {navItems.map((item) => {
+                  const active = pathname.startsWith(item.href);
+                  return (
+                    <Link key={item.href} href={item.href}
+                      className="relative font-mono text-[0.65rem] uppercase tracking-[0.28em] transition-colors"
+                      style={{ color: active ? '#818cf8' : 'rgba(255,255,255,0.50)' }}
+                      onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.color = '#fff'; }}
+                      onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.color = 'rgba(255,255,255,0.50)'; }}
+                    >
+                      {t(item.key)}
+                      {active && (
+                        <span className="absolute -bottom-0.5 left-0 right-0 h-px"
+                          style={{ background: 'linear-gradient(90deg,#818cf8,#38bdf8)' }} />
+                      )}
+                    </Link>
+                  );
+                })}
+              </nav>
+              <div style={{ width: 1, height: 18, background: 'rgba(255,255,255,0.12)' }} aria-hidden />
+              <LanguageSwitcher variant="nav" />
+            </div>
+          </div>
+
         </div>
       </header>
 
@@ -110,11 +117,6 @@ export default function Navbar() {
                   <span className="absolute inset-0 m-auto block h-px w-5 -rotate-45 bg-white" />
                 </span>
               </button>
-            </div>
-
-            {/* Language switcher — mobile, prominent at top */}
-            <div className="flex justify-center">
-              <LanguageSwitcher variant="mobile" />
             </div>
 
             {/* Nav links */}
