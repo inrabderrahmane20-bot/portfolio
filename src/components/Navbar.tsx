@@ -55,7 +55,7 @@ export default function Navbar() {
           {/* Logo — centered on mobile (flex-1 + justify-center), left on desktop */}
           <div className="flex-1 flex justify-center md:justify-start md:flex-none md:mr-auto">
             <Link href="/" className="flex items-center transition-all hover:opacity-80" aria-label="Home">
-              <Image src="/LOGO.png" alt="AC" width={44} height={36} className="h-7 sm:h-8 w-auto object-contain" priority />
+              <Image src="/LOGO.png" alt="AC" width={56} height={16} className="h-7 sm:h-8 w-auto object-contain" priority />
             </Link>
           </div>
 
@@ -107,7 +107,7 @@ export default function Navbar() {
             {/* Top row */}
             <div className="flex items-center justify-between">
               <Link href="/" onClick={() => setOpen(false)} aria-label="Home">
-                <Image src="/LOGO.png" alt="AC" width={44} height={36} className="h-7 w-auto object-contain" />
+                <Image src="/LOGO.png" alt="AC" width={56} height={16} className="h-7 w-auto object-contain" />
               </Link>
               <button onClick={() => setOpen(false)} aria-label="Close menu"
                 className="w-10 h-10 flex items-center justify-center"
