@@ -18,7 +18,7 @@ const ACC  = '#818cf8';
 const ACC2 = '#38bdf8';
 
 /* ── Type scales (safe at 320 px) ─────────────────────────────────── */
-const FS_HERO  = 'clamp(2.4rem, 10.5vw, 13.5rem)';  /* min 38.4 px */
+const FS_HERO  = 'clamp(2rem, 13vw, 13.5rem)';  /* min 38.4 px */
 const FS_H2    = 'clamp(1.75rem, 5vw, 4.5rem)';      /* min 28 px   */
 const FS_LABEL = '0.625rem';
 const FS_BODY  = '0.875rem';
@@ -99,8 +99,8 @@ export default function Home() {
 
           {/* Giant title */}
           <div className="flex-1 flex items-center py-4 sm:py-8">
-            <h1 className="font-display font-black uppercase leading-[0.87] tracking-[-0.03em] break-words"
-              style={{ fontSize: FS_HERO, color: T, maxWidth: '100%' }}>
+            <h1 className="font-display font-black uppercase leading-[0.87] tracking-[-0.03em]"
+              style={{ fontSize: FS_HERO, color: T}}>
               <div className="overflow-hidden"><span className="hero-word block">Brand &amp;</span></div>
               <div className="overflow-hidden">
                 <span className="hero-word block">
@@ -270,8 +270,7 @@ export default function Home() {
                 {/* Big heading */}
                 <div className="flex-1 flex items-center overflow-hidden">
                   <h2 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em] break-words"
-                    style={{ fontSize: 'clamp(2.2rem,8vw,10rem)', whiteSpace: 'pre-line',
-                      overflowWrap: 'break-word', color: T, maxWidth: '100%' }}>
+                    style={{ fontSize: 'clamp(2.2rem,8vw,10rem)', whiteSpace: 'pre-line', color: T}}>
                     {item.title}
                   </h2>
                 </div>

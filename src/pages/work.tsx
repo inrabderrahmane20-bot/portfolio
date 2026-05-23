@@ -12,7 +12,7 @@ const BDR  = 'rgba(255,255,255,0.07)';
 const ACC  = '#818cf8';
 const ACC2 = '#38bdf8';
 
-const FS_HERO  = 'clamp(2.4rem,9vw,11rem)';
+const FS_HERO  = 'clamp(2rem, 13vw, 13.5rem)';
 const FS_H2    = 'clamp(1.75rem,5vw,4.5rem)';
 const FS_LABEL = '0.625rem';
 const FS_BODY  = '0.875rem';
@@ -55,7 +55,7 @@ export default function Work() {
         </div>
 
         <div className="relative z-10 py-6 sm:py-8">
-          <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em] break-words"
+          <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
             style={{ fontSize: FS_HERO, color: T }}>
             {['Selected','Work'].map(w => (
               <div key={w} className="overflow-hidden">

@@ -70,7 +70,7 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
         </div>
 
         <div className="relative z-10 py-6 sm:py-8">
-          <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em] break-words"
+          <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
             style={{ fontSize: FS_HERO, color: T }}>
             {item.title.split(' ').map(w => (
               <div key={w} className="overflow-hidden">
