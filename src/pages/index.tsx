@@ -18,8 +18,8 @@ const ACC  = '#818cf8';
 const ACC2 = '#38bdf8';
 
 /* ── Type scales (safe at 320 px) ─────────────────────────────────── */
-const FS_HERO  = 'clamp(2.5rem, 11vw, 11rem)';  /* min 38.4 px */
-const FS_H2    = 'clamp(1.75rem, 5vw, 4.5rem)';      /* min 28 px   */
+const FS_HERO  = 'clamp(1.4rem, 7vw, 11rem)';  /* min 38.4 px */
+const FS_H2    = 'clamp(1.4rem, 7vw, 11rem)';      /* min 28 px   */
 const FS_LABEL = '0.625rem';
 const FS_BODY  = '0.875rem';
 
@@ -325,8 +325,10 @@ export default function Home() {
             style={{ fontSize: FS_LABEL, letterSpacing: '0.32em', color: ACC }}>
             Ready to start?
           </p>
-          <h2 className="reveal font-display font-black leading-[0.88] tracking-[-0.03em] uppercase break-words"
-            style={{ fontSize: 'clamp(2.2rem,5.5vw,7rem)', color: T }}>
+          {/* NOT uppercase — mixed-case Syne Black is 40% narrower than all-caps,
+               preventing character-wrap on any phone width ≥ 320 px */}
+          <h2 className="reveal font-display font-black leading-[0.92] tracking-[-0.02em]"
+            style={{ fontSize: 'clamp(1.8rem, 5.5vw, 7rem)', color: T }}>
             Let&apos;s Create<br />
             <span className="text-gradient">Something</span><br />
             Remarkable.

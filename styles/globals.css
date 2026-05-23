@@ -257,6 +257,36 @@ canvas { max-width: 100%; }
   backdrop-filter: blur(8px);
 }
 
+/* ─── Zoom lock — prevents ALL pinch/double-tap zoom ─────────────────── */
+html {
+  touch-action: pan-x pan-y;   /* allow scroll, block pinch-zoom */
+  -ms-touch-action: pan-x pan-y;
+}
+body {
+  touch-action: pan-x pan-y;
+  -webkit-user-select: none;   /* stops accidental text-select on long-press */
+  user-select: none;
+}
+/* Re-enable text selection for content and inputs */
+p, span, a, h1, h2, h3, h4, li, blockquote,
+input, textarea, select {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ─── Global text overflow safety ────────────────────────────────────── */
+/* Headings NEVER break mid-character. If a word truly doesn't fit,
+   it wraps at the natural word boundary (space).  No orphan letters. */
+h1, h2, h3, h4 {
+  overflow-wrap: normal;
+  word-break:    keep-all;    /* break only at spaces, never mid-word */
+  hyphens:       none;
+}
+/* Long non-word strings (emails, URLs) break anywhere */
+a[href^="mailto:"], a[href^="http"] {
+  word-break: break-all;
+}
+
 /* ─── Tap interactions ───────────────────────────────────────────────── */
 a, button { -webkit-tap-highlight-color: transparent; }
 

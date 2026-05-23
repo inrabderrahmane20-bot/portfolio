@@ -50,6 +50,22 @@ export default function App({ Component, pageProps }: AppProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const router = useRouter();
 
+  /* ── Zoom lock — blocks all pinch-zoom and double-tap-zoom ─────────── */
+  useEffect(() => {
+    /* Prevent pinch zoom (multi-touch) */
+    const blockPinch = (e: TouchEvent) => { if (e.touches.length > 1) e.preventDefault(); };
+    /* Prevent double-tap zoom on iOS */
+    const blockGesture = (e: Event) => e.preventDefault();
+    document.addEventListener('touchmove',    blockPinch,   { passive: false });
+    document.addEventListener('gesturestart', blockGesture, { passive: false });
+    document.addEventListener('gesturechange',blockGesture, { passive: false });
+    return () => {
+      document.removeEventListener('touchmove',    blockPinch);
+      document.removeEventListener('gesturestart', blockGesture);
+      document.removeEventListener('gesturechange',blockGesture);
+    };
+  }, []);
+
   /* ── Scroll reveals — re-run on every page navigation ─────────────── */
   useEffect(() => {
     let obs = setupReveal();
@@ -120,7 +136,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <Head>
       <title>AC — Brand &amp; Web Design Specialist</title>
       <meta name="description" content="Abderrahmane Charak — Software engineer and digital product designer crafting elegant web systems from Marrakech, Morocco." />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <link rel="icon" href="/favicon.ico" sizes="any" />
       <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
       <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
