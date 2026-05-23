@@ -121,9 +121,9 @@ export default function Home() {
               <span className="flex-shrink-0">↗</span>
             </a>
             <div className="flex gap-2">
-              <Stat n="16+" label={t('hero.stat1')} />
-              <Stat n="50+" label={t('hero.stat2')} />
-              <Stat n="30+" label={t('hero.stat3')} />
+              <Stat n="3+"  label={t('hero.stat1')} />
+              <Stat n="10+" label={t('hero.stat2')} />
+              <Stat n="10+" label={t('hero.stat3')} />
             </div>
             <div className="flex items-center gap-2.5 pt-1">
               <div className="scroll-line-anim w-px h-7 flex-shrink-0"
@@ -160,7 +160,7 @@ export default function Home() {
                 <div key={n} className="text-right">
                   <div className="font-display text-2xl font-black leading-none text-gradient">
                     {t(`hero.stat${n}`) === 'Yrs' || t(`hero.stat${n}`) === 'Ans' || t(`hero.stat${n}`) === 'Años'
-                      ? '16+' : n === '2' ? '50+' : '30+'}
+                      ? '3+' : n === '2' ? '10+' : '10+'}
                   </div>
                   <div className="font-mono uppercase mt-0.5"
                     style={{ fontSize:'0.58rem', letterSpacing:'0.1em', color: MUT }}>

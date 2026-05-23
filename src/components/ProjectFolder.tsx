@@ -118,29 +118,29 @@ async function explodeShreds(el: HTMLElement, onDone: () => void) {
     );
   }
 
-  /* ── After ~1.6 s all papers have landed — darken them to black ── */
+  /* ── After ~1.1 s all papers have landed — darken them to black ── */
   setTimeout(() => {
     gsap.to(shreds, {
       backgroundColor: '#030308',
       backgroundImage: 'none',
       border:          'none',
-      duration:        0.35,
-      stagger:         { amount: 0.30, from: 'random' },
+      duration:        0.30,
+      stagger:         { amount: 0.25, from: 'random' },
       ease:            'power1.in',
     });
-  }, 1600);
+  }, 1100);
 
-  /* ── After ~2.1 s drop a solid black curtain over any gaps ── */
+  /* ── After ~1.7 s drop a solid black curtain over any gaps ── */
   setTimeout(() => {
     const curtain = document.createElement('div');
     curtain.style.cssText =
       'position:absolute;inset:0;background:#030308;z-index:10;opacity:0;';
     overlay.appendChild(curtain);
-    gsap.to(curtain, { opacity: 1, duration: 0.45, ease: 'power2.in' });
-  }, 2100);
+    gsap.to(curtain, { opacity: 1, duration: 0.12, ease: 'power2.in' });
+  }, 1700);
 
-  /* ── Navigate while screen is fully black ── */
-  setTimeout(onDone, 2700);
+  /* ── Navigate immediately after curtain appears (no visible black pause) ── */
+  setTimeout(onDone, 1702);
 
   /* ── Clean up shred DOM after page has changed ── */
   setTimeout(() => {
