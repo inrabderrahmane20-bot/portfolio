@@ -1,9 +1,10 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
-import { featuredWork, services, whyItems, logoPartners, contactData } from '@/lib/content';
+import { services, whyItems, logoPartners, contactData } from '@/lib/content';
 import HeroOrbs from '@/components/HeroOrbs';
 import AuroraBackground from '@/components/AuroraBackground';
 import FlowArt, { FlowSection } from '@/components/ui/story-scroll';
+import ProjectFolder from '@/components/ProjectFolder';
 
 /* ── Design tokens ───────────────────────────────────────────────────── */
 const BG      = '#030308';
@@ -216,10 +217,11 @@ export default function Home() {
       </div>
       {/* ══════════════════ END SCENE CONTAINER ════════════════════════ */}
 
-      {/* ═══════════════════ SELECTED WORK ════════════════════════════ */}
+      {/* ═══════════════════ SELECTED WORK — FOLDER ══════════════════ */}
       <section className="relative" style={{ zIndex: 1, backgroundColor: BG, padding: '5rem 0 6rem', borderTop: `1px solid ${BDR}` }}>
         <div className="container">
-          <div className="reveal flex flex-wrap items-baseline gap-3 sm:gap-8 mb-10 sm:mb-16">
+          {/* Section header */}
+          <div className="reveal flex flex-wrap items-baseline gap-3 sm:gap-8 mb-12 sm:mb-20">
             <span className="font-mono text-[0.58rem] uppercase tracking-[0.22em] px-3 py-1 rounded-full"
               style={{ color: ACCENT2, border: '1px solid rgba(56,189,248,0.35)', background: 'rgba(56,189,248,0.06)' }}>
               Portfolio
@@ -228,40 +230,18 @@ export default function Home() {
               style={{ fontSize: 'clamp(2rem,5vw,4.5rem)', color: TEXT }}>
               Selected Work
             </h2>
-            <Link href="/work"
-              className="font-mono text-xs sm:text-sm transition-colors"
-              style={{ color: MUTED, borderBottom: `1px solid ${BDR}`, paddingBottom: '2px' }}
-              onMouseEnter={e => (e.currentTarget.style.color = ACCENT)}
-              onMouseLeave={e => (e.currentTarget.style.color = MUTED)}>
-              View All ↗
-            </Link>
           </div>
 
-          <div className="reveal-group grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-8">
-            {featuredWork.map((item, i) => (
-              <Link key={item.slug} href={`/work/${item.slug}`}
-                className={`work-card reveal-item group block ${i === 2 ? 'sm:col-span-2' : ''}`}>
-                <div
-                  className={`relative overflow-hidden rounded-xl mb-3 sm:mb-4 work-frame ${i === 2 ? 'aspect-[16/7] sm:aspect-[21/9]' : 'aspect-[4/3] sm:aspect-[4/3]'}`}
-                  style={{ border: `1px solid ${BDR}` }}>
-                  <div className={`work-thumb absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
-                  <div className="work-overlay">View Project ↗</div>
-                </div>
-                <div className="flex items-baseline justify-between gap-4 px-1">
-                  <div>
-                    <span className="font-mono text-[0.58rem] uppercase tracking-[0.15em] block mb-1" style={{ color: MUTED }}>
-                      {item.category} · {item.year}
-                    </span>
-                    <h3 className="font-display font-bold tracking-[-0.01em]"
-                      style={{ fontSize: 'clamp(1rem,2vw,1.5rem)', color: TEXT }}>
-                      {item.title}
-                    </h3>
-                  </div>
-                  <span className="font-sans text-base flex-shrink-0" style={{ color: MUTED }}>↗</span>
-                </div>
-              </Link>
-            ))}
+          {/* Folder: all screenshots cramped inside, peek out the top */}
+          <div className="reveal">
+            <ProjectFolder />
           </div>
+
+          {/* Hint label */}
+          <p className="text-center mt-8 font-mono text-[0.58rem] uppercase tracking-[0.22em]"
+            style={{ color: MUTED }}>
+            Open the folder to explore all projects
+          </p>
         </div>
       </section>
 
