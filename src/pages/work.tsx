@@ -12,7 +12,7 @@ const BDR  = 'rgba(255,255,255,0.07)';
 const ACC  = '#818cf8';
 const ACC2 = '#38bdf8';
 
-const FS_HERO  = 'clamp(2rem, 13vw, 13.5rem)';
+const FS_HERO  = 'clamp(2.5rem, 11vw, 11rem)';
 const FS_H2    = 'clamp(1.75rem,5vw,4.5rem)';
 const FS_LABEL = '0.625rem';
 const FS_BODY  = '0.875rem';

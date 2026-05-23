@@ -18,7 +18,7 @@ const ACC  = '#818cf8';
 const ACC2 = '#38bdf8';
 
 /* ── Type scales (safe at 320 px) ─────────────────────────────────── */
-const FS_HERO  = 'clamp(2rem, 13vw, 13.5rem)';  /* min 38.4 px */
+const FS_HERO  = 'clamp(2.5rem, 11vw, 11rem)';  /* min 38.4 px */
 const FS_H2    = 'clamp(1.75rem, 5vw, 4.5rem)';      /* min 28 px   */
 const FS_LABEL = '0.625rem';
 const FS_BODY  = '0.875rem';
@@ -104,7 +104,7 @@ export default function Home() {
               <div className="overflow-hidden"><span className="hero-word block">Brand &amp;</span></div>
               <div className="overflow-hidden">
                 <span className="hero-word block">
-                  Web <span className="hero-pill text-gradient">Design</span>
+                  Web <span className="hero-pill"><span className="text-gradient">Design</span></span>
                 </span>
               </div>
               <div className="overflow-hidden"><span className="hero-word block">Specialist</span></div>
