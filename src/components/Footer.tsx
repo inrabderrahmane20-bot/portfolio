@@ -32,6 +32,7 @@ export default function Footer() {
                   { key:'nav.work', href:'/work' },
                   { key:'nav.about', href:'/about' },
                   { key:'nav.contact', href:'/contact' },
+                  { key:'nav.cards', href:'/business-cards' },
                 ].map(({ key, href }) => (
                   <Link key={href} href={href}
                     className="font-sans text-sm transition-all"
@@ -68,10 +69,6 @@ export default function Footer() {
           <p className="font-mono text-[0.60rem] uppercase tracking-[0.2em]"
             style={{ color:'rgba(255,255,255,0.25)' }}>
             © {new Date().getFullYear()} Abderrahmane Charak
-          </p>
-          <p className="font-mono text-[0.60rem] uppercase tracking-[0.2em]"
-            style={{ color:'rgba(255,255,255,0.25)' }}>
-            {t('footer.built')}
           </p>
         </div>
       </div>

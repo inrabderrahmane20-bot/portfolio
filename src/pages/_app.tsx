@@ -9,6 +9,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CustomCursor from '@/components/CustomCursor';
 import FallingStars from '@/components/FallingStars';
+import BusinessManWidget from '@/components/BusinessManWidget';
 
 /* ── Intersection Observer-based scroll reveal ───────────────────────── */
 function setupReveal(): { disconnect: () => void } {
@@ -170,6 +171,7 @@ export default function App({ Component, pageProps }: AppProps) {
       </div>
 
       <CustomCursor />
+      <BusinessManWidget />
       <Navbar />
       <Component {...pageProps} />
       <Footer />
