@@ -78,7 +78,8 @@ const FlowArt: React.FC<FlowArtProps> = ({
       if (!inner) return;
 
       if (i > 0) {
-        gsap.set(inner, { rotation: 25, transformOrigin: 'bottom left' });
+        const maxRot = typeof window !== 'undefined' && window.innerWidth < 640 ? 12 : 25;
+        gsap.set(inner, { rotation: maxRot, transformOrigin: 'bottom left' });
         const tween = gsap.to(inner, {
           rotation: 0,
           ease: 'none',

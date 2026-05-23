@@ -125,7 +125,7 @@ export default function Navbar() {
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className="font-display font-black uppercase leading-[0.92] tracking-[-0.03em] transition-all"
-                    style={{ fontSize: 'clamp(2.8rem,10vw,4.5rem)', color: '#ffffff' }}
+                    style={{ fontSize: 'clamp(2rem,8vw,4.5rem)', color: '#ffffff' }}
                     onMouseEnter={e => {
                       const el = e.currentTarget as HTMLElement;
                       el.style.background = 'linear-gradient(135deg, #818cf8, #38bdf8)';
