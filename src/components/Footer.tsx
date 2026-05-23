@@ -32,7 +32,6 @@ export default function Footer() {
                   { key:'nav.work', href:'/work' },
                   { key:'nav.about', href:'/about' },
                   { key:'nav.contact', href:'/contact' },
-                  { key:'nav.cards', href:'/business-cards' },
                 ].map(({ key, href }) => (
                   <Link key={href} href={href}
                     className="font-sans text-sm transition-all"
@@ -59,6 +58,13 @@ export default function Footer() {
                 <p className="font-sans text-sm" style={{ color:'rgba(255,255,255,0.32)' }}>
                   {contactData.location}
                 </p>
+                <Link href="/business-cards"
+                  className="font-sans text-sm transition-all"
+                  style={{ color:'rgba(255,255,255,0.50)' }}
+                  onMouseEnter={e => (e.currentTarget.style.color='#818cf8')}
+                  onMouseLeave={e => (e.currentTarget.style.color='rgba(255,255,255,0.50)')}>
+                  Business Card
+                </Link>
               </div>
             </div>
           </div>
