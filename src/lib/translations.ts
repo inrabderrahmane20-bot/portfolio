@@ -63,7 +63,7 @@ export const T: Record<Lang, Record<string, string>> = {
     'cta.label':   'Ready to start?',
     'cta.line1':   "Let's Create",
     'cta.line2':   'Something',
-    'cta.line3':   'Remarkable.',
+    'cta.line3':   'Remarkable',
     'cta.button':  'Start a Project',
     'cta.email':   'Email',
     'cta.loc':     'Location',
@@ -73,7 +73,6 @@ export const T: Record<Lang, Record<string, string>> = {
     'footer.tag':   'Software engineer & product designer crafting elegant digital systems.',
     'footer.nav':   'Navigation',
     'footer.con':   'Contact',
-    'footer.built': 'Designed & built with precision',
 
     /* Work page */
     'work.label':   'Portfolio',
