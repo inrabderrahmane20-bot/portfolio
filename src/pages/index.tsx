@@ -172,8 +172,7 @@ export default function Home() {
         {/* ─── MARQUEE ──────────────────────────────────────────────── */}
         <div className="relative overflow-hidden py-3 sm:py-4"
           style={{ zIndex: 1, background: 'rgba(3,3,8,0.60)',
-            borderTop: `1px solid ${BDR}`, borderBottom: `1px solid ${BDR}`,
-            backdropFilter: 'blur(8px)' }}>
+            borderTop: `1px solid ${BDR}`, borderBottom: `1px solid ${BDR}` }}>
           <div className="marquee-track flex gap-6 sm:gap-10 whitespace-nowrap w-max">
             {[...marqueeItems,...marqueeItems,...marqueeItems].map((item, i) => (
               <span key={i} className="font-display font-bold uppercase"
@@ -188,7 +187,7 @@ export default function Home() {
 
         {/* ─── SERVICES ─────────────────────────────────────────────── */}
         <section className="relative" style={{ zIndex: 1,
-          backgroundColor: 'rgba(7,7,26,0.75)', backdropFilter: 'blur(2px)',
+          backgroundColor: 'rgba(7,7,26,0.75)',
           padding: 'clamp(3rem,6vw,8rem) 0', borderTop: `1px solid ${BDR}` }}>
           <div className="container">
             <div className="reveal flex flex-wrap items-baseline gap-3 sm:gap-8 mb-8 sm:mb-16">

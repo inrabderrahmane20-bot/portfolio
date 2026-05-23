@@ -24,14 +24,32 @@ export default function Work() {
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    let ctx: any;
+
+    /* Page-entrance: fade in from black (bridges the folder transition) */
+    const curtain = document.createElement('div');
+    curtain.style.cssText =
+      'position:fixed;inset:0;background:#030308;z-index:9999;pointer-events:none;';
+    document.body.appendChild(curtain);
+
     import('gsap').then(({ gsap }) => {
+      /* Fade out the black curtain smoothly */
+      gsap.to(curtain, {
+        opacity:    0,
+        duration:   0.80,
+        ease:       'power2.out',
+        delay:      0.08,
+        onComplete: () => { if (document.body.contains(curtain)) document.body.removeChild(curtain); },
+      });
+
+      /* Then animate the hero words in */
+      let ctx: any;
       ctx = gsap.context(() => {
-        gsap.from('.hero-word', { y: '110%', duration: 1.1, stagger: 0.08, ease: 'power4.out', delay: 0.15 });
-        gsap.from('.hero-meta', { opacity: 0, y: 14, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: 0.5 });
+        gsap.from('.hero-word', { y: '110%', duration: 1.1, stagger: 0.08, ease: 'power4.out', delay: 0.30 });
+        gsap.from('.hero-meta', { opacity: 0, y: 14, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: 0.70 });
       }, heroRef);
+
+      return () => ctx?.revert?.();
     });
-    return () => ctx?.revert?.();
   }, []);
 
   return (
@@ -73,7 +91,7 @@ export default function Work() {
 
       {/* Gallery */}
       <section className="relative" style={{ zIndex: 1,
-        backgroundColor: 'rgba(7,7,26,0.72)', backdropFilter: 'blur(2px)',
+        backgroundColor: 'rgba(7,7,26,0.72)',
         padding: 'clamp(3rem,5vw,6rem) 0', borderTop: `1px solid ${BDR}` }}>
         <div className="container">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">

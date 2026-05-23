@@ -73,8 +73,7 @@ export default function About() {
       </section>
 
       {/* Bio */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: 'rgba(7,7,26,0.80)',
-        backdropFilter:'blur(4px)', padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
+      <section className="relative" style={{ zIndex: 1, backgroundColor: 'rgba(7,7,26,0.82)', padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24">
           <div>
             <p className="reveal font-mono uppercase mb-7" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>Profile</p>

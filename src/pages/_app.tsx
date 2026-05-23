@@ -72,10 +72,10 @@ export default function App({ Component, pageProps }: AppProps) {
     let rafId  = -1;
 
     const lenis = new Lenis({
-      duration:    1.2,
+      duration:    0.85,   /* snappier — less CPU time on each scroll event */
       easing:      (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      syncTouch:   true,
+      syncTouch:   false,  /* native touch scrolling — fastest on mobile */
       autoRaf:     false,
     });
 

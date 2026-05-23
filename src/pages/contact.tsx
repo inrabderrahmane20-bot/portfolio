@@ -81,7 +81,7 @@ export default function Contact() {
 
       {/* Form + info */}
       <section className="relative" style={{ zIndex: 1,
-        backgroundColor: 'rgba(7,7,26,0.75)', backdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(7,7,26,0.78)',
         padding: 'clamp(3rem,5vw,6rem) 0', borderTop: `1px solid ${BDR}` }}>
         <div className="container grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-14 lg:gap-20">
 

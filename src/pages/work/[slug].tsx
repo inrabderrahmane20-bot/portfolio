@@ -111,7 +111,7 @@ export default function CaseStudy({ item, details, nextItem }: Props) {
 
       {/* Intro */}
       <section className="relative" style={{ zIndex: 1,
-        backgroundColor: 'rgba(7,7,26,0.80)', backdropFilter: 'blur(4px)',
+        backgroundColor: 'rgba(7,7,26,0.80)',
         padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
         <div className="container grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 sm:gap-14 lg:gap-20">
           <div className="reveal">

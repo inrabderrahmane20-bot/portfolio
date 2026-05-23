@@ -18,53 +18,134 @@ const CARDS_M = [   /* mobile   */
   { itemIdx: 4, xPct: '19%', rot:  5,  hoverRot:   9, z: 2 },
 ];
 
-/* ── GSAP shred explosion ─────────────────────────────────────────── */
-async function explodeShreds(el: HTMLElement) {
+/*
+ * Two-wave paper shred explosion:
+ *
+ * Wave 1 — BURST (papers fly out from folder centre and LAND on screen, staying visible)
+ * Wave 2 — POUR  (papers rain down from above, filling every gap)
+ *
+ * After both waves land the papers ALL turn black together,
+ * then a solid dark overlay slides in and we navigate.
+ * The work page fades in from black on its own mount.
+ */
+async function explodeShreds(el: HTMLElement, onDone: () => void) {
   const { gsap } = await import('gsap');
   const r   = el.getBoundingClientRect();
   const cx  = r.left + r.width  / 2;
   const cy  = r.top  + r.height / 2;
+  const W   = window.innerWidth;
+  const H   = window.innerHeight;
 
+  /* Shared overlay that covers the page */
   const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;pointer-events:none;overflow:hidden;';
+  overlay.style.cssText =
+    'position:fixed;inset:0;z-index:9990;pointer-events:all;overflow:hidden;';
   document.body.appendChild(overlay);
 
-  const srcs = (workItems as any[]).filter(w => w.image).map(w => w.image as string);
+  const srcs  = (workItems as any[]).filter(w => w.image).map(w => w.image as string);
+  const shreds: HTMLDivElement[] = [];
 
-  for (let i = 0; i < 72; i++) {
+  function makeShred(
+    startX: number, startY: number,
+    targetX: number, targetY: number,
+    w: number, h: number,
+    delay: number, duration: number,
+    isPhoto: boolean,
+  ) {
     const d = document.createElement('div');
-    const w = 18 + Math.random() * 110;
-    const h = 4  + Math.random() * 24;
-    const isPhoto = Math.random() > 0.40 && srcs.length > 0;
-
     d.style.cssText = [
-      'position:absolute', `width:${w}px`, `height:${h}px`,
-      `left:${cx - w / 2}px`, `top:${cy - h / 2}px`,
-      'border-radius:2px', 'will-change:transform,opacity',
+      'position:absolute',
+      `width:${w}px`, `height:${h}px`,
+      `left:0px`, `top:0px`,
+      'border-radius:2px',
+      'will-change:transform',
     ].join(';');
 
-    if (isPhoto) {
-      d.style.backgroundImage    = `url(${srcs[Math.floor(Math.random() * srcs.length)]})`;
+    if (isPhoto && srcs.length) {
+      const src = srcs[Math.floor(Math.random() * srcs.length)];
+      d.style.backgroundImage    = `url(${src})`;
       d.style.backgroundSize     = 'cover';
-      d.style.backgroundPosition = `${Math.random()*90}% ${Math.random()*90}%`;
-      d.style.border             = '1px solid rgba(255,255,255,0.15)';
+      d.style.backgroundPosition = `${Math.random() * 85}% ${Math.random() * 85}%`;
     } else {
-      d.style.background = `hsl(35,16%,${68 + Math.random()*26}%)`;
+      /* Cream / warm paper colours */
+      const l = 72 + Math.random() * 22;
+      const s = 10 + Math.random() * 18;
+      d.style.background = `hsl(35,${s}%,${l}%)`;
     }
 
     overlay.appendChild(d);
+    shreds.push(d);
+
+    /* Place at start, then tween to landing spot (opacity stays near 1) */
+    gsap.set(d, { x: startX - w / 2, y: startY - h / 2, rotation: (Math.random() - 0.5) * 40, opacity: 0 });
     gsap.to(d, {
-      x:        (Math.random() - 0.5) * window.innerWidth  * 1.8,
-      y:        (Math.random() - 0.5) * window.innerHeight * 1.8,
-      rotation: Math.random() * 960 - 480,
-      scaleX:   0.1 + Math.random() * 0.55,
-      opacity:  0,
-      duration: 1.2 + Math.random() * 1.1,
-      delay:    Math.random() * 0.55,
-      ease:     'power2.out',
+      x:        targetX - w / 2,
+      y:        targetY - h / 2,
+      rotation: (Math.random() - 0.5) * 60,
+      opacity:  0.80 + Math.random() * 0.20,   /* stays visible — no fade to 0 */
+      duration,
+      delay,
+      ease:     'power3.out',
     });
   }
-  setTimeout(() => { if (document.body.contains(overlay)) document.body.removeChild(overlay); }, 3800);
+
+  /* ── WAVE 1: burst from folder centre, land anywhere on screen ── */
+  for (let i = 0; i < 110; i++) {
+    const w = 30 + Math.random() * 160;
+    const h = 6  + Math.random() * 32;
+    makeShred(
+      cx, cy,
+      Math.random() * W, Math.random() * H,
+      w, h,
+      Math.random() * 0.25,        /* burst starts immediately */
+      0.55 + Math.random() * 0.55,
+      Math.random() > 0.38,
+    );
+  }
+
+  /* ── WAVE 2: pour from top edge, fall onto screen ── */
+  for (let i = 0; i < 100; i++) {
+    const w = 40 + Math.random() * 200;
+    const h = 7  + Math.random() * 36;
+    const startX = Math.random() * W;
+    makeShred(
+      startX, -h - 20,             /* starts above viewport */
+      startX + (Math.random() - 0.5) * 120, Math.random() * H,
+      w, h,
+      0.15 + Math.random() * 0.90, /* pour wave starts 0.15s–1.05s */
+      0.45 + Math.random() * 0.65,
+      Math.random() > 0.45,
+    );
+  }
+
+  /* ── After ~1.6 s all papers have landed — darken them to black ── */
+  setTimeout(() => {
+    gsap.to(shreds, {
+      backgroundColor: '#030308',
+      backgroundImage: 'none',
+      border:          'none',
+      duration:        0.35,
+      stagger:         { amount: 0.30, from: 'random' },
+      ease:            'power1.in',
+    });
+  }, 1600);
+
+  /* ── After ~2.1 s drop a solid black curtain over any gaps ── */
+  setTimeout(() => {
+    const curtain = document.createElement('div');
+    curtain.style.cssText =
+      'position:absolute;inset:0;background:#030308;z-index:10;opacity:0;';
+    overlay.appendChild(curtain);
+    gsap.to(curtain, { opacity: 1, duration: 0.45, ease: 'power2.in' });
+  }, 2100);
+
+  /* ── Navigate while screen is fully black ── */
+  setTimeout(onDone, 2700);
+
+  /* ── Clean up shred DOM after page has changed ── */
+  setTimeout(() => {
+    if (document.body.contains(overlay)) document.body.removeChild(overlay);
+  }, 5000);
 }
 
 /* ── Folder icon ──────────────────────────────────────────────────── */
@@ -85,7 +166,6 @@ function FolderIcon({ open }: { open: boolean }) {
 export default function ProjectFolder() {
   const [hovered,  setHovered]  = useState(false);
   const [popped,   setPopped]   = useState(false);
-  const [flash,    setFlash]    = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const folderRef = useRef<HTMLDivElement>(null);
   const router    = useRouter();
@@ -97,13 +177,12 @@ export default function ProjectFolder() {
     return () => window.removeEventListener('resize', check);
   }, []);
 
-  const CARDS    = isMobile ? CARDS_M : CARDS_D;
-  /* Card dimensions: WIDE and SHORT — landscape document style */
-  const CARD_W   = '78%';                  /* as % of folder  */
-  const CARD_H   = isMobile ? 88  : 115;  /* total px height */
-  const PEEK_H   = isMobile ? 62  : 80;   /* visible above folder */
-  const BODY_H   = isMobile ? 140 : 195;
-  const POP_Y    = isMobile ? -220 : -300;
+  const CARDS  = isMobile ? CARDS_M : CARDS_D;
+  const CARD_W = '78%';
+  const CARD_H = isMobile ? 88  : 115;
+  const PEEK_H = isMobile ? 62  : 80;
+  const BODY_H = isMobile ? 140 : 195;
+  const POP_Y  = isMobile ? -220 : -300;
 
   const items = (workItems as any[]).filter(w => w.image);
 
@@ -114,22 +193,16 @@ export default function ProjectFolder() {
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       router.push('/work'); return;
     }
-    if (folderRef.current) explodeShreds(folderRef.current);
-    setTimeout(() => setFlash(true), 2400);
-    setTimeout(() => router.push('/work'), 3000);
+    /* explodeShreds takes a callback that fires when the screen is fully black */
+    if (folderRef.current) {
+      explodeShreds(folderRef.current, () => router.push('/work'));
+    } else {
+      router.push('/work');
+    }
   };
 
   return (
     <>
-      {/* Dark-flash before navigation */}
-      {flash && (
-        <motion.div className="fixed inset-0"
-          style={{ backgroundColor: '#030308', zIndex: 9999, pointerEvents: 'none' }}
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          transition={{ duration: 0.55, ease: 'easeIn' }}
-        />
-      )}
-
       <div
         ref={folderRef}
         role="button" tabIndex={0}

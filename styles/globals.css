@@ -105,10 +105,41 @@ canvas { max-width: 100%; }
 .cursor-active .cursor-ring { width: 56px; height: 56px; border-color: rgba(129,140,248,0.18); }
 .cursor-label {
   position: fixed; padding: .4rem .9rem; border-radius: 999px;
-  background: rgba(7,7,26,.90); border: 1px solid var(--border-glow);
+  background: rgba(7,7,26,.92); border: 1px solid var(--border-glow);
   color: var(--accent); font-size: .62rem; letter-spacing: .26em; text-transform: uppercase;
   pointer-events: none; transform: translate(-50%,-50%);
-  white-space: nowrap; z-index: 9999; backdrop-filter: blur(16px);
+  white-space: nowrap; z-index: 9999;
+}
+
+/* ─── CSS Aurora (replaces Three.js WebGL shader) ────────────────────── */
+@keyframes aurora-drift-1 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  33%     { transform: translate(-3vw,-2vw) scale(1.06); }
+  66%     { transform: translate(2vw,3vw) scale(0.96); }
+}
+@keyframes aurora-drift-2 {
+  0%,100% { transform: translate(0,0) scale(1); }
+  40%     { transform: translate(3vw,-3vw) scale(1.08); }
+  70%     { transform: translate(-2vw,2vw) scale(0.94); }
+}
+.aurora-blob {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.aurora-1 {
+  width: clamp(300px, 55vw, 700px);
+  height: clamp(300px, 55vw, 700px);
+  top: -15%; right: -10%;
+  background: radial-gradient(circle, rgba(129,140,248,0.10) 0%, transparent 68%);
+  animation: aurora-drift-1 22s ease-in-out infinite;
+}
+.aurora-2 {
+  width: clamp(250px, 45vw, 600px);
+  height: clamp(250px, 45vw, 600px);
+  bottom: -10%; left: -8%;
+  background: radial-gradient(circle, rgba(56,189,248,0.08) 0%, transparent 68%);
+  animation: aurora-drift-2 28s ease-in-out infinite;
 }
 
 /* ─── Scroll progress ────────────────────────────────────────────────── */
@@ -144,16 +175,14 @@ canvas { max-width: 100%; }
   background-clip: text;
 }
 
-/* ─── Glassmorphism card ─────────────────────────────────────────────── */
+/* ─── Glassmorphism card — no backdrop-filter (too expensive) ────────── */
 .glass-card {
-  background: var(--glass); backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  background: rgba(255,255,255,0.055);
   border: 1px solid var(--border); border-radius: 12px;
-  transition: border-color .4s ease, background .4s ease, box-shadow .4s ease;
+  transition: border-color .3s ease, background .3s ease;
 }
 .glass-card:hover {
-  background: var(--glass-hover); border-color: var(--border-glow);
-  box-shadow: 0 0 28px rgba(129,140,248,.08), inset 0 1px 0 rgba(255,255,255,.06);
+  background: rgba(255,255,255,0.08); border-color: var(--border-glow);
 }
 
 /* ─── Service card ───────────────────────────────────────────────────── */
@@ -180,9 +209,9 @@ canvas { max-width: 100%; }
 /* ─── Work card ──────────────────────────────────────────────────────── */
 .work-overlay {
   position: absolute; inset: 0;
-  background: rgba(3,3,8,.55); backdrop-filter: blur(4px);
+  background: rgba(3,3,8,.60);
   display: flex; align-items: center; justify-content: center;
-  opacity: 0; transition: opacity .38s ease;
+  opacity: 0; transition: opacity .35s ease;
   font-family: 'Syne', sans-serif; font-size: .8rem;
   font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #fff;
 }
