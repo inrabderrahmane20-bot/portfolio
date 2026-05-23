@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Lenis from 'lenis';
 import '../../styles/globals.css';
+import { LanguageProvider } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CustomCursor from '@/components/CustomCursor';
@@ -155,6 +156,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <meta name="twitter:description" content="Software engineer and digital product designer crafting elegant web systems." />
       <meta name="twitter:image" content="/android-chrome-512x512.png" />
     </Head>
+    <LanguageProvider>
     <div className="relative min-h-screen" style={{ backgroundColor: '#030308', color: '#ffffff' }}>
       {/* Gradient progress bar */}
       <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-px overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
@@ -169,6 +171,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Component {...pageProps} />
       <Footer />
     </div>
+    </LanguageProvider>
     </>
   );
 }
