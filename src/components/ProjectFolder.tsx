@@ -19,125 +19,101 @@ const CARDS_M = [   /* mobile   */
 ];
 
 /*
- * Two-wave paper shred explosion:
+ * Paper-shred transition — two phases:
  *
- * Wave 1 — BURST (papers fly out from folder centre and LAND on screen, staying visible)
- * Wave 2 — POUR  (papers rain down from above, filling every gap)
+ * Phase 1 — BURST  (~0–0.44s)
+ *   All shreds explode from the folder centre and land across the screen.
  *
- * After both waves land the papers ALL turn black together,
- * then a solid dark overlay slides in and we navigate.
- * The work page fades in from black on its own mount.
+ * Phase 2 — FALL + REVEAL  (starts ~0.44s)
+ *   Every shred drops simultaneously (power2.in, 0.52s).
+ *   Simultaneously the dark overlay wipes away from top → bottom via
+ *   clip-path, so the new page is unveiled top-first as the shreds fall.
+ *   Navigation fires at the start of Phase 2 so Next.js renders the new
+ *   page behind the overlay while the wipe plays.
  */
 async function explodeShreds(el: HTMLElement, onDone: () => void) {
   const { gsap } = await import('gsap');
-  const r   = el.getBoundingClientRect();
-  const cx  = r.left + r.width  / 2;
-  const cy  = r.top  + r.height / 2;
-  const W   = window.innerWidth;
-  const H   = window.innerHeight;
+  const r  = el.getBoundingClientRect();
+  const cx = r.left + r.width  / 2;
+  const cy = r.top  + r.height / 2;
+  const W  = window.innerWidth;
+  const H  = window.innerHeight;
 
-  /* Shared overlay that covers the page */
+  /* Dark overlay — hides the old page and acts as the wipe curtain */
   const overlay = document.createElement('div');
   overlay.style.cssText =
-    'position:fixed;inset:0;z-index:9990;pointer-events:all;overflow:hidden;';
+    'position:fixed;inset:0;z-index:9990;pointer-events:all;overflow:hidden;background:#030308;';
   document.body.appendChild(overlay);
 
-  const srcs  = (workItems as any[]).filter(w => w.image).map(w => w.image as string);
+  const srcs = (workItems as any[]).filter(w => w.image).map(w => w.image as string);
   const shreds: HTMLDivElement[] = [];
 
-  function makeShred(
-    startX: number, startY: number,
-    targetX: number, targetY: number,
-    w: number, h: number,
-    delay: number, duration: number,
-    isPhoto: boolean,
-  ) {
+  /* ── Phase 1: burst shreds from folder centre ── */
+  for (let i = 0; i < 190; i++) {
+    const w = 28 + Math.random() * 200;
+    const h = 6  + Math.random() * 40;
     const d = document.createElement('div');
     d.style.cssText = [
       'position:absolute',
       `width:${w}px`, `height:${h}px`,
-      `left:0px`, `top:0px`,
+      'left:0', 'top:0',
       'border-radius:2px',
-      'will-change:transform',
+      'will-change:transform,opacity',
     ].join(';');
 
-    if (isPhoto && srcs.length) {
+    if (Math.random() > 0.42 && srcs.length) {
       const src = srcs[Math.floor(Math.random() * srcs.length)];
       d.style.backgroundImage    = `url(${src})`;
       d.style.backgroundSize     = 'cover';
       d.style.backgroundPosition = `${Math.random() * 85}% ${Math.random() * 85}%`;
     } else {
-      /* Cream / warm paper colours */
       const l = 72 + Math.random() * 22;
       const s = 10 + Math.random() * 18;
       d.style.background = `hsl(35,${s}%,${l}%)`;
     }
-
     overlay.appendChild(d);
     shreds.push(d);
 
-    /* Place at start, then tween to landing spot (opacity stays near 1) */
-    gsap.set(d, { x: startX - w / 2, y: startY - h / 2, rotation: (Math.random() - 0.5) * 40, opacity: 0 });
+    gsap.set(d, { x: cx - w/2, y: cy - h/2, rotation: (Math.random()-0.5)*40, opacity: 0 });
     gsap.to(d, {
-      x:        targetX - w / 2,
-      y:        targetY - h / 2,
-      rotation: (Math.random() - 0.5) * 60,
-      opacity:  0.80 + Math.random() * 0.20,   /* stays visible — no fade to 0 */
-      duration,
-      delay,
+      x:        Math.random() * W - w/2,
+      y:        Math.random() * H - h/2,
+      rotation: (Math.random()-0.5)*70,
+      opacity:  0.88 + Math.random() * 0.12,
+      duration: 0.26 + Math.random() * 0.18,
+      delay:    Math.random() * 0.10,
       ease:     'power3.out',
     });
   }
 
-  /* ── WAVE 1: burst from folder centre, land anywhere on screen ── */
-  for (let i = 0; i < 110; i++) {
-    const w = 30 + Math.random() * 160;
-    const h = 6  + Math.random() * 32;
-    makeShred(
-      cx, cy,
-      Math.random() * W, Math.random() * H,
-      w, h,
-      Math.random() * 0.25,        /* burst starts immediately */
-      0.55 + Math.random() * 0.55,
-      Math.random() > 0.38,
-    );
-  }
-
-  /* ── WAVE 2: pour from top edge, fall onto screen ── */
-  for (let i = 0; i < 100; i++) {
-    const w = 40 + Math.random() * 200;
-    const h = 7  + Math.random() * 36;
-    const startX = Math.random() * W;
-    makeShred(
-      startX, -h - 20,             /* starts above viewport */
-      startX + (Math.random() - 0.5) * 120, Math.random() * H,
-      w, h,
-      0.15 + Math.random() * 0.90, /* pour wave starts 0.15s–1.05s */
-      0.45 + Math.random() * 0.65,
-      Math.random() > 0.45,
-    );
-  }
-
-  /* ── After ~1.0 s papers are landing — start darkening ── */
+  /* ── Phase 2: ~440ms in — everything happens at once ── */
   setTimeout(() => {
+    /* Fire navigation immediately so Next.js renders the new page behind */
+    onDone();
+
+    /* All shreds drop simultaneously */
     gsap.to(shreds, {
-      backgroundColor: '#030308',
-      backgroundImage: 'none',
-      border:          'none',
-      duration:        0.22,
-      stagger:         { amount: 0.18, from: 'random' },
-      ease:            'power1.in',
+      y:         `+=${H + 400}`,
+      duration:  0.52,
+      ease:      'power2.in',
+      overwrite: true,
     });
-  }, 1000);
 
-  /* ── Navigate at 1050 ms — papers are mid-darken, screen is mostly black,
-        new page loads behind the shreds while they finish going dark ── */
-  setTimeout(onDone, 1050);
-
-  /* ── Clean up shred DOM after page has changed ── */
-  setTimeout(() => {
-    if (document.body.contains(overlay)) document.body.removeChild(overlay);
-  }, 5000);
+    /* Overlay wipes away top → bottom, revealing the new page from the top */
+    gsap.fromTo(
+      overlay,
+      { clipPath: 'inset(0% 0% 0% 0%)' },
+      {
+        clipPath:   'inset(100% 0% 0% 0%)',
+        duration:   0.56,
+        delay:      0.04,
+        ease:       'power2.in',
+        onComplete: () => {
+          if (document.body.contains(overlay)) document.body.removeChild(overlay);
+        },
+      },
+    );
+  }, 440);
 }
 
 /* ── Folder icon ──────────────────────────────────────────────────── */
