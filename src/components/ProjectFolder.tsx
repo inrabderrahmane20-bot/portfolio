@@ -250,10 +250,19 @@ export default function ProjectFolder() {
                     objectFit:       'cover',
                     objectPosition:  'top left',
                     display:         'block',
-                    /* Keep the card slightly washed-out — paper-like */
                     filter:          'brightness(0.92) contrast(0.9)',
                   }}
                 />
+                {/* Fade bottom so the peek looks naturally complete, not cut off */}
+                <div aria-hidden style={{
+                  position:   'absolute',
+                  bottom:     0,
+                  left:       0,
+                  right:      0,
+                  height:     '55%',
+                  background: 'linear-gradient(to bottom, transparent 0%, rgba(10,10,26,0.72) 55%, #0a0a1a 100%)',
+                  pointerEvents: 'none',
+                }} />
                 {/* Project name label on the card */}
                 <div style={{
                   position:   'absolute',
