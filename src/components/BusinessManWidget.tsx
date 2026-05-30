@@ -3,26 +3,27 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 /*
- * A business card that peeks 20% from the right screen edge,
- * softly teasing between 5% and 20% visible in a looping pulse.
- * Dragging it left past 80 px navigates to /business-cards.
+ * Business card peek widget — right edge of screen.
+ * Fix: touch-action:pan-y on the drag element so horizontal drags are
+ * captured by framer-motion instead of being stolen by the browser's
+ * edge-swipe / back-navigation gesture (iOS & Android).
+ * Tap anywhere on the card also navigates directly as a fallback.
  */
 export default function BusinessManWidget() {
   const router = useRouter();
   const hidden = router.pathname === '/business-cards';
 
-  /* card is 84 px wide:
-     20% visible → left: 84 * 0.80 = 67 px off screen  →  x = 0  (base)
-      5% visible → left: 84 * 0.95 = 80 px off screen  →  x = -13 px  */
+  /* card 84 px wide:
+     ~28% visible → left: 84 * 0.72 = 61 px off screen → x = 0 (base)
+     ~10% visible → x = -14 px  */
   const cardX = useMotionValue(0);
 
-  /* pulse animation: ease out to -13 (mostly hidden), ease back to 0 (20% shown) */
   useEffect(() => {
     if (hidden) return;
     let running = true;
     const loop = async () => {
       while (running) {
-        await animate(cardX, -13, { duration: 1.4, ease: [0.4, 0, 0.6, 1] });
+        await animate(cardX, -14, { duration: 1.4, ease: [0.4, 0, 0.6, 1] });
         await animate(cardX,   0, { duration: 1.1, ease: [0.16, 1, 0.3, 1] });
       }
     };
@@ -30,32 +31,45 @@ export default function BusinessManWidget() {
     return () => { running = false; };
   }, [hidden, cardX]);
 
-  const onDragEnd = (_: unknown, info: { offset: { x: number } }) => {
-    if (info.offset.x < -80) {
+  const handleDragEnd = (_: unknown, info: { offset: { x: number } }) => {
+    if (info.offset.x < -70) {
       router.push('/business-cards');
     } else {
       animate(cardX, 0, { type: 'spring', stiffness: 300, damping: 26 });
     }
   };
 
+  const handleTap = () => {
+    router.push('/business-cards');
+  };
+
   if (hidden) return null;
 
   return (
+    /* Wrapper: overscroll-behavior-x prevents page-level horizontal scroll
+       from fighting with the drag gesture */
     <div style={{
-      position:      'fixed',
-      bottom:        72,
-      right:         -67,          /* 67 px off screen → 17 px (≈20%) visible */
-      zIndex:        40,
-      pointerEvents: 'auto',
-      userSelect:    'none',
+      position:             'fixed',
+      bottom:               72,
+      right:                -61,          /* 61 px off → ~23 px visible */
+      zIndex:               40,
+      pointerEvents:        'auto',
+      userSelect:           'none',
+      overscrollBehaviorX:  'contain' as any,
     }}>
       <motion.div
         drag="x"
-        dragConstraints={{ left: -230, right: 13 }}
+        dragConstraints={{ left: -230, right: 14 }}
         dragElastic={{ left: 0.07, right: 0.04 }}
-        style={{ x: cardX, cursor: 'grab' }}
+        style={{
+          x:           cardX,
+          cursor:      'grab',
+          /* KEY FIX: tell browser to own vertical pan (scroll), let us own horizontal */
+          touchAction: 'pan-y',
+        }}
         whileDrag={{ cursor: 'grabbing' }}
-        onDragEnd={onDragEnd}
+        onDragEnd={handleDragEnd}
+        onTap={handleTap}
       >
         <div style={{
           width:          84,

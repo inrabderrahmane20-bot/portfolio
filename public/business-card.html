@@ -152,11 +152,13 @@ html, body {
   pointer-events: all;
   user-select: none;
   -webkit-user-select: none;
+  touch-action: none;
 }
 
 .card-wrapper {
   position: relative; width: 100%; height: 100%;
   transform-style: preserve-3d;
+  touch-action: none;
   will-change: transform;
   cursor: grab;
   transform: rotateY(0deg);
@@ -364,9 +366,6 @@ html, body {
 </div>
 
 <script>
-/* ── Easter egg state ── */
-let spinCount = 0, lastSpinRot = 0, easterEggTriggered = false, countdownActive = false;
-let countdownOverlay = null, countdownTimeout = null;
 
 /* ── Matrix rain ── */
 (function() {
@@ -561,21 +560,19 @@ loadDriveImage(document.getElementById('imgBack'),  document.getElementById('phB
 
   let rot = 0, velocity = 0, dragging = false, lastX = 0, lastDeltaX = 0;
   let introActive = true, introStart = null;
-  const introRot0 = -540, introScale0 = 0.55, introDur = 1800;
+  const introScale0 = 0.82, introDur = 820;
 
   const SENSITIVITY = 0.52, INERTIA_DAMP = 0.935, MIN_VELOCITY = 0.04;
 
   function getTargetRot() { return window.innerWidth < 600 ? 0 : -12; }
 
+  /* Intro starts one half-flip before the target — clean single flip, no spinning */
+  const introRot0 = getTargetRot() - 180;
+  rot = introRot0;
+
   function render(scaleOverride) {
     const scale = typeof scaleOverride === 'number' ? scaleOverride : 1;
     if (wrapper) wrapper.style.transform = 'rotateY(' + rot + 'deg) scale(' + scale + ')';
-
-    if (!easterEggTriggered && !countdownActive) {
-      const diff = Math.abs(rot - lastSpinRot);
-      if (diff > 360) { spinCount += Math.floor(diff / 360); lastSpinRot = rot; }
-      if (spinCount >= 12) triggerEasterEgg();
-    }
 
     const phase = ((rot % 360) + 360) % 360;
     const cycle = phase < 180 ? phase / 180 : (360 - phase) / 180;
@@ -596,31 +593,6 @@ loadDriveImage(document.getElementById('imgBack'),  document.getElementById('phB
     if (rotFill) rotFill.style.width = barPct + '%';
     if (hudRot) hudRot.textContent = 'rotY: ' + rot.toFixed(2) + '°';
     if (hudVel) hudVel.textContent = 'vel: ' + Math.abs(velocity).toFixed(2);
-  }
-
-  function triggerEasterEgg() {
-    easterEggTriggered = true; countdownActive = true;
-    let count = 10;
-    let speeds = Array.from({length:10}, () => 300 + Math.random() * 900);
-    countdownOverlay = document.createElement('div');
-    countdownOverlay.style.cssText = 'position:fixed;inset:0;background:rgba(4,7,26,0.92);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;font-family:"JetBrains Mono",monospace;';
-    countdownOverlay.innerHTML = '<div id="egg-countdown" style="font-size:clamp(48px,10vw,120px);color:#2a7cff;font-weight:700;margin-bottom:24px;"></div><div style="font-size:clamp(18px,3vw,32px);color:#a8bcd4;margin-bottom:18px;">You spun the card too much!</div><div style="font-size:clamp(14px,2vw,22px);color:#00ff8c;">Get ready for a surprise…</div>';
-    document.body.appendChild(countdownOverlay);
-    doCountdown(count, speeds);
-  }
-  function doCountdown(n, speeds) {
-    const cd = document.getElementById('egg-countdown');
-    if (!cd) return;
-    cd.textContent = n;
-    if (n > 0) countdownTimeout = setTimeout(() => doCountdown(n-1, speeds), speeds[10-n]);
-    else setTimeout(showFinalMessage, 600);
-  }
-  function showFinalMessage() {
-    if (countdownOverlay) {
-      countdownOverlay.innerHTML = '<div style="font-size:clamp(32px,6vw,60px);color:#00ff8c;font-weight:700;margin-bottom:24px;">Time to create your future website!</div><div style="font-size:clamp(16px,2vw,28px);color:#a8bcd4;margin-bottom:18px;">You are now obliged to reach me 😁</div><button id="egg-whatsapp" style="padding:18px 38px;font-size:clamp(18px,3vw,28px);background:#2a7cff;color:#fff;border:none;border-radius:12px;cursor:pointer;font-family:inherit;font-weight:600;box-shadow:0 4px 24px #2a7cff44;">Contact on WhatsApp</button>';
-      const btn = document.getElementById('egg-whatsapp');
-      if (btn) btn.onclick = function() { window.location.href = 'https://wa.me/212711374861?text=' + encodeURIComponent("Hello, I'm reaching you from your carte de visite to create my very first professional website!"); };
-    }
   }
 
   function loop(ts) {
@@ -648,11 +620,11 @@ loadDriveImage(document.getElementById('imgBack'),  document.getElementById('phB
     if (hint) hint.classList.add('gone');
   }
   function onMove(x) {
-    if (!dragging || countdownActive) return;
+    if (!dragging) return;
     const dx = x - lastX; lastDeltaX = dx; rot += dx * SENSITIVITY; lastX = x;
   }
   function onEnd() {
-    if (!dragging || countdownActive) return;
+    if (!dragging) return;
     dragging = false; wrapper.classList.remove('dragging');
     velocity = lastDeltaX * SENSITIVITY;
   }
