@@ -211,7 +211,7 @@ export const languageSkills = [
 export const contactData = {
   email:    'inr.abderrahmane.20@gmail.com',
   location: 'Marrakech, Morocco',
-  phones:   ['+212 711 374 861', '+212 717 790 613'],
+  phones:   ['+212 717 790 613'],
   socials:  ['github.com/inrabderrahmane20-bot'],
   availability: 'Open to Projects',
 };
