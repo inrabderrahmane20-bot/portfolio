@@ -163,12 +163,12 @@ export const experienceItems = [
     description: 'Designed and developed websites and mobile applications using Symfony, Cordova, and WordPress for a range of client campaigns.',
   },
   {
-    title: 'Software Developer — Internship',
+    title: 'Software Developer',
     subtitle: 'OCP Group · Mar 2024 – Jul 2024',
-    description: 'Built a customer complaint chatbot and internal automation tools with Flask, Python, Spring, and Node.js for Africa\'s largest phosphate producer.',
+    description: 'Built a customer complaint chatbot and internal automation tools with Flask, Python, Spring, and Node.js for Africa\'s largest phosphate producers.',
   },
   {
-    title: 'Software Developer — Internship',
+    title: 'Software Developer',
     subtitle: 'RMA Assurance · Jul 2023 – Sep 2023',
     description: 'Developed an insurance management application with Django, React, and MySQL for one of Morocco\'s leading insurance groups.',
   },

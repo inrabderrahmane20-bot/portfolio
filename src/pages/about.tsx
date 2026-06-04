@@ -139,25 +139,6 @@ export default function About() {
         </div>
       </section>
 
-      {/* Awards */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: SURF, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>
-            Recognition &amp; Awards
-          </p>
-          <div className="reveal-group grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {awards.map(a => (
-              <div key={a.body} className="reveal-item p-4 sm:p-5 text-center award-card glass-card">
-                <div className="font-display font-black leading-none tracking-[-0.02em] mb-2 text-gradient"
-                  style={{ fontSize: 'clamp(1.6rem,4vw,2.8rem)' }}>{a.count}</div>
-                <p className="font-sans text-xs leading-5" style={{ color: T2 }}>{a.body}</p>
-                <p className="font-mono uppercase mt-1.5" style={{ fontSize: '0.55rem', letterSpacing: '0.12em', color: MUT }}>{a.year}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Experience */}
       <section className="relative" style={{ zIndex: 1, backgroundColor: BG, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
         <div className="container">
