@@ -16,7 +16,7 @@ export default function Resume() {
         }}
       >
         <iframe
-          src="/resume.html"
+          src="/resume-card.html"
           title="Résumé — Abderrahmane Charak"
           style={{
             width:  '100%',
