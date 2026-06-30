@@ -16,6 +16,7 @@ export default function Navbar() {
     { key: 'nav.work',    href: '/work' },
     { key: 'nav.about',   href: '/about' },
     { key: 'nav.contact', href: '/contact' },
+    { key: 'nav.resume',  href: '/resume' },
     { key: 'nav.cards',   href: '/business-cards' },
   ];
 

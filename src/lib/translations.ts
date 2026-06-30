@@ -7,6 +7,7 @@ export const T: Record<Lang, Record<string, string>> = {
     'nav.work':      'Work',
     'nav.about':     'About',
     'nav.contact':   'Contact',
+    'nav.resume':    'Resume',
     'nav.cards':     'Business Cards',
     'nav.available': 'Marrakech, Morocco · Available for projects',
 
@@ -204,6 +205,7 @@ export const T: Record<Lang, Record<string, string>> = {
     'nav.work':      'Travaux',
     'nav.about':     'À propos',
     'nav.contact':   'Contact',
+    'nav.resume':    'CV',
     'nav.cards':     'Cartes de Visite',
     'nav.available': 'Marrakech, Maroc · Disponible pour des projets',
 
@@ -391,6 +393,7 @@ export const T: Record<Lang, Record<string, string>> = {
     'nav.work':      'Trabajos',
     'nav.about':     'Sobre mí',
     'nav.contact':   'Contacto',
+    'nav.resume':    'CV',
     'nav.cards':     'Tarjetas de Visita',
     'nav.available': 'Marrakech, Marruecos · Disponible para proyectos',
 

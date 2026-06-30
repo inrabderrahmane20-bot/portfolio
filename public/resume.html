@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<link rel="icon" type="image/x-icon" href="favicon.ico"/>
+<meta name="theme-color" content="#04071a"/>
+<title>R&eacute;sum&eacute; &mdash; Abderrahmane Charak</title>
+</head>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const userLang = navigator.language || navigator.userLanguage;
+  let lang = 'en';
+  if (userLang.startsWith('fr')) lang = 'fr';
+  if (userLang.startsWith('es')) lang = 'es';
+  const TXT = {
+    en: { title: 'Résumé — Abderrahmane Charak', label: '// résumé', dim: 'curriculum.vitae', hint: 'drag to flip', dl: 'Download PDF', p1: 'loading page 1…', p2: 'loading page 2…' },
+    fr: { title: 'CV — Abderrahmane Charak', label: '// cv', dim: 'curriculum.vitae', hint: 'glisser pour tourner', dl: 'Télécharger le PDF', p1: 'chargement page 1…', p2: 'chargement page 2…' },
+    es: { title: 'CV — Abderrahmane Charak', label: '// cv', dim: 'curriculum.vitae', hint: 'arrastra para girar', dl: 'Descargar PDF', p1: 'cargando página 1…', p2: 'cargando página 2…' },
+  };
+  const t = TXT[lang] || TXT.en;
+  document.title = t.title;
+  const hud = document.getElementById('hud-tl');
+  if (hud) {
+    const label = hud.querySelector('.hud-label'); if (label) label.textContent = t.label;
+    const dim   = hud.querySelector('.hud-dim');   if (dim)   dim.textContent   = t.dim;
+  }
+  const hintTxt = document.getElementById('hint-text'); if (hintTxt) hintTxt.textContent = t.hint;
+  const dlTxt   = document.getElementById('dl-text');   if (dlTxt)   dlTxt.textContent   = t.dl;
+  const phF = document.getElementById('phFront'); if (phF) phF.textContent = t.p1;
+  const phB = document.getElementById('phBack');  if (phB) phB.textContent = t.p2;
+});
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #04071a;
+  --deep:   #060b24;
+  --mid:    #0a1232;
+  --accent: #2a7cff;
+  --cyan:   #00d4ff;
+  --green:  #00ff8c;
+  --silver: #a8bcd4;
+  --dim:    rgba(168,188,212,0.18);
+  /* Portrait A4 card (ratio 1 : 1.4142) — sized by available height */
+  --card-h: min(72vh, calc(86vw * 1.4142), 660px);
+  --card-w: calc(var(--card-h) / 1.4142);
+  --radius: calc(var(--card-w) * 0.035);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: var(--navy);
+  font-family: 'JetBrains Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  cursor: crosshair;
+}
+
+#grid-layer {
+  position: fixed; inset: 0; z-index: 1;
+  background:
+    linear-gradient(rgba(42,124,255,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42,124,255,0.035) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 30%, transparent 75%);
+}
+
+#matrix-canvas { position: fixed; inset: 0; z-index: 2; opacity: 0.18; }
+#float-canvas  { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+
+#circuit-layer {
+  position: fixed; inset: 0; z-index: 4;
+  pointer-events: none;
+  opacity: 0.22;
+}
+
+#glow-layer {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background:
+    radial-gradient(ellipse 50% 40% at 15% 70%, rgba(0,212,255,0.055) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 35% at 88% 20%, rgba(42,124,255,0.065) 0%, transparent 60%),
+    radial-gradient(ellipse 35% 30% at 50% 50%, rgba(0,255,140,0.025) 0%, transparent 55%);
+}
+
+#glow-layer::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 150px;
+  opacity: 0.6;
+}
+
+.hud {
+  position: fixed; z-index: 20;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px, 1.1vw, 11px);
+  font-weight: 300;
+  color: rgba(0,212,255,0.45);
+  pointer-events: none;
+  line-height: 1.7;
+  letter-spacing: 0.04em;
+}
+
+#hud-tl { top: 22px; left: 24px; }
+#hud-tr { top: 22px; right: 24px; text-align: right; }
+#hud-bl { bottom: 22px; left: 24px; }
+#hud-br { bottom: 22px; right: 24px; text-align: right; }
+
+.hud-label { color: rgba(42,124,255,0.55); font-size: 0.85em; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 2px; }
+.hud-val   { color: rgba(0,212,255,0.55); }
+.hud-green { color: rgba(0,255,140,0.5); }
+.hud-dim   { color: rgba(168,188,212,0.2); font-size: 0.82em; }
+
+#hud-tl::before,#hud-tr::before,#hud-bl::after,#hud-br::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  border-color: rgba(42,124,255,0.35);
+  border-style: solid;
+}
+#hud-tl::before { top:-6px; left:-6px; border-width: 1.5px 0 0 1.5px; }
+#hud-tr::before { top:-6px; right:-6px; border-width: 1.5px 1.5px 0 0; }
+#hud-bl::after  { bottom:-6px; left:-6px; border-width: 0 0 1.5px 1.5px; }
+#hud-br::after  { bottom:-6px; right:-6px; border-width: 0 1.5px 1.5px 0; }
+
+#scanline {
+  position: fixed; inset: 0; z-index: 6; pointer-events: none;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    rgba(0,212,255,0.012) 50%,
+    transparent 100%);
+  background-size: 100% 6px;
+  animation: scanSweep 8s linear infinite;
+  opacity: 0.5;
+}
+@keyframes scanSweep {
+  from { background-position: 0 -100vh; }
+  to   { background-position: 0 100vh; }
+}
+
+#scene-wrap {
+  position: fixed; inset: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: center;
+  pointer-events: none;
+}
+
+.scene {
+  position: relative;
+  perspective: 2200px;
+  perspective-origin: 50% 46%;
+  width: var(--card-w);
+  height: var(--card-h);
+  pointer-events: all;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+.card-wrapper {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  touch-action: none;
+  will-change: transform;
+  cursor: grab;
+  transform: rotateY(0deg);
+}
+.card-wrapper.dragging { cursor: grabbing; }
+
+.card-face {
+  position: absolute; inset: 0;
+  border-radius: var(--radius);
+  overflow: hidden;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  outline: 1px solid rgba(255,255,255,0.07);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.13),
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    0 0 0 1px rgba(42,124,255,0.08);
+  background: #0b1540;
+}
+.card-face--front { transform: translateZ(5px); }
+.card-face--back  { transform: rotateY(180deg) translateZ(5px); }
+
+.card-face img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  display: block;
+  pointer-events: none;
+  -webkit-user-drag: none;
+}
+
+.img-placeholder {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #0b1540 0%, #060b24 100%);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(42,124,255,0.25);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 1.3vw, 12px);
+  letter-spacing: 0.2em;
+  transition: opacity 0.6s ease;
+}
+.img-placeholder.loaded { opacity: 0; pointer-events: none; }
+
+.gloss {
+  position: absolute; inset: 0;
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+.card-edge { position: absolute; inset: 0; transform-style: preserve-3d; }
+.edge-strip {
+  position: absolute;
+  background: linear-gradient(to bottom,
+    rgba(100,130,200,0.0) 0%,
+    rgba(168,188,212,0.3) 30%,
+    rgba(200,220,255,0.4) 50%,
+    rgba(168,188,212,0.3) 70%,
+    rgba(100,130,200,0.0) 100%);
+}
+.edge-left   { top: calc(var(--radius)); bottom: calc(var(--radius)); left: 0; width: 4px; transform: rotateY(-90deg) translateZ(3px); }
+.edge-right  { top: calc(var(--radius)); bottom: calc(var(--radius)); right: 0; width: 4px; transform: rotateY(90deg) translateZ(3px); }
+
+.card-shadow {
+  position: absolute;
+  bottom: calc(-1 * var(--card-h) * 0.06);
+  left: 50%;
+  width: calc(var(--card-w) * 0.85);
+  height: calc(var(--card-h) * 0.12);
+  background: radial-gradient(ellipse at 50% 25%, rgba(0,8,45,0.85) 0%, transparent 70%);
+  filter: blur(28px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* ── Bottom control cluster: hint + download button ── */
+#controls {
+  position: fixed;
+  bottom: 4vh; left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+
+#hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(9px,1.1vw,11px);
+  color: rgba(0,212,255,0.38);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  pointer-events: none;
+  display: flex; align-items: center; gap: 10px;
+  transition: opacity 0.8s ease;
+  white-space: nowrap;
+}
+#hint.gone { opacity: 0; }
+.h-arr { animation: hArr 2.5s ease-in-out infinite; display: inline-block; }
+.h-arr:last-child { animation-delay: 0.5s; animation-direction: reverse; }
+@keyframes hArr {
+  0%,100% { opacity: 0.2; transform: translateX(0); }
+  50%      { opacity: 0.7; transform: translateX(5px); }
+}
+
+#download-btn {
+  pointer-events: all;
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 11px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(10px, 1.15vw, 12px);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: rgba(0,212,255,0.9);
+  background: rgba(0,212,255,0.06);
+  border: 1px solid rgba(0,212,255,0.32);
+  border-radius: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+#download-btn:hover, #download-btn:focus-visible {
+  background: rgba(0,212,255,0.13);
+  color: #cdf6ff;
+  border-color: rgba(0,212,255,0.55);
+  box-shadow: 0 0 22px rgba(0,212,255,0.28), inset 0 0 14px rgba(0,212,255,0.10);
+  transform: translateY(-1px);
+  outline: none;
+}
+#download-btn:active { transform: translateY(0); }
+#download-btn svg { width: 15px; height: 15px; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  #scanline, .h-arr { animation: none !important; }
+}
+</style>
+<body>
+
+<div id="grid-layer"></div>
+<canvas id="matrix-canvas"></canvas>
+<canvas id="float-canvas"></canvas>
+<svg id="circuit-layer" xmlns="http://www.w3.org/2000/svg"></svg>
+<div id="glow-layer"></div>
+<div id="scanline"></div>
+
+<div class="hud" id="hud-tl">
+  <div class="hud-label">// résumé</div>
+  <div class="hud-val">ABDERRAHMANE CHARAK</div>
+  <div class="hud-dim">curriculum.vitae</div>
+</div>
+
+<div class="hud" id="hud-tr">
+  <div class="hud-label">sys.status //</div>
+  <div class="hud-green" id="hud-online">&#x25CF; ONLINE</div>
+  <div class="hud-dim" id="hud-time">--:--:--</div>
+</div>
+
+<div class="hud" id="hud-bl">
+  <div class="hud-dim" id="hud-rot-disp">rotY: 0.00&deg;</div>
+  <div class="hud-dim" id="hud-face">page: 1</div>
+  <div class="hud-dim" id="hud-vel">vel: 0.00</div>
+</div>
+
+<div class="hud" id="hud-br">
+  <div class="hud-dim">format: A4 / 2pp</div>
+  <div class="hud-dim">drag_sensitivity: 0.52</div>
+  <div class="hud-dim">renderer: rAF/60fps</div>
+</div>
+
+<div id="scene-wrap">
+  <div class="scene" id="scene">
+    <div class="card-shadow" id="cardShadow"></div>
+    <div class="card-wrapper" id="cardWrapper">
+
+      <div class="card-face card-face--front">
+        <div class="img-placeholder" id="phFront">loading page 1&hellip;</div>
+        <img id="imgFront" alt="Résumé — page 1"/>
+        <div class="gloss" id="glossFront"></div>
+      </div>
+
+      <div class="card-face card-face--back">
+        <div class="img-placeholder" id="phBack">loading page 2&hellip;</div>
+        <img id="imgBack" alt="Résumé — page 2"/>
+        <div class="gloss" id="glossBack"></div>
+      </div>
+
+      <div class="card-edge">
+        <div class="edge-strip edge-left"></div>
+        <div class="edge-strip edge-right"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="controls">
+  <div id="hint">
+    <span class="h-arr">&larr;</span>
+    <span id="hint-text">drag to flip</span>
+    <span class="h-arr">&rarr;</span>
+  </div>
+  <a id="download-btn"
+     href="/Abderrahmane_Charak_CV.docx.pdf"
+     download="Abderrahmane_Charak_CV.pdf"
+     target="_blank" rel="noopener"
+     aria-label="Download résumé as PDF">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/>
+    </svg>
+    <span id="dl-text">Download PDF</span>
+  </a>
+</div>
+
+<script>
+
+/* ── Matrix rain ── */
+(function() {
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx    = canvas.getContext('2d');
+  const CHARS  = '01アイウエオカキクケコ{}[]()<>=!@#$%^&*+-/\\|;:ABCDEFabcdef0123456789';
+  let cols, drops, speeds, alphas;
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols   = Math.floor(canvas.width / 18);
+    drops  = Array.from({ length: cols }, () => Math.random() * -canvas.height / 18);
+    speeds = Array.from({ length: cols }, () => 0.25 + Math.random() * 0.55);
+    alphas = Array.from({ length: cols }, () => 0.25 + Math.random() * 0.55);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+  function draw() {
+    ctx.fillStyle = 'rgba(4,7,26,0.15)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < cols; i++) {
+      const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+      const x    = i * 18, y = drops[i] * 18;
+      ctx.font      = (11 + Math.random() * 3) + "px 'JetBrains Mono',monospace";
+      ctx.fillStyle = 'rgba(0,255,180,' + alphas[i] + ')';
+      ctx.fillText(char, x, y);
+      const trail = CHARS[Math.floor(Math.random() * CHARS.length)];
+      ctx.fillStyle = 'rgba(42,100,255,' + (alphas[i] * 0.35) + ')';
+      ctx.fillText(trail, x, y - 18);
+      drops[i] += speeds[i];
+      if (drops[i] * 18 > canvas.height && Math.random() > 0.975) {
+        drops[i] = -2;
+        speeds[i] = 0.2 + Math.random() * 0.6;
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── Floating keywords ── */
+(function() {
+  const canvas = document.getElementById('float-canvas');
+  const ctx    = canvas.getContext('2d');
+  const KW = ['const','async','await','import','export','function','return','class','extends',
+    'interface','typeof','void','null','Promise','fetch()','.then()','.catch()','useState',
+    'useEffect','for(;;)','while(true)','git push','git commit','npm install','// TODO',
+    'try{}','catch(e)','O(log n)','REST','GraphQL','WebSocket','200 OK','404','Bearer',
+    'docker','k8s','nginx','ssh','curl','.env','README.md','.gitignore'];
+  let W, H, particles = [];
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  function spawn() {
+    const side = Math.random() < 0.5;
+    return {
+      text: KW[Math.floor(Math.random() * KW.length)],
+      x: side ? Math.random() * W * 0.30 : W * 0.70 + Math.random() * W * 0.30,
+      y: H + 20, vx: (Math.random() - 0.5) * 0.18,
+      vy: -(0.18 + Math.random() * 0.32),
+      alpha: 0, maxAlpha: 0.08 + Math.random() * 0.16,
+      size: 9 + Math.floor(Math.random() * 5),
+      color: Math.random() < 0.4 ? '#2a7cff' : Math.random() < 0.6 ? '#00d4ff' : '#00ff8c',
+      life: 0, maxLife: 220 + Math.random() * 180,
+    };
+  }
+  for (let i = 0; i < 28; i++) { const p = spawn(); p.y = Math.random() * H; p.life = Math.random() * p.maxLife; p.alpha = p.maxAlpha; particles.push(p); }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (Math.random() < 0.04 && particles.length < 40) particles.push(spawn());
+    particles = particles.filter(p => p.life < p.maxLife + 30);
+    for (const p of particles) {
+      p.life++; p.x += p.vx; p.y += p.vy;
+      if (p.life < 30) p.alpha = (p.life / 30) * p.maxAlpha;
+      else if (p.life > p.maxLife - 40) p.alpha = Math.max(0, p.alpha - p.maxAlpha / 40);
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle   = p.color;
+      ctx.font        = '300 ' + p.size + "px 'JetBrains Mono',monospace";
+      ctx.fillText(p.text, p.x, p.y);
+      ctx.globalAlpha = 1;
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── SVG circuit traces ── */
+(function() {
+  const svg = document.getElementById('circuit-layer');
+  const ns  = 'http://www.w3.org/2000/svg';
+  const W   = window.innerWidth, H = window.innerHeight;
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  const COLORS = ['#1a3a8f','#0d2a7a','#0a2070','#1244aa'];
+  function makeTrace(sx, sy) {
+    const segs = 3 + Math.floor(Math.random() * 5);
+    let d = 'M' + sx + ' ' + sy, cx = sx, cy = sy;
+    for (let i = 0; i < segs; i++) {
+      const horiz = Math.random() < 0.55, len = 40 + Math.random() * 140;
+      if (horiz) { const nx = cx + (Math.random() < 0.5 ? len : -len); d += ' H' + nx.toFixed(0); cx = nx; }
+      else { const ny = cy + (Math.random() < 0.5 ? len : -len); d += ' V' + ny.toFixed(0); cy = ny; }
+      if (i < segs - 1) {
+        const dot = document.createElementNS(ns, 'circle');
+        dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', '2');
+        dot.setAttribute('fill', COLORS[Math.floor(Math.random() * COLORS.length)]);
+        svg.appendChild(dot);
+      }
+    }
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('stroke', COLORS[Math.floor(Math.random() * COLORS.length)]);
+    path.setAttribute('stroke-width', Math.random() < 0.3 ? '1.5' : '1');
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-dasharray', (20 + Math.random()*40) + ' ' + (10 + Math.random()*20));
+    svg.appendChild(path);
+    const anim = document.createElementNS(ns, 'animate');
+    anim.setAttribute('attributeName', 'stroke-dashoffset');
+    anim.setAttribute('from', '100'); anim.setAttribute('to', '0');
+    anim.setAttribute('dur', (3 + Math.random() * 7) + 's');
+    anim.setAttribute('repeatCount', 'indefinite');
+    path.appendChild(anim);
+  }
+  for (let i = 0; i < 22; i++) {
+    const zone = Math.random(); let sx, sy;
+    if (zone < 0.25)     { sx = Math.random() * W * 0.25; sy = Math.random() * H; }
+    else if (zone < 0.5) { sx = W * 0.75 + Math.random() * W * 0.25; sy = Math.random() * H; }
+    else if (zone < 0.75){ sx = Math.random() * W; sy = Math.random() * H * 0.22; }
+    else                 { sx = Math.random() * W; sy = H * 0.78 + Math.random() * H * 0.22; }
+    makeTrace(sx, sy);
+  }
+  const ledPos = Array.from({ length: 14 }, () => ({ x: Math.random() * W, y: Math.random() * H }));
+  for (const pos of ledPos) {
+    const circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('cx', pos.x); circle.setAttribute('cy', pos.y); circle.setAttribute('r', '2.5');
+    circle.setAttribute('fill', Math.random() < 0.5 ? '#2a7cff' : '#00ff8c');
+    const anim2 = document.createElementNS(ns, 'animate');
+    anim2.setAttribute('attributeName', 'opacity');
+    anim2.setAttribute('values', '0.1;0.8;0.1');
+    anim2.setAttribute('dur', (1.5 + Math.random() * 4) + 's');
+    anim2.setAttribute('repeatCount', 'indefinite');
+    circle.appendChild(anim2);
+    svg.appendChild(circle);
+  }
+})();
+
+/* ── HUD clock ── */
+(function() {
+  const el = document.getElementById('hud-time');
+  function tick() { el.textContent = new Date().toTimeString().slice(0,8); }
+  tick(); setInterval(tick, 1000);
+})();
+
+/* ── Image loading (Google Drive) ── */
+const RECTO_ID = '1F6aAV6l1eFLJzKn7S2YdI_0KNyUpD97I';
+const VERSO_ID = '1cRCxYnMh30dEVgmvNoGZleUgLVbX0TG8';
+
+function loadDriveImage(imgEl, placeholderEl, fileId) {
+  function tryUrl(url) {
+    return new Promise((res, rej) => {
+      const img = new Image();
+      img.onload  = () => res(url);
+      img.onerror = rej;
+      img.src     = url;
+    });
+  }
+  const urls = [
+    'https://lh3.googleusercontent.com/d/' + fileId + '=w1600',
+    'https://drive.google.com/thumbnail?id=' + fileId + '&sz=w1600',
+    'https://lh3.googleusercontent.com/d/' + fileId,
+  ];
+  (async () => {
+    for (const url of urls) {
+      try { await tryUrl(url); imgEl.src = url; imgEl.onload = () => placeholderEl.classList.add('loaded'); return; }
+      catch {}
+    }
+    placeholderEl.textContent = '— image unavailable —';
+  })();
+}
+
+loadDriveImage(document.getElementById('imgFront'), document.getElementById('phFront'), RECTO_ID);
+loadDriveImage(document.getElementById('imgBack'),  document.getElementById('phBack'),  VERSO_ID);
+
+/* ── Card rotation engine ── */
+(function() {
+  const wrapper  = document.getElementById('cardWrapper');
+  const shadow   = document.getElementById('cardShadow');
+  const glossF   = document.getElementById('glossFront');
+  const glossB   = document.getElementById('glossBack');
+  const hudRot   = document.getElementById('hud-rot-disp');
+  const hudFace  = document.getElementById('hud-face');
+  const hudVel   = document.getElementById('hud-vel');
+  const hint     = document.getElementById('hint');
+
+  let rot = 0, velocity = 0, dragging = false, lastX = 0, lastDeltaX = 0;
+  let introActive = true, introStart = null;
+  const introScale0 = 0.84, introDur = 820;
+
+  const SENSITIVITY = 0.52, INERTIA_DAMP = 0.935, MIN_VELOCITY = 0.04;
+
+  function getTargetRot() { return window.innerWidth < 600 ? 0 : -10; }
+
+  /* Intro starts one half-flip before the target — clean single flip, no spinning */
+  const introRot0 = getTargetRot() - 180;
+  rot = introRot0;
+
+  function render(scaleOverride) {
+    const scale = typeof scaleOverride === 'number' ? scaleOverride : 1;
+    if (wrapper) wrapper.style.transform = 'rotateY(' + rot + 'deg) scale(' + scale + ')';
+
+    const phase = ((rot % 360) + 360) % 360;
+    const cycle = phase < 180 ? phase / 180 : (360 - phase) / 180;
+    const edge  = 1 - Math.abs(cycle - 0.5) * 2;
+    const norm360 = ((rot % 360) + 360) % 360;
+    const showingFront = norm360 < 90 || norm360 >= 270;
+    if (hudFace) hudFace.textContent = 'page: ' + (showingFront ? '1' : '2');
+
+    const gPos   = 15 + cycle * 70, gAlpha = (0.02 + edge * 0.10).toFixed(3);
+    const gAngle = 80 + (cycle - 0.5) * 45;
+    if (glossF) glossF.style.background = 'linear-gradient(' + gAngle + 'deg,transparent ' + Math.max(gPos-28,0) + '%,rgba(255,255,255,' + gAlpha + ') ' + gPos + '%,transparent ' + Math.min(gPos+28,100) + '%)';
+    if (glossB) glossB.style.background = 'linear-gradient(' + (180+gAngle) + 'deg,transparent ' + Math.max((100-gPos)-28,0) + '%,rgba(255,255,255,' + gAlpha + ') ' + (100-gPos) + '%,transparent ' + Math.min((100-gPos)+28,100) + '%)';
+    if (shadow) { shadow.style.opacity = 0.8 - edge * 0.3; shadow.style.transform = 'translateX(-50%) scaleX(' + (1 - edge * 0.3) + ')'; }
+
+    if (hudRot) hudRot.textContent = 'rotY: ' + rot.toFixed(2) + '°';
+    if (hudVel) hudVel.textContent = 'vel: ' + Math.abs(velocity).toFixed(2);
+  }
+
+  function loop(ts) {
+    if (introActive) {
+      if (!introStart) introStart = ts;
+      let t = Math.min(1, (ts - introStart) / introDur);
+      t = 1 - Math.pow(1 - t, 3);
+      rot = introRot0 + (getTargetRot() - introRot0) * t;
+      const scale = introScale0 + (1 - introScale0) * t;
+      render(scale);
+      if (t >= 1) { introActive = false; rot = getTargetRot(); render(1); }
+      else { requestAnimationFrame(loop); return; }
+    } else if (!dragging) {
+      if (Math.abs(velocity) > MIN_VELOCITY) { rot += velocity; velocity *= INERTIA_DAMP; }
+      else velocity = 0;
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+
+  function onStart(x) {
+    dragging = true; lastX = x; lastDeltaX = 0; velocity = 0;
+    wrapper.classList.add('dragging');
+    if (hint) hint.classList.add('gone');
+  }
+  function onMove(x) {
+    if (!dragging) return;
+    const dx = x - lastX; lastDeltaX = dx; rot += dx * SENSITIVITY; lastX = x;
+  }
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false; wrapper.classList.remove('dragging');
+    velocity = lastDeltaX * SENSITIVITY;
+  }
+
+  wrapper.addEventListener('mousedown',  e => { if (e.target.closest('a')) return; e.preventDefault(); onStart(e.clientX); });
+  document.addEventListener('mousemove', e => onMove(e.clientX));
+  document.addEventListener('mouseup',   () => onEnd());
+  document.addEventListener('mouseleave',() => dragging && onEnd());
+
+  wrapper.addEventListener('touchstart',  e => { if (e.target.closest('a')) return; e.preventDefault(); onStart(e.touches[0].clientX); }, { passive: false });
+  document.addEventListener('touchmove',  e => { if (dragging) { e.preventDefault(); onMove(e.touches[0].clientX); } }, { passive: false });
+  document.addEventListener('touchend',   () => onEnd());
+  document.addEventListener('touchcancel',() => onEnd());
+
+  wrapper.setAttribute('tabindex','0');
+  wrapper.setAttribute('role','button');
+  wrapper.setAttribute('aria-label','Résumé — drag or use arrow keys to flip between page 1 and page 2');
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft'  || e.key === 'a') velocity -= 3;
+    if (e.key === 'ArrowRight' || e.key === 'd') velocity += 3;
+    if (e.key === ' ' || e.key === 'Enter') {
+      if (document.activeElement && document.activeElement.id === 'download-btn') return;
+      e.preventDefault(); velocity = velocity > 0 ? -8 : 8;
+    }
+  });
+})();
+</script>
+</body>
+</html>
