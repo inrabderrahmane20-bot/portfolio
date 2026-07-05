@@ -1,83 +1,65 @@
 import { useEffect, useRef, useState } from 'react';
 
+/**
+ * Drafting-table cursor: full-viewport crosshair hairlines + vermilion dot.
+ * Elements with a `data-cursor="LABEL"` attribute show a mono tag beside it.
+ * Fine pointers only — CSS hides everything on touch.
+ */
 export default function CustomCursor() {
-  const cursorRef = useRef<HTMLDivElement | null>(null);
-  const ringRef = useRef<HTMLDivElement | null>(null);
-  const labelRef = useRef<HTMLDivElement | null>(null);
-  const [active, setActive] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [enabled, setEnabled] = useState(false);
-  const [label, setLabel] = useState('');
+  const vRef   = useRef<HTMLDivElement>(null);
+  const hRef   = useRef<HTMLDivElement>(null);
+  const dotRef = useRef<HTMLDivElement>(null);
+  const lblRef = useRef<HTMLDivElement>(null);
+  const [label, setLabel] = useState<string | null>(null);
+  const labelRef = useRef<string | null>(null);
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const isTouch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth < 900;
-    if (isTouch) {
-      setEnabled(false);
-      return;
-    }
+    if (window.matchMedia('(pointer: coarse)').matches) return;
 
-    setEnabled(true);
+    const onMove = (e: MouseEvent) => {
+      const { clientX: x, clientY: y } = e;
+      if (vRef.current)   vRef.current.style.transform   = `translateX(${x}px)`;
+      if (hRef.current)   hRef.current.style.transform   = `translateY(${y}px)`;
+      if (dotRef.current) dotRef.current.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
+      if (lblRef.current) lblRef.current.style.transform = `translate(${x + 18}px, ${y + 18}px)`;
 
-    const moveCursor = (event: MouseEvent) => {
-      const { clientX: x, clientY: y } = event;
-      if (cursorRef.current && ringRef.current) {
-        cursorRef.current.style.left = `${x}px`;
-        cursorRef.current.style.top = `${y}px`;
-        ringRef.current.style.left = `${x}px`;
-        ringRef.current.style.top = `${y}px`;
-      }
-
-      if (labelRef.current) {
-        labelRef.current.style.left = `${x}px`;
-        labelRef.current.style.top = `${y + 44}px`;
-      }
-
-      setVisible(true);
-    };
-
-    const handleHover = (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      const element = target.closest('a, button, [role="button"], input, textarea, label') as HTMLElement | null;
-      if (element) {
-        setActive(true);
-        setLabel(element.tagName === 'A' ? 'View' : 'Open');
-      } else {
-        setActive(false);
-        setLabel('');
+      const target = (e.target as HTMLElement)?.closest?.('[data-cursor]') as HTMLElement | null;
+      const next = target?.getAttribute('data-cursor') ?? null;
+      if (next !== labelRef.current) {
+        labelRef.current = next;
+        setLabel(next);
       }
     };
 
-    const hide = (event: MouseEvent) => {
-      if (!event.relatedTarget) {
-        setVisible(false);
-      }
+    const onLeave = () => {
+      [vRef, hRef, dotRef, lblRef].forEach(r => { if (r.current) r.current.style.opacity = '0'; });
+    };
+    const onEnter = () => {
+      [vRef, hRef, dotRef].forEach(r => { if (r.current) r.current.style.opacity = ''; });
+      if (lblRef.current) lblRef.current.style.opacity = labelRef.current ? '1' : '0';
     };
 
-    document.addEventListener('mousemove', moveCursor);
-    document.addEventListener('mouseover', handleHover, true);
-    document.addEventListener('mouseout', hide);
-
+    window.addEventListener('mousemove', onMove, { passive: true });
+    document.documentElement.addEventListener('mouseleave', onLeave);
+    document.documentElement.addEventListener('mouseenter', onEnter);
     return () => {
-      document.removeEventListener('mousemove', moveCursor);
-      document.removeEventListener('mouseover', handleHover, true);
-      document.removeEventListener('mouseout', hide);
+      window.removeEventListener('mousemove', onMove);
+      document.documentElement.removeEventListener('mouseleave', onLeave);
+      document.documentElement.removeEventListener('mouseenter', onEnter);
     };
   }, []);
 
-  if (!enabled) {
-    return null;
-  }
-
   return (
-    <div className={`custom-cursor ${active ? 'cursor-active' : ''}`}>
-      <div ref={ringRef} className="cursor-ring" style={{ opacity: visible ? 1 : 0 }} />
-      <div ref={cursorRef} className="cursor-dot" style={{ opacity: visible ? 1 : 0 }} />
-      {active && label ? (
-        <div ref={labelRef} className="cursor-label">
-          {label}
-        </div>
-      ) : null}
-    </div>
+    <>
+      <div ref={vRef}   className="xh-v"   aria-hidden style={{ transition: 'opacity 0.3s ease' }} />
+      <div ref={hRef}   className="xh-h"   aria-hidden style={{ transition: 'opacity 0.3s ease' }} />
+      <div ref={dotRef} className="xh-dot" aria-hidden
+        style={{ transition: 'opacity 0.3s ease, width 0.25s ease, height 0.25s ease',
+          width: label ? 10 : 6, height: label ? 10 : 6 }} />
+      <div ref={lblRef} className="xh-label" aria-hidden
+        style={{ opacity: label ? 1 : 0, transition: 'opacity 0.22s ease' }}>
+        {label}
+      </div>
+    </>
   );
 }

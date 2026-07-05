@@ -1,114 +1,137 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import {
-  aboutProfile, awards, philosophy,
-  experienceItems, educationItems, skillsList, languageSkills, contactData,
+  identity, contactData, experienceItems, educationItems,
+  certifications, coreSkills, toolsTech, languageSkills,
 } from '@/lib/content';
-import AuroraBackground from '@/components/AuroraBackground';
-
-const BG   = '#030308';
-const SURF = '#07071a';
-const T    = '#ffffff';
-const T2   = 'rgba(255,255,255,0.62)';
-const MUT  = 'rgba(255,255,255,0.32)';
-const BDR  = 'rgba(255,255,255,0.07)';
-const BDG  = 'rgba(129,140,248,0.38)';
-const ACC  = '#818cf8';
-const ACC2 = '#38bdf8';
-
-const FS_HERO  = 'clamp(1.4rem, 7vw, 11rem)';
-const FS_H2    = 'clamp(1.6rem,4vw,4.5rem)';
-const FS_LABEL = '0.625rem';
-const FS_BODY  = '0.875rem';
-const SP       = 'clamp(2.5rem,5vw,6rem)';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { bootDelay } from '@/lib/motion';
+import Marquee from '@/components/Marquee';
+import Magnetic from '@/components/Magnetic';
+import ScrambleText from '@/components/ScrambleText';
+import Stamp from '@/components/Stamp';
 
 export default function About() {
-  const heroRef = useRef<HTMLElement | null>(null);
+  const heroRef = useRef<HTMLElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
     let ctx: any;
     import('gsap').then(({ gsap }) => {
       ctx = gsap.context(() => {
-        gsap.from('.hero-word', { y: '110%', duration: 1.1, stagger: 0.08, ease: 'power4.out', delay: 0.15 });
-        gsap.from('.hero-meta', { opacity: 0, y: 14, duration: 0.9, stagger: 0.09, ease: 'power3.out', delay: 0.5 });
+        const d = bootDelay();
+        gsap.from('.mask-line > span', { y: '112%', duration: 1.2, stagger: 0.1, ease: 'power4.out', delay: d });
+        gsap.from('.hero-meta', { opacity: 0, y: 16, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: d + 0.5 });
       }, heroRef);
     });
     return () => ctx?.revert?.();
   }, []);
 
+  const heads = t('about.heads').split('|').filter(Boolean);
+
   return (
-    <div style={{ backgroundColor: BG, overflowX: 'hidden', position: 'relative' }}>
-      <AuroraBackground />
+    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
 
-      {/* Hero */}
-      <section ref={heroRef}
-        className="relative flex flex-col justify-between px-5 sm:px-[5vw] pt-24 sm:pt-28 pb-10 sm:pb-14 overflow-hidden"
-        style={{ zIndex: 1, minHeight: '55vh', color: T }}>
-        <div aria-hidden className="pointer-events-none absolute top-0 right-0 opacity-40"
-          style={{ width: 'min(45vw,400px)', height: 'min(45vw,400px)',
-            background: 'radial-gradient(circle at 60% 30%, rgba(129,140,248,0.12), transparent 65%)' }} />
+      {/* ═══ HERO ════════════════════════════════════════════════════ */}
+      <section ref={heroRef} className="relative flex flex-col" style={{ minHeight: '72svh', paddingTop: '6rem' }}>
+        <div className="container flex-1 flex flex-col">
+          <div className="hero-meta flex items-center justify-between flex-wrap gap-3"
+            style={{ borderBottom: '1px solid var(--line)', paddingBottom: '0.9rem' }}>
+            <ScrambleText className="o-label" text={t('about.file')} />
+            <ScrambleText className="o-label hidden md:block" text={identity.coords} />
+          </div>
 
-        <div className="hero-meta relative z-10 flex items-center gap-3 flex-wrap">
-          <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.32em', color: ACC }}>About</span>
-          <span className="block w-5 h-px" style={{ backgroundColor: BDG }} />
-          <span className="font-mono" style={{ fontSize: FS_LABEL, letterSpacing: '0.32em', color: MUT }}>{contactData.location}</span>
+          <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
+            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 380 }}>
+              {heads.map((w, i) => (
+                <span key={w} className="mask-line">
+                  <span style={{ fontSize: 'var(--fs-hero)' }}>
+                    {i === heads.length - 1
+                      ? <em className="it" style={{ color: 'var(--verm)' }}>{w}</em>
+                      : w}
+                  </span>
+                </span>
+              ))}
+            </h1>
+          </div>
+
+          <p className="hero-meta font-sans pb-10" style={{ fontSize: 'var(--fs-body)', lineHeight: 1.75,
+            color: 'var(--fg-2)', maxWidth: '52ch' }}>
+            {t('about.headline')}
+          </p>
         </div>
-
-        <div className="relative z-10 py-6 sm:py-10">
-          <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
-            style={{ fontSize: FS_HERO, color: T }}>
-            {['Developer','Designer','Engineer'].map(w => (
-              <div key={w} className="overflow-hidden">
-                <span className="hero-word block">{w}</span>
-              </div>
-            ))}
-          </h1>
-        </div>
-
-        <p className="hero-meta relative z-10 font-sans leading-7 font-light max-w-lg"
-          style={{ fontSize: FS_BODY, color: T2 }}>
-          {aboutProfile.headline}
-        </p>
       </section>
 
-      {/* Bio */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: 'rgba(7,7,26,0.82)', padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-16 lg:gap-24">
+      {/* ═══ PROFILE + FACTS ═════════════════════════════════════════ */}
+      <section style={{ borderTop: '1px solid var(--line)' }}>
+        <div className="container grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-12 lg:gap-20"
+          style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
+
           <div>
-            <p className="reveal font-mono uppercase mb-7" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>Profile</p>
-            {aboutProfile.bio.map((para, i) => (
-              <p key={i} className="reveal font-sans leading-8 mb-5 font-light" style={{ fontSize: FS_BODY, color: T2 }}>{para}</p>
+            <p className="reveal o-label" style={{ marginBottom: '2rem' }}>
+              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('about.profile')}
+            </p>
+            {[t('about.p1'), t('about.p2'), t('about.p3')].map((para, i) => (
+              <p key={i} className="reveal font-sans"
+                style={{ fontSize: 'clamp(1.05rem, 1.7vw, 1.35rem)', lineHeight: 1.7,
+                  color: i === 0 ? 'var(--ink)' : 'var(--fg-2)', marginBottom: '1.6rem',
+                  fontWeight: i === 0 ? 500 : 400 }}>
+                {para}
+              </p>
             ))}
-          </div>
-          <div className="space-y-4">
-            {/* Quick facts */}
-            <div className="reveal glass-card" style={{ padding: 'clamp(1.1rem,3vw,2rem)' }}>
-              <p className="font-mono uppercase mb-5" style={{ fontSize: FS_LABEL, letterSpacing: '0.28em', color: MUT }}>Quick Facts</p>
-              {[
-                { label: 'Location',     value: contactData.location },
-                { label: 'Email',        value: contactData.email },
-                { label: 'GitHub',       value: contactData.socials[0] },
-                { label: 'Availability', value: contactData.availability },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 py-3"
-                  style={{ borderBottom: `1px solid ${BDR}` }}>
-                  <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.18em', color: MUT }}>{label}</span>
-                  <span className="font-sans text-sm break-all sm:break-normal sm:text-right" style={{ color: T2 }}>{value}</span>
+
+            {/* Core skill meters */}
+            <div className="reveal-group" style={{ marginTop: '3rem', borderTop: '1px solid var(--line)' }}>
+              {coreSkills.map(s => (
+                <div key={s.label} className="reveal-item flex items-center gap-4"
+                  style={{ padding: '1rem 0', borderBottom: '1px solid var(--line)' }}>
+                  <span className="font-mono flex-shrink-0" style={{ fontSize: '0.66rem', letterSpacing: '0.18em',
+                    textTransform: 'uppercase', width: 'min(46%, 240px)' }}>
+                    {s.label}
+                  </span>
+                  <span className="flex-1" style={{ height: 1, background: 'var(--line)', position: 'relative' }}>
+                    <span style={{ position: 'absolute', inset: 0, width: `${s.pct}%`, background: 'var(--verm)' }} />
+                  </span>
+                  <span className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--mut)', letterSpacing: '0.1em' }}>
+                    {s.pct}%
+                  </span>
                 </div>
               ))}
             </div>
-            {/* Languages */}
-            <div className="reveal glass-card" style={{ padding: 'clamp(1.1rem,3vw,2rem)' }}>
-              <p className="font-mono uppercase mb-5" style={{ fontSize: FS_LABEL, letterSpacing: '0.28em', color: MUT }}>Languages</p>
+          </div>
+
+          {/* Dossier facts */}
+          <div className="flex flex-col gap-10">
+            <div className="reveal" style={{ border: '1px solid var(--line-2)', padding: 'clamp(1.3rem,2.5vw,2rem)',
+              position: 'relative', background: 'var(--paper-2)' }}>
+              <Stamp size={92} className="absolute -top-10 -right-6 hidden sm:block" />
+              <p className="o-label" style={{ marginBottom: '1.4rem' }}>{t('about.facts')}</p>
+              {[
+                [t('about.name'),  identity.name],
+                [t('about.role'),  t('about.role.v')],
+                [t('about.loc'),   contactData.location],
+                [t('about.mail'),  contactData.email],
+                ['GitHub',         identity.github],
+                [t('about.avail'), t('footer.open')],
+              ].map(([k, v]) => (
+                <div key={k} className="flex flex-col sm:flex-row sm:justify-between sm:items-baseline gap-0.5"
+                  style={{ padding: '0.7rem 0', borderBottom: '1px solid var(--line)' }}>
+                  <span className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.22em',
+                    textTransform: 'uppercase', color: 'var(--mut)' }}>{k}</span>
+                  <span className="font-sans" style={{ fontSize: '0.85rem', wordBreak: 'break-word' }}>{v}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="reveal">
+              <p className="o-label" style={{ marginBottom: '1.2rem' }}>{t('about.langs')}</p>
               {languageSkills.map(l => (
-                <div key={l.label} className="flex justify-between items-center py-3"
-                  style={{ borderBottom: `1px solid ${BDR}` }}>
-                  <span className="font-display font-bold text-sm" style={{ color: T }}>{l.label}</span>
-                  <span className="font-mono uppercase px-2.5 py-0.5 rounded-full"
-                    style={{ fontSize: FS_LABEL, letterSpacing: '0.15em',
-                      color: ACC, border: `1px solid ${BDG}`, background: 'rgba(129,140,248,0.07)' }}>
-                    {l.level}
+                <div key={l.label} className="flex justify-between items-center"
+                  style={{ padding: '0.8rem 0', borderBottom: '1px solid var(--line)' }}>
+                  <span className="font-serif" style={{ fontSize: '1.15rem', fontWeight: 470 }}>{l.label}</span>
+                  <span className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.24em',
+                    textTransform: 'uppercase', color: 'var(--acc-text)' }}>
+                    {t(l.levelKey)}
                   </span>
                 </div>
               ))}
@@ -117,98 +140,119 @@ export default function About() {
         </div>
       </section>
 
-      {/* Philosophy */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: BG, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <p className="reveal font-mono uppercase mb-7" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>Philosophy</p>
-          <blockquote className="reveal font-display font-bold leading-[0.92] tracking-[-0.02em] mb-10 sm:mb-14 break-words"
-            style={{ fontSize: 'clamp(1.35rem,3.5vw,4rem)', color: T }}>
-            &ldquo;{philosophy.heading}&rdquo;
-          </blockquote>
-          <div className="reveal-group grid grid-cols-1 sm:grid-cols-2" style={{ borderTop: `1px solid ${BDR}` }}>
-            {philosophy.points.map((pt, i) => (
-              <div key={i} className="reveal-item py-6 sm:py-8 sm:pr-8"
-                style={{ borderBottom: `1px solid ${BDR}`, borderRight: i % 2 === 0 ? `1px solid ${BDR}` : 'none' }}>
-                <span className="font-mono block mb-3 uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.15em', color: ACC }}>
-                  {String(i + 1).padStart(2,'0')}
-                </span>
-                <p className="font-sans leading-7 font-light" style={{ fontSize: FS_BODY, color: T2 }}>{pt}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ═══ TOOLS TICKER ════════════════════════════════════════════ */}
+      <div style={{ borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)', padding: '1rem 0' }}>
+        <Marquee duration={46}>
+          {toolsTech.map(tool => (
+            <span key={tool} className="font-mono" style={{ fontSize: '0.7rem', letterSpacing: '0.28em',
+              textTransform: 'uppercase', color: 'var(--fg-2)', paddingRight: '3.2rem',
+              display: 'inline-flex', alignItems: 'center', gap: '3.2rem' }}>
+              {tool} <span style={{ color: 'var(--verm)' }}>·</span>
+            </span>
+          ))}
+        </Marquee>
+      </div>
 
-      {/* Experience */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: BG, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <p className="reveal font-mono uppercase mb-10" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>Experience</p>
-          <div className="reveal-group" style={{ borderTop: `1px solid ${BDR}` }}>
-            {experienceItems.map(it => (
-              <div key={it.title}
-                className="reveal-item grid grid-cols-1 sm:grid-cols-[2fr_3fr] gap-4 sm:gap-8 py-7 sm:py-10"
-                style={{ borderBottom: `1px solid ${BDR}` }}>
+      {/* ═══ EXPERIENCE — ink dossier ════════════════════════════════ */}
+      <section data-theme="ink" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
+        <div className="container" style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
+          <p className="reveal o-label" style={{ marginBottom: '2.5rem' }}>
+            <span style={{ color: 'var(--acc)' }}>{'//'}</span> {t('about.exp')}
+          </p>
+          <div className="reveal-group" style={{ borderTop: '1px solid var(--line)' }}>
+            {experienceItems.map((exp, i) => (
+              <div key={exp.id}
+                className="reveal-item grid grid-cols-1 md:grid-cols-[minmax(9rem,12rem)_1fr_minmax(0,18rem)] gap-x-8 gap-y-3"
+                style={{ padding: 'clamp(1.6rem,3vw,2.6rem) 0', borderBottom: '1px solid var(--line)' }}>
                 <div>
-                  <p className="font-mono uppercase mb-2.5" style={{ fontSize: FS_LABEL, letterSpacing: '0.20em', color: MUT }}>{it.subtitle}</p>
-                  <h3 className="font-display font-bold tracking-[-0.01em] leading-[1.05] break-words"
-                    style={{ fontSize: 'clamp(0.95rem,2vw,1.5rem)', color: T }}>{it.title}</h3>
+                  <p className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.2em', color: 'var(--acc)' }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </p>
+                  <p className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.14em',
+                    color: 'var(--mut)', marginTop: '0.5rem' }}>
+                    {exp.period}
+                  </p>
                 </div>
-                <p className="font-sans leading-7 font-light" style={{ fontSize: FS_BODY, color: T2 }}>{it.description}</p>
+                <div>
+                  <h3 className="font-serif" style={{ fontSize: 'clamp(1.4rem,2.6vw,2.2rem)', fontWeight: 400,
+                    lineHeight: 1.08, letterSpacing: '-0.015em' }}>
+                    {exp.org}
+                  </h3>
+                  <p className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.24em',
+                    textTransform: 'uppercase', color: 'var(--fg-2)', margin: '0.6rem 0 1rem' }}>
+                    {t(exp.roleKey)} — {exp.place}
+                  </p>
+                  <p className="font-sans" style={{ fontSize: 'var(--fs-small)', lineHeight: 1.75,
+                    color: 'var(--fg-2)', maxWidth: '62ch' }}>
+                    {t(exp.descKey)}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-1.5 content-start md:justify-end">
+                  {exp.stack.map(s => (
+                    <span key={s} className="font-mono self-start" style={{ fontSize: '0.56rem', letterSpacing: '0.14em',
+                      border: '1px solid var(--line)', padding: '0.35rem 0.6rem', color: 'var(--mut)' }}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Skills + Education */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: SURF, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container grid grid-cols-1 sm:grid-cols-2 gap-10">
+      {/* ═══ EDUCATION + CERTIFICATIONS ══════════════════════════════ */}
+      <section style={{ borderTop: '1px solid var(--line)' }}>
+        <div className="container grid grid-cols-1 lg:grid-cols-2 gap-14"
+          style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
           <div>
-            <p className="reveal font-mono uppercase mb-7" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>Skills</p>
-            <div className="reveal-group" style={{ borderTop: `1px solid ${BDR}` }}>
-              {skillsList.map(s => (
-                <div key={s} className="reveal-item flex items-center gap-3 py-3.5"
-                  style={{ borderBottom: `1px solid ${BDR}` }}>
-                  <span className="block w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: ACC }} />
-                  <span className="font-sans" style={{ fontSize: FS_BODY, color: T2 }}>{s}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="reveal font-mono uppercase mb-7" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>Education</p>
-            <div className="reveal-group" style={{ borderTop: `1px solid ${BDR}` }}>
+            <p className="reveal o-label" style={{ marginBottom: '2rem' }}>
+              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('about.edu')}
+            </p>
+            <div className="reveal-group" style={{ borderTop: '1px solid var(--line)' }}>
               {educationItems.map(e => (
-                <div key={e.title} className="reveal-item py-5" style={{ borderBottom: `1px solid ${BDR}` }}>
-                  <h3 className="font-display font-bold text-sm sm:text-base leading-[1.2] mb-2 break-words" style={{ color: T }}>{e.title}</h3>
-                  <p className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.18em', color: MUT }}>{e.subtitle}</p>
+                <div key={e.id} className="reveal-item" style={{ padding: '1.4rem 0', borderBottom: '1px solid var(--line)' }}>
+                  <div className="flex items-baseline justify-between gap-4 flex-wrap">
+                    <h3 className="font-serif" style={{ fontSize: 'clamp(1.15rem,2vw,1.5rem)', fontWeight: 450, lineHeight: 1.15 }}>
+                      {t(e.titleKey)}
+                    </h3>
+                    <span className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.16em', color: 'var(--acc-text)' }}>
+                      {e.year}
+                    </span>
+                  </div>
+                  <p className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.18em',
+                    textTransform: 'uppercase', color: 'var(--mut)', marginTop: '0.5rem' }}>
+                    {e.org}
+                  </p>
                 </div>
               ))}
             </div>
           </div>
-        </div>
-      </section>
+          <div>
+            <p className="reveal o-label" style={{ marginBottom: '2rem' }}>
+              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('about.cert')}
+            </p>
+            <div className="reveal-group" style={{ borderTop: '1px solid var(--line)' }}>
+              {certifications.map((c, i) => (
+                <div key={c} className="reveal-item flex items-center gap-4"
+                  style={{ padding: '1.4rem 0', borderBottom: '1px solid var(--line)' }}>
+                  <span className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.2em', color: 'var(--mut)' }}>
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="font-sans" style={{ fontSize: '1rem' }}>{c}</span>
+                </div>
+              ))}
+            </div>
 
-      {/* CTA */}
-      <section className="relative overflow-hidden" style={{ zIndex: 1, backgroundColor: BG, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div aria-hidden className="pointer-events-none absolute -bottom-14 -left-14 rounded-full glow-orb"
-          style={{ width:'min(280px,60vw)', height:'min(280px,60vw)',
-            background:'radial-gradient(circle, rgba(129,140,248,0.10), transparent 65%)' }} />
-        <div className="container relative z-10">
-          <p className="reveal font-mono uppercase mb-5 sm:mb-7"
-            style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>Let&apos;s work together</p>
-          <h2 className="reveal font-display font-black leading-[0.92] tracking-[-0.02em] mb-8 sm:mb-10"
-            style={{ fontSize: 'clamp(2rem,5.5vw,7rem)', color: T }}>
-            Ready to build<br /><span className="text-gradient">something great?</span>
-          </h2>
-          <Link href="/contact"
-            className="reveal flex sm:inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full font-display font-bold uppercase tracking-[0.1em] transition-all"
-            style={{ fontSize: '0.72rem', background:'linear-gradient(135deg,#6366f1,#38bdf8)',
-              color:'#fff', boxShadow:'0 0 30px rgba(99,102,241,0.35)' }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 48px rgba(99,102,241,0.60)')}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 30px rgba(99,102,241,0.35)')}>
-            Get in Touch <span className="text-base leading-none">↗</span>
-          </Link>
+            <div className="reveal" style={{ marginTop: '3rem' }}>
+              <Magnetic>
+                <Link href="/contact" className="btn-slab" data-cursor={t('ui.write')}>
+                  <span>{t('about.cta')}</span>
+                  <span className="arr" aria-hidden>↗</span>
+                </Link>
+              </Magnetic>
+            </div>
+          </div>
         </div>
       </section>
     </div>

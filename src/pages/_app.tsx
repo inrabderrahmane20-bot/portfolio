@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Lenis from 'lenis';
@@ -8,28 +8,23 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CustomCursor from '@/components/CustomCursor';
-import FallingStars from '@/components/FallingStars';
-import BusinessManWidget from '@/components/BusinessManWidget';
+import Preloader from '@/components/Preloader';
 
-/* ── Intersection Observer-based scroll reveal ───────────────────────── */
+/* ── IntersectionObserver scroll reveal ─────────────────────────────── */
 function setupReveal(): { disconnect: () => void } {
-  /* Stagger children of .reveal-group */
   const groupObs = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         entry.target
           .querySelectorAll<HTMLElement>('.reveal-item')
-          .forEach((item, i) => {
-            setTimeout(() => item.classList.add('is-visible'), i * 85);
-          });
+          .forEach((item, i) => setTimeout(() => item.classList.add('is-visible'), i * 80));
         groupObs.unobserve(entry.target);
       });
     },
     { threshold: 0.08, rootMargin: '0px 0px -30px 0px' },
   );
 
-  /* Single .reveal elements */
   const singleObs = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -43,62 +38,85 @@ function setupReveal(): { disconnect: () => void } {
 
   document.querySelectorAll('.reveal-group').forEach((el) => groupObs.observe(el));
   document.querySelectorAll('.reveal').forEach((el) => singleObs.observe(el));
-
-  return {
-    disconnect: () => { groupObs.disconnect(); singleObs.disconnect(); },
-  };
+  return { disconnect: () => { groupObs.disconnect(); singleObs.disconnect(); } };
 }
 
 export default function App({ Component, pageProps }: AppProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
+  const curtainRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  /* ── Zoom lock — blocks all pinch-zoom and double-tap-zoom ─────────── */
+  /* ── Zoom lock ─────────────────────────────────────────────────────── */
   useEffect(() => {
-    /* Prevent pinch zoom (multi-touch) */
     const blockPinch = (e: TouchEvent) => { if (e.touches.length > 1) e.preventDefault(); };
-    /* Prevent double-tap zoom on iOS */
     const blockGesture = (e: Event) => e.preventDefault();
-    document.addEventListener('touchmove',    blockPinch,   { passive: false });
+    document.addEventListener('touchmove', blockPinch, { passive: false });
     document.addEventListener('gesturestart', blockGesture, { passive: false });
-    document.addEventListener('gesturechange',blockGesture, { passive: false });
+    document.addEventListener('gesturechange', blockGesture, { passive: false });
     return () => {
-      document.removeEventListener('touchmove',    blockPinch);
+      document.removeEventListener('touchmove', blockPinch);
       document.removeEventListener('gesturestart', blockGesture);
-      document.removeEventListener('gesturechange',blockGesture);
+      document.removeEventListener('gesturechange', blockGesture);
     };
   }, []);
 
-  /* ── Scroll reveals — re-run on every page navigation ─────────────── */
+  /* ── Route curtain — ink wipe between pages ────────────────────────── */
   useEffect(() => {
-    let obs = setupReveal();
+    const el = curtainRef.current;
+    if (!el) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    const onComplete = () => {
-      obs.disconnect();
-      setTimeout(() => { obs = setupReveal(); }, 120);
+    const cover = () => {
+      if (reduced) return;
+      el.style.transition = 'transform 0.42s cubic-bezier(0.76, 0, 0.24, 1)';
+      el.style.transform  = 'translateY(0)';
+    };
+    const reveal = () => {
+      if (reduced) return;
+      setTimeout(() => {
+        el.style.transition = 'transform 0.55s cubic-bezier(0.76, 0, 0.24, 1)';
+        el.style.transform  = 'translateY(-101%)';
+        setTimeout(() => {
+          el.style.transition = 'none';
+          el.style.transform  = 'translateY(101%)';
+        }, 600);
+      }, 120);
     };
 
-    router.events.on('routeChangeComplete', onComplete);
+    router.events.on('routeChangeStart', cover);
+    router.events.on('routeChangeComplete', reveal);
+    router.events.on('routeChangeError', reveal);
     return () => {
-      obs.disconnect();
-      router.events.off('routeChangeComplete', onComplete);
+      router.events.off('routeChangeStart', cover);
+      router.events.off('routeChangeComplete', reveal);
+      router.events.off('routeChangeError', reveal);
     };
   }, [router.events]);
 
-  /* ── Lenis smooth scroll + GSAP ScrollTrigger sync ────────────────── */
+  /* ── Scroll reveals — re-run per navigation ────────────────────────── */
+  useEffect(() => {
+    let obs = setupReveal();
+    const onComplete = () => {
+      obs.disconnect();
+      setTimeout(() => { obs = setupReveal(); }, 150);
+    };
+    router.events.on('routeChangeComplete', onComplete);
+    return () => { obs.disconnect(); router.events.off('routeChangeComplete', onComplete); };
+  }, [router.events]);
+
+  /* ── Lenis smooth scroll + GSAP ScrollTrigger sync ─────────────────── */
   useEffect(() => {
     let useRaf = true;
     let rafId  = -1;
 
     const lenis = new Lenis({
-      duration:    0.85,   /* snappier — less CPU time on each scroll event */
-      easing:      (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 0.9,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      syncTouch:   false,  /* native touch scrolling — fastest on mobile */
-      autoRaf:     false,
+      syncTouch: false,
+      autoRaf: false,
     });
 
-    /* Fallback RAF loop until GSAP loads */
     const raf = (time: number) => {
       if (!useRaf) return;
       lenis.raf(time);
@@ -106,7 +124,6 @@ export default function App({ Component, pageProps }: AppProps) {
     };
     rafId = requestAnimationFrame(raf);
 
-    /* Sync with GSAP ticker so ScrollTrigger reads correct position */
     Promise.all([import('gsap'), import('gsap/ScrollTrigger')]).then(
       ([{ gsap }, { ScrollTrigger }]) => {
         gsap.registerPlugin(ScrollTrigger);
@@ -118,7 +135,6 @@ export default function App({ Component, pageProps }: AppProps) {
       },
     );
 
-    /* Scroll progress bar */
     const onScroll = () => {
       const total = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(total > 0 ? window.scrollY / total : 0);
@@ -136,48 +152,48 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <>
-    <Head>
-      <title>— Brand &amp; Web Design Specialist</title>
-      <meta name="description" content="Abderrahmane Charak — Software engineer and digital product designer crafting elegant web systems from Marrakech, Morocco." />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-      <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-      <link rel="icon" href="/favicon.ico" sizes="any" />
-      <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
-      <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
-      <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-      <meta name="theme-color" content="#030308" media="(prefers-color-scheme: dark)" />
-      <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
-      {/* Open Graph */}
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content="AC — Brand &amp; Web Design Specialist" />
-      <meta property="og:description" content="Software engineer and digital product designer crafting elegant web systems." />
-      <meta property="og:image" content="/android-chrome-512x512.png" />
-      <meta property="og:image:width" content="512" />
-      <meta property="og:image:height" content="512" />
-      {/* Twitter */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content="AC — Brand &amp; Web Design Specialist" />
-      <meta name="twitter:description" content="Software engineer and digital product designer crafting elegant web systems." />
-      <meta name="twitter:image" content="/android-chrome-512x512.png" />
-    </Head>
-    <LanguageProvider>
-    <div className="relative min-h-screen" style={{ backgroundColor: '#030308', color: '#ffffff' }}>
-      <FallingStars />
-      {/* Gradient progress bar */}
-      <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-px overflow-hidden" style={{ background: 'rgba(255,255,255,0.06)' }}>
-        <div
-          className="scroll-progress h-full"
-          style={{ transform: `scaleX(${scrollProgress})`, transformOrigin: 'left' }}
-        />
-      </div>
+      <Head>
+        <title>Abderrahmane Charak — Software Engineer</title>
+        <meta name="description" content="Abderrahmane Charak — state-certified software engineer building full-stack web and mobile products end to end, from Marrakech, Morocco." />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <meta name="theme-color" content="#EFEBE2" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="Abderrahmane Charak — Software Engineer" />
+        <meta property="og:description" content="Full-stack web & mobile products, engineered end to end — Marrakech, Morocco." />
+        <meta property="og:image" content="/android-chrome-512x512.png" />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="Abderrahmane Charak — Software Engineer" />
+        <meta name="twitter:description" content="Full-stack web & mobile products, engineered end to end — Marrakech, Morocco." />
+        <meta name="twitter:image" content="/android-chrome-512x512.png" />
+      </Head>
+      <LanguageProvider>
+        <div className="relative min-h-screen" style={{ backgroundColor: 'var(--paper)', color: 'var(--ink)' }}>
+          {/* Architectural hairlines + film grain */}
+          <div className="page-rules" aria-hidden><i /><i /><i /><i /><i /></div>
+          <div className="grain" aria-hidden />
 
-      <CustomCursor />
-      <BusinessManWidget />
-      <Navbar />
-      <Component {...pageProps} />
-      <Footer />
-    </div>
-    </LanguageProvider>
+          {/* Reading progress — hairline vermilion */}
+          <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-[2px]">
+            <div className="h-full" style={{
+              transform: `scaleX(${scrollProgress})`, transformOrigin: 'left',
+              background: 'var(--verm)', transition: 'transform 0.1s linear' }} />
+          </div>
+
+          <CustomCursor />
+          <Preloader />
+          <div ref={curtainRef} className="curtain" aria-hidden />
+
+          <Navbar />
+          <main id="main">
+            <Component {...pageProps} />
+          </main>
+          <Footer />
+        </div>
+      </LanguageProvider>
     </>
   );
 }

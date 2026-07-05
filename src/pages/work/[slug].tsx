@@ -3,216 +3,184 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import { useEffect, useRef } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { workItems, caseStudyContent } from '@/lib/content';
-import AuroraBackground from '@/components/AuroraBackground';
+import { bootDelay } from '@/lib/motion';
+import Magnetic from '@/components/Magnetic';
+import ScrambleText from '@/components/ScrambleText';
 
-const BG   = '#030308';
-const SURF = '#07071a';
-const T    = '#ffffff';
-const T2   = 'rgba(255,255,255,0.62)';
-const MUT  = 'rgba(255,255,255,0.32)';
-const BDR  = 'rgba(255,255,255,0.07)';
-const BDG  = 'rgba(129,140,248,0.38)';
-const ACC  = '#818cf8';
-
-const FS_HERO  = 'clamp(2.2rem,8.5vw,11rem)';
-const FS_H2    = 'clamp(1.5rem,3.5vw,3.5rem)';
-const FS_LABEL = '0.625rem';
-const FS_BODY  = '0.875rem';
-const SP       = 'clamp(2.5rem,5vw,5rem)';
+type WorkItem = (typeof workItems)[number];
 
 interface Props {
-  item:     { title:string; titleKey?:string; category:string; categoryKey?:string; year:string; summary:string; summaryKey?:string; gradient:string; image?:string };
-  details:  { titleKey:string; introKey:string; challengeKey:string; goalKey:string; processKey:string; resultKey:string };
-  nextItem: { slug:string; title:string; titleKey?:string; gradient:string } | null;
+  item: WorkItem;
+  details: { titleKey: string; introKey: string; challengeKey: string; goalKey: string; processKey: string; resultKey: string };
+  nextItem: { slug: string; title: string; titleKey: string } | null;
+  index: number;
 }
 
 const SECTIONS = [
-  { key:'challenge', label:'cs.challenge' },
-  { key:'goal',      label:'cs.goal'      },
-  { key:'process',   label:'cs.process'   },
-  { key:'result',    label:'cs.result'    },
+  { key: 'challenge', label: 'cs.challenge' },
+  { key: 'goal',      label: 'cs.goal' },
+  { key: 'process',   label: 'cs.process' },
+  { key: 'result',    label: 'cs.result' },
 ] as const;
 
-export default function CaseStudy({ item, details, nextItem }: Props) {
-  const heroRef = useRef<HTMLElement | null>(null);
+export default function CaseStudy({ item, details, nextItem, index }: Props) {
+  const heroRef = useRef<HTMLElement>(null);
   const { t } = useLanguage();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
     let ctx: any;
     import('gsap').then(({ gsap }) => {
       ctx = gsap.context(() => {
-        gsap.from('.hero-word', { y: '110%', duration: 1.1, stagger: 0.08, ease: 'power4.out', delay: 0.1 });
-        gsap.from('.hero-meta', { opacity: 0, y: 14, duration: 0.9, stagger: 0.09, ease: 'power3.out', delay: 0.45 });
+        const d = bootDelay();
+        gsap.from('.mask-line > span', { y: '112%', duration: 1.2, stagger: 0.1, ease: 'power4.out', delay: d });
+        gsap.from('.hero-meta', { opacity: 0, y: 16, duration: 0.9, stagger: 0.08, ease: 'power3.out', delay: d + 0.45 });
       }, heroRef);
     });
     return () => ctx?.revert?.();
   }, []);
 
   return (
-    <div style={{ backgroundColor: BG, overflowX: 'hidden', position: 'relative' }}>
-      <AuroraBackground />
+    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
 
-      {/* Hero */}
-      <section ref={heroRef}
-        className="relative flex flex-col justify-between px-5 sm:px-[5vw] pt-24 sm:pt-28 pb-10 sm:pb-14 overflow-hidden"
-        style={{ zIndex: 1, minHeight: '52vh', color: T }}>
-        <div aria-hidden className="pointer-events-none absolute top-0 right-0 opacity-40"
-          style={{ width: 'min(45vw,400px)', height: 'min(45vw,400px)',
-            background: 'radial-gradient(circle at 65% 20%, rgba(129,140,248,0.12), transparent 65%)' }} />
+      {/* ═══ HERO ════════════════════════════════════════════════════ */}
+      <section ref={heroRef} className="relative flex flex-col" style={{ minHeight: '64svh', paddingTop: '6rem' }}>
+        <div className="container flex-1 flex flex-col">
+          <div className="hero-meta flex items-center justify-between flex-wrap gap-3"
+            style={{ borderBottom: '1px solid var(--line)', paddingBottom: '0.9rem' }}>
+            <span className="o-label" style={{ display: 'inline-flex', gap: '0.8rem' }}>
+              <Link href="/work" className="u-sweep" style={{ color: 'var(--fg-2)' }}>{t('nav.work')}</Link>
+              <span aria-hidden>/</span>
+              <span style={{ color: 'var(--acc-text)' }}>{t(item.categoryKey)}</span>
+            </span>
+            <ScrambleText className="o-label" text={`FILE ${String(index + 1).padStart(3, '0')} — ${item.year}`} />
+          </div>
 
-        {/* Breadcrumb */}
-        <div className="hero-meta relative z-10 flex items-center gap-3 flex-wrap">
-          <Link href="/work" className="font-mono uppercase transition-colors"
-            style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}
-            onMouseEnter={e => (e.currentTarget.style.color = T)}
-            onMouseLeave={e => (e.currentTarget.style.color = MUT)}>{t('nav.work')}</Link>
-          <span style={{ color: MUT }}>/</span>
-          <span className="font-mono uppercase" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>
-            {item.categoryKey ? t(item.categoryKey) : item.category}
-          </span>
+          <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
+            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.96, fontWeight: 380 }}>
+              {t(item.titleKey).split(' ').map((w, i, arr) => (
+                <span key={`${w}-${i}`} className="mask-line">
+                  <span style={{ fontSize: 'var(--fs-hero)' }}>
+                    {i === arr.length - 1 && arr.length > 1
+                      ? <em className="it" style={{ color: 'var(--verm)' }}>{w}</em>
+                      : w}
+                  </span>
+                </span>
+              ))}
+            </h1>
+          </div>
+
+          <div className="hero-meta flex flex-wrap items-center gap-x-8 gap-y-3 pb-10">
+            {item.stack.map(s => (
+              <span key={s} className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.2em',
+                textTransform: 'uppercase', border: '1px solid var(--line-2)', padding: '0.45rem 0.8rem',
+                color: 'var(--fg-2)' }}>
+                {s}
+              </span>
+            ))}
+            {item.metric && (
+              <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.2em',
+                textTransform: 'uppercase', background: 'var(--verm)', color: '#FFF7F2', padding: '0.5rem 0.85rem' }}>
+                {item.metric}
+              </span>
+            )}
+            {item.link && (
+              <a href={item.link} target="_blank" rel="noreferrer" className="font-mono u-sweep"
+                data-cursor={t('ui.visit')}
+                style={{ fontSize: '0.66rem', letterSpacing: '0.24em', textTransform: 'uppercase',
+                  color: 'var(--acc-text)' }}>
+                {t('cs.live')} ↗
+              </a>
+            )}
+          </div>
         </div>
+      </section>
 
-        <div className="relative z-10 py-6 sm:py-8">
-          <h1 className="font-display font-black uppercase leading-[0.88] tracking-[-0.03em]"
-            style={{ fontSize: FS_HERO, color: T }}>
-            {(item.titleKey ? t(item.titleKey) : item.title).split(' ').map(w => (
-              <div key={w} className="overflow-hidden">
-                <span className="hero-word block">{w}</span>
+      {/* ═══ PLATE ═══════════════════════════════════════════════════ */}
+      <div style={{ borderTop: '1px solid var(--line)', background: 'var(--ink)', padding: 'clamp(0.6rem,2vw,1.4rem)' }}>
+        <img src={item.image} alt={t(item.titleKey)}
+          style={{ width: '100%', aspectRatio: '21/9', objectFit: 'cover', objectPosition: 'top' }} />
+      </div>
+
+      {/* ═══ INTRO ═══════════════════════════════════════════════════ */}
+      <section className="container grid grid-cols-1 lg:grid-cols-[1fr_1.8fr] gap-10 lg:gap-20"
+        style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
+        <div className="reveal">
+          <p className="o-label" style={{ marginBottom: '1.4rem' }}>
+            <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('cs.overview')}
+          </p>
+          <p className="font-sans" style={{ fontSize: 'var(--fs-small)', lineHeight: 1.8, color: 'var(--fg-2)' }}>
+            {t(item.summaryKey)}
+          </p>
+        </div>
+        <blockquote className="reveal font-serif" style={{ fontSize: 'clamp(1.5rem,3.2vw,3rem)', fontWeight: 400,
+          lineHeight: 1.18, letterSpacing: '-0.015em' }}>
+          {t(details.introKey)}
+        </blockquote>
+      </section>
+
+      {/* ═══ DOSSIER GRID ════════════════════════════════════════════ */}
+      <section data-theme="ink" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
+        <div className="container" style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
+          <div className="reveal-group grid grid-cols-1 md:grid-cols-2" style={{ border: '1px solid var(--line)' }}>
+            {SECTIONS.map(({ key, label }, idx) => (
+              <div key={key} className="reveal-item"
+                style={{ padding: 'clamp(1.6rem,3.4vw,3rem)',
+                  borderRight: idx % 2 === 0 ? '1px solid var(--line)' : 'none',
+                  borderBottom: idx < 2 ? '1px solid var(--line)' : 'none' }}>
+                <div className="flex items-baseline justify-between" style={{ marginBottom: '1.4rem' }}>
+                  <p className="o-label" style={{ color: 'var(--acc)' }}>{t(label)}</p>
+                  <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.2em', color: 'var(--mut)' }}>
+                    {String(idx + 1).padStart(2, '0')}
+                  </span>
+                </div>
+                <p className="font-sans" style={{ fontSize: 'var(--fs-small)', lineHeight: 1.8, color: 'var(--fg-2)' }}>
+                  {t(details[`${key}Key`])}
+                </p>
               </div>
             ))}
-          </h1>
+          </div>
         </div>
+      </section>
 
-        <div className="hero-meta relative z-10 flex flex-wrap gap-4 sm:gap-10">
-          {[{ label:'cs.cat', value:item.categoryKey ? t(item.categoryKey) : item.category }, { label:'cs.year', value:item.year }].map(({ label, value }) => (
-            <div key={label}>
-              <p className="font-mono uppercase mb-1" style={{ fontSize: '0.55rem', letterSpacing: '0.25em', color: MUT }}>{t(label)}</p>
-              <p className="font-display font-bold text-sm px-3 py-0.5 rounded-full"
-                style={{ letterSpacing: '0.04em', color: ACC, border: `1px solid ${BDG}`, background:'rgba(129,140,248,0.07)' }}>
-                {value}
-              </p>
+      {/* ═══ GALLERY ═════════════════════════════════════════════════ */}
+      <section className="container" style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
+        <p className="reveal o-label" style={{ marginBottom: '2rem' }}>
+          <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('cs.gallery')}
+        </p>
+        <div className="reveal-group grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {[0, 1, 2].map(i => (
+            <div key={i} className={`reveal-item ${i === 0 ? 'sm:col-span-2' : ''}`}
+              style={{ border: '1px solid var(--line-2)', background: 'var(--paper-2)', padding: 8 }}>
+              <img src={item.image} alt={`${t(item.titleKey)} — ${i + 1}`}
+                loading="lazy"
+                style={{ width: '100%', objectFit: 'cover',
+                  objectPosition: i === 0 ? 'top' : i === 1 ? 'center' : 'bottom',
+                  aspectRatio: i === 0 ? '16/9' : '4/4.4', display: 'block' }} />
             </div>
           ))}
         </div>
       </section>
 
-      {/* Full-width screenshot */}
-      <div className="relative" style={{ zIndex: 1, borderTop: `1px solid ${BDR}` }}>
-        <div className="relative overflow-hidden" style={{ aspectRatio: '21/8', width: '100%' }}>
-          {item.image ? (
-            <>
-              <img src={item.image} alt={item.titleKey ? t(item.titleKey) : item.title}
-                style={{ position:'absolute', inset:0, width:'100%', height:'100%', objectFit:'cover', objectPosition:'top', display:'block' }} />
-              <div className="absolute inset-x-0 bottom-0 h-24 pointer-events-none"
-                style={{ background: 'linear-gradient(to top, rgba(3,3,8,0.65), transparent)' }} />
-            </>
-          ) : (
-            <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient}`} />
-          )}
-        </div>
-      </div>
-
-      {/* Intro */}
-      <section className="relative" style={{ zIndex: 1,
-        backgroundColor: 'rgba(7,7,26,0.80)',
-        padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container grid grid-cols-1 lg:grid-cols-[2fr_3fr] gap-8 sm:gap-14 lg:gap-20">
-          <div className="reveal">
-            <p className="font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>{t('cs.overview')}</p>
-            <p className="font-sans leading-7" style={{ fontSize: FS_BODY, color: T2 }}>
-              {item.summaryKey ? t(item.summaryKey) : item.summary}
-            </p>
-          </div>
-          <blockquote className="reveal font-display font-bold leading-[0.95] tracking-[-0.02em] break-words"
-            style={{ fontSize: 'clamp(1.25rem,3vw,3rem)', color: T }}>
-            {t(details.introKey)}
-          </blockquote>
-        </div>
-      </section>
-
-      {/* Case study grid */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: BG, paddingBottom: SP, borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <div className="reveal-group grid grid-cols-1 sm:grid-cols-2" style={{ borderTop: `1px solid ${BDR}` }}>
-            {SECTIONS.map(({ key, label }, idx) => (
-              <div key={key} className="reveal-item py-7 sm:py-10 pr-0 sm:pr-10"
-                style={{ borderBottom:`1px solid ${BDR}`, borderRight: idx%2===0 ? `1px solid ${BDR}` : 'none' }}>
-                <p className="font-mono uppercase mb-4" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: ACC }}>{t(label)}</p>
-                <p className="font-sans leading-8 font-light" style={{ fontSize: FS_BODY, color: T2 }}>{t(details[`${key}Key`])}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Deliverables */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: SURF, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>{t('cs.deliver')}</p>
-          <div className="reveal-group grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {[
-              { label:'cs.d1.l', desc:'cs.d1.d' },
-              { label:'cs.d2.l', desc:'cs.d2.d' },
-              { label:'cs.d3.l', desc:'cs.d3.d' },
-            ].map(({ label, desc }) => (
-              <div key={label} className="reveal-item glass-card p-5 sm:p-7">
-                <div className="w-8 h-8 rounded-full flex items-center justify-center mb-5"
-                  style={{ border: `1px solid ${BDG}`, background: 'rgba(129,140,248,0.08)' }}>
-                  <span style={{ color: ACC, fontSize: '0.75rem' }}>⬡</span>
-                </div>
-                <h3 className="font-display font-bold text-sm sm:text-base tracking-[-0.01em] mb-2.5" style={{ color: T }}>{t(label)}</h3>
-                <p className="font-sans leading-6" style={{ fontSize: FS_BODY, color: T2 }}>{t(desc)}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery */}
-      <section className="relative" style={{ zIndex: 1, backgroundColor: BG, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div className="container">
-          <p className="reveal font-mono uppercase mb-8" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>{t('cs.gallery')}</p>
-          <div className="reveal-group grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-            {[0,1,2].map(i => (
-              <div key={i} className={`reveal-item overflow-hidden rounded-xl ${i===0?'sm:col-span-2':''}`}
-                style={{ border: `1px solid ${BDR}` }}>
-                {item.image ? (
-                  <img src={item.image} alt={`${item.titleKey ? t(item.titleKey) : item.title} view ${i+1}`}
-                    className={i===0?'aspect-[16/9]':'aspect-[4/5]'}
-                    style={{ width:'100%', objectFit:'cover', objectPosition:'top', display:'block' }} />
-                ) : (
-                  <div className={`bg-gradient-to-br ${item.gradient} ${i===0?'aspect-[16/9]':'aspect-[4/5]'}`} />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Next project */}
-      <section className="relative overflow-hidden" style={{ zIndex: 1, backgroundColor: SURF, padding: `${SP} 0`, borderTop: `1px solid ${BDR}` }}>
-        <div aria-hidden className="pointer-events-none absolute -bottom-10 -left-10 rounded-full glow-orb"
-          style={{ width:'min(260px,55vw)', height:'min(260px,55vw)',
-            background:'radial-gradient(circle, rgba(129,140,248,0.09), transparent 65%)' }} />
-        <div className="container relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+      {/* ═══ NEXT ════════════════════════════════════════════════════ */}
+      <section style={{ borderTop: '1px solid var(--line)' }}>
+        <div className="container flex flex-col sm:flex-row sm:items-end justify-between gap-8"
+          style={{ paddingTop: 'clamp(3rem,6vw,5.5rem)', paddingBottom: 'clamp(3rem,6vw,5.5rem)' }}>
           <div>
-            <p className="font-mono uppercase mb-3" style={{ fontSize: FS_LABEL, letterSpacing: '0.30em', color: MUT }}>
-              {nextItem ? t('cs.next') : t('cs.back')}
+            <p className="reveal o-label" style={{ marginBottom: '1.1rem' }}>
+              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {nextItem ? t('cs.next') : t('cs.back')}
             </p>
-            <h2 className="font-display font-bold leading-[0.9] tracking-[-0.02em]"
-              style={{ fontSize: 'clamp(1.8rem,4.5vw,5rem)', color: T }}>
-              {nextItem ? (nextItem.titleKey ? t(nextItem.titleKey) : nextItem.title) : t('cs.btn.a')}
+            <h2 className="reveal font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 400,
+              lineHeight: 1, letterSpacing: '-0.02em' }}>
+              {nextItem ? t(nextItem.titleKey) : t('cs.btn.a')}
             </h2>
           </div>
-          <Link href={nextItem ? `/work/${nextItem.slug}` : '/work'}
-            className="flex sm:inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full font-display font-bold uppercase tracking-[0.1em] transition-all flex-shrink-0"
-            style={{ fontSize: '0.72rem', background:'linear-gradient(135deg,#6366f1,#38bdf8)',
-              color:'#fff', boxShadow:'0 0 28px rgba(99,102,241,0.30)' }}
-            onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 46px rgba(99,102,241,0.55)')}
-            onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 28px rgba(99,102,241,0.30)')}>
-            {nextItem ? t('cs.btn.n') : t('cs.btn.a')} <span className="text-base leading-none">↗</span>
-          </Link>
+          <Magnetic>
+            <Link href={nextItem ? `/work/${nextItem.slug}` : '/work'} className="btn-slab reveal"
+              data-cursor={t('ui.open')}>
+              <span>{nextItem ? t('cs.btn.n') : t('cs.btn.a')}</span>
+              <span className="arr" aria-hidden>↗</span>
+            </Link>
+          </Magnetic>
         </div>
       </section>
     </div>
@@ -225,14 +193,14 @@ export const getStaticPaths: GetStaticPaths = async () => ({
 });
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const slug    = params?.slug as string;
-  const item    = workItems.find(e => e.slug === slug);
+  const slug = params?.slug as string;
+  const item = workItems.find(e => e.slug === slug);
   const details = caseStudyContent[slug] ?? null;
   if (!item || !details) return { notFound: true };
-  const idx  = workItems.findIndex(e => e.slug === slug);
+  const idx = workItems.findIndex(e => e.slug === slug);
   const next = workItems[(idx + 1) % workItems.length];
   const nextItem = next && next.slug !== slug
-    ? { slug: next.slug, title: next.title, gradient: next.gradient }
+    ? { slug: next.slug, title: next.title, titleKey: next.titleKey }
     : null;
-  return { props: { item, details, nextItem } };
+  return { props: { item, details, nextItem, index: idx } };
 };

@@ -12,7 +12,8 @@ export default function BusinessCards() {
           position:   'fixed',
           inset:      0,
           top:        68,
-          background: '#04071a',
+          background: '#171310',
+          zIndex:     150,
         }}
       >
         <iframe
