@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
-import { identity, workItems } from '@/lib/content';
+import { workItems } from '@/lib/content';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { bootDelay } from '@/lib/motion';
 import WorkIndex from '@/components/WorkIndex';

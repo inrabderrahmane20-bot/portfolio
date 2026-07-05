@@ -31,7 +31,7 @@
   --card:  rgba(23, 19, 16, 0.035);
 
   /* Type scale */
-  --fs-mega:  clamp(2.55rem, 11vw, 11.5rem);
+  --fs-mega:  clamp(2.3rem, 9.9vw, 10.5rem);
   --fs-hero:  clamp(2.6rem, 10vw, 11rem);
   --fs-h2:    clamp(2rem, 5.6vw, 5.4rem);
   --fs-h3:    clamp(1.2rem, 2.6vw, 2.1rem);

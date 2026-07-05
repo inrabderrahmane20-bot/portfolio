@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
 import {
-  identity, contactData, capabilities, experienceItems,
-  ledgerFacts, clients,
+  identity, capabilities, experienceItems,
+  ledgerFacts, clients, workItems,
 } from '@/lib/content';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { bootDelay } from '@/lib/motion';
@@ -198,7 +198,7 @@ export default function Home() {
         <div className="reveal flex items-end justify-between gap-6 flex-wrap" style={{ marginBottom: 'clamp(2rem,4vw,4rem)' }}>
           <div>
             <p className="o-label" style={{ marginBottom: '1.1rem' }}>
-              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('work.label')} — 001–005
+              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('work.label')} — 001–{String(workItems.length).padStart(3, '0')}
             </p>
             <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 400,
               lineHeight: 0.98, letterSpacing: '-0.02em' }}>

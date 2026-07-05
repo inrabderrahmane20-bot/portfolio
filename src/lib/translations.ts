@@ -121,6 +121,9 @@ export const T: Record<Lang, Record<string, string>> = {
     'edu.bac.title':  'Scientific Baccalaureate',
 
     /* Work items */
+    'workItem.marrakech-privee.title':    'Marrakech Privée',
+    'workItem.marrakech-privee.category': 'Web Experience',
+    'workItem.marrakech-privee.summary':  'Ultra-premium website for a private concierge and event-planning agency in Marrakech — bespoke events, VIP services and private stays, wrapped in an editorial luxury identity with GSAP motion and four-language i18n (EN/FR/ES/DE).',
     'workItem.select-emc.title':    'Select by EMC',
     'workItem.select-emc.category': 'Web Platform',
     'workItem.select-emc.summary':  'Full multi-service platform for a Marrakech luxury concierge and events agency — concierge, event organisation and VIP services, now serving ~50 users a day. A fast, SEO-optimised, multilingual Next.js build with multi-currency support and a scalable content architecture across dozens of service pages.',
@@ -150,6 +153,11 @@ export const T: Record<Lang, Record<string, string>> = {
     'cs.btn.a':     'All projects',
     'cs.live':      'View live site',
 
+    'cs.marrakech-privee.intro':     'A by-invitation digital address for Marrakech’s finest experiences — where restraint, typography and motion do the talking.',
+    'cs.marrakech-privee.challenge': 'Stand apart from the gold-on-black clichés of luxury travel sites — communicating discretion and craft across four languages without slowing the experience down.',
+    'cs.marrakech-privee.goal':      'Design and build an editorial luxury experience — bespoke event requests, curated activities and VIP services — with cinematic motion and EN/FR/ES/DE localisation.',
+    'cs.marrakech-privee.process':   'Custom design system with serif-led typography, GSAP + Lenis motion language, curtain page transitions, a bespoke request flow, and a Next.js 15 build with client-side locale switching.',
+    'cs.marrakech-privee.result':    'A distinctive digital flagship for the agency — an experience that positions Marrakech Privée at the very top of its market.',
     'cs.select-emc.intro':     'A premium digital presence for an exclusive concierge service — where every interaction communicates quiet luxury and effortless service.',
     'cs.select-emc.challenge': 'Convey the exclusivity and personal touch of a top-tier concierge brand across dozens of service pages — without feeling cold or transactional, and without sacrificing load speed or SEO.',
     'cs.select-emc.goal':      'Ship a multi-service platform spanning concierge, event organisation and VIP services — multilingual, multi-currency, and structured to grow.',

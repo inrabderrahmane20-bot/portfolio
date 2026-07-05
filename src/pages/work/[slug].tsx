@@ -148,16 +148,18 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
           <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('cs.gallery')}
         </p>
         <div className="reveal-group grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[0, 1, 2].map(i => (
-            <div key={i} className={`reveal-item ${i === 0 ? 'sm:col-span-2' : ''}`}
-              style={{ border: '1px solid var(--line-2)', background: 'var(--paper-2)', padding: 8 }}>
-              <img src={item.image} alt={`${t(item.titleKey)} — ${i + 1}`}
-                loading="lazy"
-                style={{ width: '100%', objectFit: 'cover',
-                  objectPosition: i === 0 ? 'top' : i === 1 ? 'center' : 'bottom',
-                  aspectRatio: i === 0 ? '16/9' : '4/4.4', display: 'block' }} />
-            </div>
-          ))}
+          {item.gallery.map((src, i) => {
+            const wide = i === 0 || item.gallery.length === 1;
+            return (
+              <div key={src + i} className={`reveal-item ${wide ? 'sm:col-span-2' : ''}`}
+                style={{ border: '1px solid var(--line-2)', background: 'var(--paper-2)', padding: 8 }}>
+                <img src={src} alt={`${t(item.titleKey)} — ${i + 1}`}
+                  loading="lazy"
+                  style={{ width: '100%', objectFit: 'cover', objectPosition: 'top',
+                    aspectRatio: wide ? '16/9' : '4/4.4', display: 'block' }} />
+              </div>
+            );
+          })}
         </div>
       </section>
 

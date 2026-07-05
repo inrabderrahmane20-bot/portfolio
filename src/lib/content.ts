@@ -29,6 +29,20 @@ export const contactData = {
 /* ─── Work Items ─────────────────────────────────────────────────────── */
 export const workItems = [
   {
+    slug: 'marrakech-privee',
+    title: 'Marrakech Privée',
+    titleKey: 'workItem.marrakech-privee.title',
+    category: 'Web Experience',
+    categoryKey: 'workItem.marrakech-privee.category',
+    year: '2026',
+    summaryKey: 'workItem.marrakech-privee.summary',
+    stack: ['Next.js 15', 'GSAP', 'EN / FR / ES / DE'],
+    metric: null,
+    link: null,
+    image: '/Marrakech_privee1.png',
+    gallery: ['/Marrakech_privee2.png', '/Marrakech_privee3.png', '/Marrakech_privee4.png'],
+  },
+  {
     slug: 'select-emc',
     title: 'Select by EMC',
     titleKey: 'workItem.select-emc.title',
@@ -40,6 +54,7 @@ export const workItems = [
     metric: '~50 users / day',
     link: 'https://selectbyemc.com',
     image: '/select.png',
+    gallery: ['/Select1.png', '/Select2.png', '/Select3.png'],
   },
   {
     slug: 'travel-to',
@@ -53,6 +68,7 @@ export const workItems = [
     metric: null,
     link: null,
     image: '/TravelTo.png',
+    gallery: ['/Traveltto1.png', '/Traveltto2.png', '/Traveltto3.png'],
   },
   {
     slug: 'atlassia-rent',
@@ -65,7 +81,8 @@ export const workItems = [
     stack: ['Next.js', 'Node.js', 'FR / AR / EN'],
     metric: null,
     link: null,
-    image: '/Rent_Car.png',
+    image: '/Atalssin1.png',
+    gallery: ['/Atlassin2.png', '/Atlassin3.png', '/Atlassin4.png'],
   },
   {
     slug: 'riad-marrakech',
@@ -79,6 +96,7 @@ export const workItems = [
     metric: null,
     link: null,
     image: '/Riad.png',
+    gallery: ['/Riad.png'],
   },
   {
     slug: 'driving-school',
@@ -91,7 +109,8 @@ export const workItems = [
     stack: ['Next.js', 'Local SEO', 'Conversion'],
     metric: null,
     link: null,
-    image: '/Permis.png',
+    image: '/Auto_ecole.png',
+    gallery: ['/Auto_ecole1.png', '/Auto_ecole2.png'],
   },
 ];
 
