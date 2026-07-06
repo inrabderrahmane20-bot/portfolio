@@ -148,13 +148,13 @@ export default function Home() {
           </div>
 
           {/* Under-headline row */}
-          <div className="pb-8 grid grid-cols-1 md:grid-cols-[1.2fr_1fr_auto] gap-8 items-end">
+          <div className="pb-8 grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-8 items-end">
             <p className="hero-meta font-sans" style={{
               fontSize: 'var(--fs-body)', lineHeight: 1.75, color: 'var(--fg-2)', maxWidth: '46ch' }}>
               {t('hero.tagline')}
             </p>
 
-            <div className="hero-meta flex flex-wrap gap-2">
+            <div className="hero-meta flex flex-wrap gap-2 md:justify-end">
               {[t('hero.chip1'), t('hero.chip2'), t('hero.chip3')].map(chip => (
                 <span key={chip} className="font-mono" style={{
                   fontSize: '0.6rem', letterSpacing: '0.2em', textTransform: 'uppercase',
@@ -162,14 +162,6 @@ export default function Home() {
                   {chip}
                 </span>
               ))}
-            </div>
-
-            <div className="hero-meta hidden md:flex flex-col items-end gap-2">
-              <span className="o-label">{t('hero.scroll')}</span>
-              <svg width="14" height="44" viewBox="0 0 14 44" aria-hidden>
-                <line x1="7" y1="0" x2="7" y2="36" stroke="var(--verm)" strokeWidth="1" />
-                <path d="M2 32 L7 40 L12 32" fill="none" stroke="var(--verm)" strokeWidth="1" />
-              </svg>
             </div>
           </div>
         </div>
