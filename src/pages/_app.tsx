@@ -8,7 +8,6 @@ import { LanguageProvider } from '@/contexts/LanguageContext';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CustomCursor from '@/components/CustomCursor';
-import Preloader from '@/components/Preloader';
 import SpaceBackdrop from '@/components/SpaceBackdrop';
 
 /* ── IntersectionObserver scroll reveal ─────────────────────────────── */
@@ -188,7 +187,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </div>
 
           <CustomCursor />
-          <Preloader />
           <div ref={curtainRef} className="curtain" aria-hidden />
 
           <Navbar />

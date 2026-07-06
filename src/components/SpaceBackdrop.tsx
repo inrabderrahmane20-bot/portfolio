@@ -163,7 +163,7 @@ function inclinedBasis(a: number, b: number): { u: V3; w: V3 } {
 
 function buildGlobe(isMob: boolean): GlobeData {
   /* Land-fill dots — evenly spaced on the sphere, PIP-tested against WORLD */
-  const step = isMob ? 3.4 : 2.3;
+  const step = isMob ? 2.6 : 1.7;
   const dots: V3[] = [];
   const dotLonArr: number[] = [];
   for (let lat = -55; lat <= 80; lat += step) {
@@ -356,48 +356,54 @@ export default function SpaceBackdrop() {
 
     /* ── The Earth ─────────────────────────────────────────────────── */
     const drawGlobe = (t: number, scroll: number) => {
-      const R = Math.min(W, H) * (isMob ? 0.44 : 0.36);
-      const cx = isMob ? W * 0.72 : W * 0.80;
+      const R = Math.min(W, H) * (isMob ? 0.46 : 0.42);
+      const cx = isMob ? W * 0.72 : W * 0.79;
       const cy = (isMob ? H * 0.66 : H * 0.56) + Math.sin(t * 0.00012) * 10;
       const theta = t * 0.000042 + scroll * 0.00055;
-      const dim = isMob ? 0.8 : 1;
+      const dim = isMob ? 0.85 : 1;
 
       const view = (m: V3): V3 => rotZ(rotY(m, theta), TILT);
 
-      /* Planet body */
-      const body = ctx.createRadialGradient(cx - R * 0.4, cy - R * 0.3, R * 0.1, cx, cy, R);
-      body.addColorStop(0, `rgba(18,22,58,${0.82 * dim})`);
-      body.addColorStop(0.62, `rgba(10,12,40,${0.88 * dim})`);
-      body.addColorStop(1, `rgba(5,6,22,${0.94 * dim})`);
+      /* Planet body — luminous glassy blue, highlight toward upper-left */
+      const body = ctx.createRadialGradient(cx - R * 0.45, cy - R * 0.4, R * 0.05, cx, cy, R);
+      body.addColorStop(0, `rgba(70,110,235,${0.50 * dim})`);
+      body.addColorStop(0.4, `rgba(38,55,170,${0.55 * dim})`);
+      body.addColorStop(0.75, `rgba(22,30,110,${0.62 * dim})`);
+      body.addColorStop(1, `rgba(14,18,70,${0.72 * dim})`);
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
       ctx.fillStyle = body; ctx.fill();
 
-      /* Inner ocean glow toward the lit side */
-      const ocean = ctx.createRadialGradient(cx - R * 0.5, cy - R * 0.35, 0, cx - R * 0.3, cy - R * 0.2, R * 1.15);
-      ocean.addColorStop(0, `rgba(56,90,220,${0.16 * dim})`);
-      ocean.addColorStop(0.55, `rgba(40,60,160,${0.06 * dim})`);
-      ocean.addColorStop(1, 'rgba(0,0,0,0)');
+      /* Fresnel — the glass sphere brightens toward its edge, all around */
+      const fresnel = ctx.createRadialGradient(cx, cy, R * 0.62, cx, cy, R);
+      fresnel.addColorStop(0, 'rgba(80,160,255,0)');
+      fresnel.addColorStop(0.82, `rgba(80,160,255,${0.07 * dim})`);
+      fresnel.addColorStop(0.96, `rgba(100,180,255,${0.26 * dim})`);
+      fresnel.addColorStop(1, `rgba(140,210,255,${0.42 * dim})`);
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
-      ctx.fillStyle = ocean; ctx.fill();
+      ctx.fillStyle = fresnel; ctx.fill();
 
-      /* Atmosphere + lit limb */
-      const atm = ctx.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.32);
-      atm.addColorStop(0, 'rgba(99,102,241,0)');
-      atm.addColorStop(0.26, `rgba(99,140,255,${0.13 * dim})`);
-      atm.addColorStop(0.55, `rgba(56,189,248,${0.06 * dim})`);
+      /* Full rim light + outer atmosphere halo */
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
+      ctx.strokeStyle = `rgba(130,195,255,${0.55 * dim})`;
+      ctx.lineWidth = 1.8; ctx.stroke();
+      const atm = ctx.createRadialGradient(cx, cy, R * 0.96, cx, cy, R * 1.42);
+      atm.addColorStop(0, `rgba(90,150,255,${0.22 * dim})`);
+      atm.addColorStop(0.3, `rgba(80,140,255,${0.10 * dim})`);
+      atm.addColorStop(0.65, `rgba(56,189,248,${0.04 * dim})`);
       atm.addColorStop(1, 'rgba(56,189,248,0)');
-      ctx.beginPath(); ctx.arc(cx, cy, R * 1.32, 0, TAU);
+      ctx.beginPath(); ctx.arc(cx, cy, R * 1.42, 0, TAU);
       ctx.fillStyle = atm; ctx.fill();
 
+      /* Extra brilliance on the sunlit limb */
       const litAngle = Math.atan2(-LIGHT[1], LIGHT[0]);
       ctx.beginPath(); ctx.arc(cx, cy, R - 1, litAngle - 1.7, litAngle + 1.7);
-      ctx.strokeStyle = `rgba(125,211,252,${0.34 * dim})`; ctx.lineWidth = 1.6; ctx.stroke();
-      ctx.beginPath(); ctx.arc(cx, cy, R - 3, litAngle - 1.2, litAngle + 1.2);
-      ctx.strokeStyle = `rgba(190,225,255,${0.14 * dim})`; ctx.lineWidth = 5; ctx.stroke();
+      ctx.strokeStyle = `rgba(170,225,255,${0.6 * dim})`; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R - 4, litAngle - 1.2, litAngle + 1.2);
+      ctx.strokeStyle = `rgba(210,240,255,${0.2 * dim})`; ctx.lineWidth = 7; ctx.stroke();
 
       /* Graticule — every 30° */
       ctx.lineWidth = 0.7;
-      ctx.strokeStyle = `rgba(129,160,255,${0.11 * dim})`;
+      ctx.strokeStyle = `rgba(140,175,255,${0.17 * dim})`;
       for (let latDeg = -60; latDeg <= 60; latDeg += 30) {
         ctx.beginPath();
         let pen = false;
@@ -437,35 +443,30 @@ export default function SpaceBackdrop() {
       ctx.lineWidth = 1.1;
       ctx.stroke();
 
-      /* ── LANDMASS DOTS — the actual Earth ── */
+      /* ── LANDMASS DOTS — the actual Earth, bright like the hologram ── */
       const nD = globe.dots.length;
       for (let i = 0; i < nD; i++) {
         const v = view(globe.dots[i]);
-        if (v[2] < -0.08) continue;
+        if (v[2] < 0.02) continue;
         const x = cx + v[0] * R, y = cy - v[1] * R;
         const lum = Math.max(0, dot3(v, LIGHT));
         let dLon = (globe.dotLon[i] - sweepLon) % TAU;
         if (dLon > 0) dLon -= TAU;
-        const wake = v[2] > 0 && dLon > -0.6 ? 1 + dLon / 0.6 : 0;
+        const wake = dLon > -0.6 ? 1 + dLon / 0.6 : 0;
 
-        if (v[2] <= 0.02) {
-          ctx.fillStyle = `rgba(129,150,248,${0.05 * dim})`;
-          ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
-          continue;
-        }
-        const a = (0.22 + lum * 0.62) * dim + wake * 0.4;
-        const sz = 1.1 + lum * 0.8 + wake * 0.9;
+        const a = (0.4 + lum * 0.55) * dim + wake * 0.35;
+        const sz = 1.3 + lum * 0.9 + wake * 0.9;
         ctx.fillStyle = wake > 0.25
-          ? `rgba(140,220,255,${Math.min(0.95, a)})`
+          ? `rgba(170,230,255,${Math.min(0.98, a)})`
           : lum > 0.5
-            ? `rgba(150,190,255,${a})`
-            : `rgba(110,130,235,${a})`;
+            ? `rgba(175,210,255,${a})`
+            : `rgba(130,155,250,${a})`;
         ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
       }
 
-      /* ── COASTLINES — glowing vector strokes ── */
+      /* ── COASTLINES — bright glowing vector strokes ── */
       for (let pass = 0; pass < 2; pass++) {
-        ctx.lineWidth = pass === 0 ? 2.6 : 1;
+        ctx.lineWidth = pass === 0 ? 3.6 : 1.3;
         for (const ring of globe.coasts) {
           ctx.beginPath();
           let pen2 = false;
@@ -480,8 +481,8 @@ export default function SpaceBackdrop() {
           if (!lumN) continue;
           const lum = lumSum / lumN;
           ctx.strokeStyle = pass === 0
-            ? `rgba(80,160,255,${(0.05 + lum * 0.10) * dim})`
-            : `rgba(150,210,255,${(0.20 + lum * 0.42) * dim})`;
+            ? `rgba(90,170,255,${(0.12 + lum * 0.16) * dim})`
+            : `rgba(175,225,255,${(0.42 + lum * 0.45) * dim})`;
           ctx.stroke();
         }
       }
@@ -679,8 +680,8 @@ export default function SpaceBackdrop() {
             if (!pen3) { ctx.moveTo(x, y); pen3 = true; if (!firstFront) firstFront = [x, y]; }
             else ctx.lineTo(x, y);
           }
-          ctx.strokeStyle = `rgba(217,70,239,${0.28 * dim})`;
-          ctx.lineWidth = 1.1;
+          ctx.strokeStyle = `rgba(232,121,249,${0.42 * dim})`;
+          ctx.lineWidth = 1.3;
           ctx.stroke();
           /* glowing tracer riding the orbit */
           const ta = t * 0.0004 * ring.dir + ri;

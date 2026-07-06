@@ -39,7 +39,7 @@ export default function Home() {
     import('gsap').then(({ gsap }) => {
       ctx = gsap.context(() => {
         const d = bootDelay();
-        gsap.from('.mask-line > span', {
+        gsap.from('.mask-line > *', {
           y: '112%', duration: 1.25, stagger: 0.1, ease: 'power4.out', delay: d,
         });
         gsap.from('.hero-meta', {
@@ -121,26 +121,47 @@ export default function Home() {
             <ScrambleText className="o-label hidden md:block" text={identity.coords} />
           </div>
 
-          {/* Name */}
+          {/* Name — SVG stretched to the exact container width: cannot clip,
+              regardless of viewport, scrollbar width, zoom or font metrics. */}
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,4rem) 0' }}>
             <div className="relative">
-              <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.92, fontWeight: 800 }}>
+              <h1 aria-label="Abderrahmane Charak">
                 <span className="mask-line">
-                  <span style={{ fontSize: 'var(--fs-mega)' }}>ABDERRAHMANE</span>
+                  <svg viewBox="0 0 1200 122" preserveAspectRatio="none"
+                    style={{ display: 'block', width: '100%', height: 'auto', overflow: 'visible' }} aria-hidden>
+                    <text x="0" y="112" textLength="1200" lengthAdjust="spacingAndGlyphs"
+                      style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 148,
+                        fill: '#EEF1FF', letterSpacing: '-0.02em' }}>
+                      ABDERRAHMANE
+                    </text>
+                  </svg>
                 </span>
-                <span className="mask-line">
-                  <span style={{ fontSize: 'var(--fs-mega)', display: 'flex', alignItems: 'baseline', gap: '0.18em', flexWrap: 'wrap' }}>
-                    <em className="it" style={{ color: 'var(--verm)' }}>CHARAK</em>
+                <span className="mask-line" style={{ marginTop: '0.6vw' }}>
+                  <span style={{ display: 'flex', alignItems: 'baseline', gap: '1.4vw' }}>
+                    <svg viewBox="0 0 620 122" preserveAspectRatio="none"
+                      style={{ display: 'block', width: '51.7%', height: 'auto', overflow: 'visible', flexShrink: 0 }} aria-hidden>
+                      <defs>
+                        <linearGradient id="name-grad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#818CF8" />
+                          <stop offset="100%" stopColor="#38BDF8" />
+                        </linearGradient>
+                      </defs>
+                      <text x="0" y="112" textLength="620" lengthAdjust="spacingAndGlyphs"
+                        style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 148,
+                          fill: 'url(#name-grad)', letterSpacing: '-0.02em' }}>
+                        CHARAK
+                      </text>
+                    </svg>
                     <span className="font-mono hidden sm:inline" style={{
                       fontSize: 'clamp(0.6rem, 1vw, 0.85rem)', letterSpacing: '0.3em',
-                      color: 'var(--mut)', fontStyle: 'normal' }}>
+                      color: 'var(--mut)' }}>
                       {t('hero.paren')}
                     </span>
                   </span>
                 </span>
               </h1>
               <div className="hero-meta hidden xl:block"
-                style={{ position: 'absolute', right: '1vw', top: '-3.5rem' }}>
+                style={{ position: 'absolute', right: '1vw', top: '-4.5rem' }}>
                 <Stamp size={132}
                   text={`${identity.name.toUpperCase()} — ${identity.role.toUpperCase()} — MARRAKECH — `} />
               </div>
