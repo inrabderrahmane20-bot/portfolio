@@ -5,28 +5,28 @@ import { useEffect, useRef } from 'react';
 
    Layers, back to front:
    1. Parallax starfield (3 depth layers, twinkle, halos) + shooting stars
-   2. THE GLOBE — a full orbital theatre:
-      · shaded planet body with day/night terminator + atmosphere + lit limb
-      · continent-seeded node cloud, K-nearest network, graticule
-      · radar sweep that ignites nodes as it passes their longitude
-      · city beacons (diffraction sparkles) emitting tangent-plane ripples
-      · great-circle traffic arcs lifting off the surface between cities
-      · double tick-ring system with counter-rotating markers
-      · equatorial debris belt (46 particles, per-particle wobble)
-      · three satellites on inclined orbits, occluded by the planet,
-        each with a call-sign label and leader line
+   2. THE EARTH — a holographic planet with real geography:
+      · coastline vector polygons (encoded lon/lat) drawn as glowing strokes
+      · landmass fill = thousands of dots point-in-polygon tested at build
+      · day/night terminator, 30° graticule, atmosphere + lit limb
+      · 29 real cities as pulsing beacons (cyan/violet), tangent ripples
+      · great-circle traffic arcs between actual city pairs
+      · radar sweep igniting land as it passes each longitude
+      · twin tick-rings + two magenta orbital ellipses, counter-rotating
+      · equatorial debris belt, three satellites with call-sign labels
       · live target reticle locked on Marrakech (31.6295°N — 7.9811°W)
-   Rotation, rings and satellites are scroll-coupled. DPR-capped, paused
-   when the tab hides, single static frame under prefers-reduced-motion.
+   Scroll-coupled rotation. DPR-capped, paused when hidden, static frame
+   under prefers-reduced-motion.
 ═══════════════════════════════════════════════════════════════════════ */
 
 type V3 = [number, number, number];
+type LL = [number, number]; // [lon, lat]
 
 const toRad = (d: number) => (d * Math.PI) / 180;
 const TAU = Math.PI * 2;
 const dot3 = (a: V3, b: V3) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 
-function ll2v(lat: number, lon: number): V3 {
+function ll2v(lon: number, lat: number): V3 {
   const a = toRad(lat), b = toRad(lon);
   return [Math.cos(a) * Math.cos(b), Math.sin(a), Math.cos(a) * Math.sin(b)];
 }
@@ -54,95 +54,177 @@ function slerp(a: V3, b: V3, t: number): V3 {
   return [a[0] * w1 + b[0] * w2, a[1] * w1 + b[1] * w2, a[2] * w1 + b[2] * w2];
 }
 
-/* ── Continent zones [latMin, latMax, lonMin, lonMax, nodes] ─────────── */
-const ZONES: [number, number, number, number, number][] = [
-  [ 22, 70, -165, -55, 52],
-  [-56, 12,  -81, -35, 34],
-  [ 36, 70,  -11,  40, 36],
-  [-34, 36,  -17,  50, 42],
-  [ 12, 74,   28,  90, 34],
-  [ -9, 55,   92, 145, 40],
-  [-44, -11, 113, 154, 20],
-  [-78, 78, -180, 180, 30],   // ocean scatter (last zone = not land)
+/* ═══ WORLD GEOGRAPHY — simplified coastlines, [lon, lat] rings ═══════ */
+const WORLD: LL[][] = [
+  /* North America */
+  [[-156,71],[-140,70],[-125,71],[-110,73],[-96,72],[-85,70],[-75,71],[-68,60],[-56,52],
+   [-65,45],[-70,42],[-75,35],[-81,31],[-80,25],[-83,29],[-89,29],[-96,27],[-97,21],
+   [-90,21],[-87,21],[-88,16],[-83,14],[-83,9],[-79,8],[-77,7],[-80,9],[-85,11],[-92,15],
+   [-97,16],[-105,20],[-109,23],[-113,27],[-115,30],[-117,33],[-122,37],[-124,41],[-124,46],
+   [-126,49],[-131,53],[-135,58],[-141,60],[-147,61],[-153,59],[-158,56],[-164,55],
+   [-162,60],[-166,64],[-166,68],[-156,71]],
+  /* Greenland */
+  [[-45,60],[-53,65],[-56,71],[-61,76],[-58,80],[-45,83],[-30,83],[-20,80],[-21,75],
+   [-27,70],[-33,67],[-40,63],[-45,60]],
+  /* South America */
+  [[-77,7],[-72,12],[-64,11],[-52,5],[-50,0],[-44,-3],[-35,-7],[-39,-13],[-40,-20],
+   [-41,-23],[-48,-26],[-53,-33],[-57,-36],[-62,-39],[-65,-41],[-65,-47],[-69,-50],
+   [-68,-53],[-71,-54],[-74,-50],[-73,-44],[-73,-38],[-71,-32],[-70,-24],[-70,-18],
+   [-76,-14],[-79,-7],[-81,-3],[-80,1],[-77,7]],
+  /* Africa */
+  [[-6,35],[3,37],[10,37],[11,33],[19,31],[25,32],[32,31],[34,27],[37,22],[40,16],
+   [43,12],[51,12],[48,5],[42,0],[40,-5],[39,-11],[36,-18],[35,-23],[32,-28],[27,-33],
+   [20,-35],[18,-32],[15,-27],[12,-18],[13,-11],[9,-2],[9,4],[3,6],[-4,5],[-8,4],
+   [-13,9],[-17,15],[-16,20],[-14,26],[-9,31],[-6,35]],
+  /* Madagascar */
+  [[44,-25],[47,-24],[50,-16],[49,-12],[45,-16],[43,-21],[44,-25]],
+  /* Eurasia (incl. Arabia + India + SE Asia mainland) */
+  [[-9,38],[-9,43],[-2,46],[-5,48],[0,49],[4,52],[8,54],[8,57],[5,59],[5,62],[12,66],
+   [16,69],[25,71],[31,70],[40,67],[48,68],[60,69],[70,73],[80,73],[95,76],[105,77],
+   [113,74],[130,72],[140,72],[150,70],[160,70],[170,67],[178,65],[178,62],[163,60],
+   [160,53],[156,58],[150,60],[143,59],[137,54],[141,49],[135,44],[129,38],[126,34],
+   [122,37],[117,38],[121,31],[117,23],[110,20],[108,15],[109,12],[105,9],[102,13],
+   [100,7],[103,1.5],[99,6],[97,12],[94,16],[90,22],[87,21],[83,17],[80,13],[77,8],
+   [73,15],[70,21],[66,25],[61,25],[57,26],[59,22],[55,17],[52,15],[45,13],[43,17],
+   [39,21],[35,28],[34,30],[35,34],[36,36],[30,36],[26,40],[22,37],[20,40],[18,42],
+   [13,45],[18,40],[15,38],[12,41],[10,44],[7,43],[3,42],[0,39],[-2,36],[-6,36],[-9,38]],
+  /* United Kingdom */
+  [[-5,50],[1,51],[0,53],[-2,56],[-4,58],[-6,55],[-5,53],[-6,50],[-5,50]],
+  /* Japan */
+  [[130,31],[134,34],[140,36],[143,42],[145,44],[141,41],[136,35],[131,31],[130,31]],
+  /* Borneo */
+  [[109,1],[114,5],[117,6],[119,1],[116,-3],[110,-2],[109,1]],
+  /* Sumatra + Java hint */
+  [[95,5],[100,2],[104,-4],[110,-7],[114,-8],[106,-6],[101,-2],[96,3],[95,5]],
+  /* New Guinea */
+  [[131,-1],[137,-2],[141,-3],[147,-6],[143,-8],[136,-4],[131,-2],[131,-1]],
+  /* Philippines hint */
+  [[120,18],[122,13],[125,9],[123,12],[121,16],[120,18]],
+  /* Australia */
+  [[113,-25],[115,-34],[124,-33],[129,-32],[133,-32],[138,-35],[141,-38],[147,-38],
+   [150,-37],[153,-30],[153,-25],[149,-20],[146,-19],[142,-11],[140,-17],[136,-12],
+   [131,-12],[129,-15],[122,-18],[114,-22],[113,-25]],
+  /* New Zealand */
+  [[173,-35],[176,-38],[174,-42],[169,-46],[167,-45],[172,-40],[173,-35]],
 ];
 
-const MARRAKECH = ll2v(31.6295, -7.9811);
+/* Real cities — [lon, lat, violet?] */
+const CITIES: [number, number, number][] = [
+  [-7.98, 31.63, 0],  // Marrakech
+  [-7.6, 33.6, 1], [0, 51.5, 0], [2.3, 48.9, 1], [-3.7, 40.4, 0], [13.4, 52.5, 0],
+  [12.5, 41.9, 1], [31.2, 30, 0], [3.4, 6.5, 1], [36.8, -1.3, 0], [28, -26.2, 1],
+  [55.3, 25.3, 0], [37.6, 55.8, 1], [72.9, 19.1, 0], [77.2, 28.6, 1], [103.8, 1.4, 0],
+  [114.2, 22.3, 1], [121.5, 31.2, 0], [116.4, 39.9, 1], [139.7, 35.7, 0], [127, 37.6, 1],
+  [151.2, -33.9, 0], [106.8, -6.2, 1], [-74, 40.7, 0], [-122.4, 37.8, 1], [-99.1, 19.4, 0],
+  [-46.6, -23.6, 1], [-58.4, -34.6, 0], [-79.4, 43.7, 1],
+];
+
+/* Point-in-polygon (lon/lat ray cast) */
+function inPoly(lon: number, lat: number, poly: LL[]): boolean {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+    const [xi, yi] = poly[i], [xj, yj] = poly[j];
+    if ((yi > lat) !== (yj > lat) && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+function isLand(lon: number, lat: number): boolean {
+  for (const poly of WORLD) if (inPoly(lon, lat, poly)) return true;
+  return false;
+}
+
+const MARRAKECH = ll2v(-7.9811, 31.6295);
 const TILT = toRad(23.4);
 const LIGHT = norm3([-0.55, 0.4, 0.72] as V3);
 
-interface Ring  { basisU: V3; basisW: V3; r: number; ticks: number; dir: number; }
+interface Ring  { u: V3; w: V3; r: number; ticks: number; dir: number; magenta: boolean; }
 interface Deb   { phase: number; r: number; speed: number; wob: number; size: number; }
 interface Sat   { u: V3; w: V3; r: number; speed: number; phase: number; name: string; }
-interface Arc   { a: V3; b: V3; t: number; spd: number; }
-interface Rip   { node: number; t: number; }
+interface Arc   { a: V3; b: V3; t: number; spd: number; violet: boolean; }
+interface Rip   { city: number; t: number; }
 interface Pulse { edge: number; t: number; spd: number; }
 
 interface GlobeData {
-  nodes: V3[];
-  lon: Float32Array;
-  land: boolean[];
-  cities: number[];
-  cityPhase: Float32Array;
+  dots: V3[]; dotLon: Float32Array;
+  coasts: V3[][];
+  cities: V3[]; cityLon: Float32Array; cityViolet: boolean[]; cityPhase: Float32Array;
   edges: [number, number][];
-  rings: Ring[];
-  debris: Deb[];
-  sats: Sat[];
+  rings: Ring[]; debris: Deb[]; sats: Sat[];
 }
 
-function inclinedBasis(inclineA: number, inclineB: number): { u: V3; w: V3 } {
-  const axis = norm3([Math.sin(inclineA), Math.cos(inclineA) * Math.cos(inclineB), Math.sin(inclineB)] as V3);
+function inclinedBasis(a: number, b: number): { u: V3; w: V3 } {
+  const axis = norm3([Math.sin(a), Math.cos(a) * Math.cos(b), Math.sin(b)] as V3);
   const u = norm3(cross3(axis, Math.abs(axis[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0] as V3));
   const w = norm3(cross3(axis, u));
   return { u, w };
 }
 
-function buildGlobe(scale: number): GlobeData {
-  const nodes: V3[] = [];
-  const land: boolean[] = [];
-  const lons: number[] = [];
-  ZONES.forEach(([la0, la1, lo0, lo1, n], zi) => {
-    const count = Math.max(6, Math.round(n * scale));
-    for (let i = 0; i < count; i++) {
-      const lat = la0 + Math.random() * (la1 - la0);
-      const lon = lo0 + Math.random() * (lo1 - lo0);
-      nodes.push(ll2v(lat, lon));
-      lons.push(toRad(lon));
-      land.push(zi < ZONES.length - 1);
+function buildGlobe(isMob: boolean): GlobeData {
+  /* Land-fill dots — evenly spaced on the sphere, PIP-tested against WORLD */
+  const step = isMob ? 3.4 : 2.3;
+  const dots: V3[] = [];
+  const dotLonArr: number[] = [];
+  for (let lat = -55; lat <= 80; lat += step) {
+    const lonStep = step / Math.max(0.25, Math.cos(toRad(lat)));
+    for (let lon = -180; lon < 180; lon += lonStep) {
+      const jLon = lon + (Math.random() - 0.5) * lonStep * 0.4;
+      const jLat = lat + (Math.random() - 0.5) * step * 0.4;
+      if (isLand(jLon, jLat)) {
+        dots.push(ll2v(jLon, jLat));
+        dotLonArr.push(toRad(jLon));
+      }
     }
+  }
+
+  /* Coastline polylines, densified so they curve with the sphere */
+  const coasts: V3[][] = WORLD.map(poly => {
+    const ring: V3[] = [];
+    for (let i = 0; i < poly.length - 1; i++) {
+      const a = poly[i], b = poly[i + 1];
+      const steps = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 4));
+      for (let s = 0; s < steps; s++) {
+        ring.push(ll2v(a[0] + ((b[0] - a[0]) * s) / steps, a[1] + ((b[1] - a[1]) * s) / steps));
+      }
+    }
+    ring.push(ll2v(poly[poly.length - 1][0], poly[poly.length - 1][1]));
+    return ring;
   });
 
-  /* K-nearest network among land nodes */
+  /* Cities */
+  const cities = CITIES.map(([lon, lat]) => ll2v(lon, lat));
+  const cityLon = Float32Array.from(CITIES.map(([lon]) => toRad(lon)));
+  const cityViolet = CITIES.map(c => c[2] === 1);
+  const cityPhase = new Float32Array(CITIES.length).map(() => Math.random() * TAU);
+
+  /* Ground network between nearby cities */
   const edges: [number, number][] = [];
   const seen = new Set<number>();
-  const N = nodes.length;
-  for (let i = 0; i < N; i++) {
-    if (!land[i]) continue;
-    const near = Array.from({ length: N }, (_, j) => j)
-      .filter(j => j !== i && land[j])
-      .sort((a, b) => dot3(nodes[b], nodes[i]) - dot3(nodes[a], nodes[i]))
-      .slice(0, 3);
+  for (let i = 0; i < cities.length; i++) {
+    const near = Array.from({ length: cities.length }, (_, j) => j)
+      .filter(j => j !== i)
+      .sort((a, b) => dot3(cities[b], cities[i]) - dot3(cities[a], cities[i]))
+      .slice(0, 2);
     for (const j of near) {
-      if (dot3(nodes[i], nodes[j]) < 0.82) continue;
-      const key = i < j ? i * N + j : j * N + i;
+      if (dot3(cities[i], cities[j]) < 0.55) continue;
+      const key = i < j ? i * 100 + j : j * 100 + i;
       if (!seen.has(key)) { seen.add(key); edges.push([i, j]); }
     }
   }
 
-  /* Cities — every ~8th land node becomes a beacon */
-  const cities: number[] = [];
-  for (let i = 0; i < N; i++) if (land[i] && i % 8 === 3) cities.push(i);
-  const cityPhase = new Float32Array(cities.length).map(() => Math.random() * TAU);
-
-  /* Tick-ring system */
   const r1 = inclinedBasis(0.35, 0.1);
   const r2 = inclinedBasis(-0.2, 0.5);
+  const r3 = inclinedBasis(1.2, -0.35);
+  const r4 = inclinedBasis(-1.0, 0.9);
   const rings: Ring[] = [
-    { basisU: r1.u, basisW: r1.w, r: 1.62, ticks: 72, dir: 1 },
-    { basisU: r2.u, basisW: r2.w, r: 1.84, ticks: 96, dir: -1 },
+    { ...r1, r: 1.62, ticks: 72, dir: 1,  magenta: false },
+    { ...r2, r: 1.84, ticks: 96, dir: -1, magenta: false },
+    { ...r3, r: 1.18, ticks: 0,  dir: 1,  magenta: true },
+    { ...r4, r: 1.30, ticks: 0,  dir: -1, magenta: true },
   ];
 
-  /* Debris belt */
-  const debris: Deb[] = Array.from({ length: Math.round(46 * scale) }, () => ({
+  const debris: Deb[] = Array.from({ length: isMob ? 22 : 46 }, () => ({
     phase: Math.random() * TAU,
     r: 1.3 + Math.random() * 0.18,
     speed: (0.00005 + Math.random() * 0.00008) * (Math.random() < 0.5 ? 1 : -1),
@@ -150,13 +232,12 @@ function buildGlobe(scale: number): GlobeData {
     size: 0.5 + Math.random() * 0.6,
   }));
 
-  /* Satellites */
   const sats: Sat[] = [1.28, 1.45, 1.7].map((r, i) => {
     const { u, w } = inclinedBasis(i * 2.1, i * 1.3 + 0.6);
     return { u, w, r, speed: (0.00016 + i * 0.00006) * (i % 2 ? -1 : 1), phase: i * 2.2, name: `SAT-0${i + 1}` };
   });
 
-  return { nodes, lon: Float32Array.from(lons), land, cities, cityPhase, edges, rings, debris, sats };
+  return { dots, dotLon: Float32Array.from(dotLonArr), coasts, cities, cityLon, cityViolet, cityPhase, edges, rings, debris, sats };
 }
 
 interface Star { x: number; y: number; z: number; r: number; tw: number; hue: 'white' | 'indigo' | 'cyan'; }
@@ -183,7 +264,7 @@ export default function SpaceBackdrop() {
     let stars: Star[] = [];
     let comets: Comet[] = [];
     let lastComet = 0;
-    let globe: GlobeData = buildGlobe(1);
+    let globe: GlobeData = buildGlobe(false);
     let pulses: Pulse[] = [];
     let arcs: Arc[] = [];
     let ripples: Rip[] = [];
@@ -206,19 +287,18 @@ export default function SpaceBackdrop() {
         hue: Math.random() < 0.72 ? 'white' : Math.random() < 0.6 ? 'indigo' : 'cyan',
       }));
 
-      globe = buildGlobe(isMob ? 0.5 : 1);
+      globe = buildGlobe(isMob);
       pulses = []; arcs = []; ripples = [];
     };
 
     const spawnArc = () => {
-      const { cities, nodes } = globe;
-      if (cities.length < 4) return;
+      const { cities } = globe;
       for (let tries = 0; tries < 8; tries++) {
-        const a = nodes[cities[(Math.random() * cities.length) | 0]];
-        const b = nodes[cities[(Math.random() * cities.length) | 0]];
-        const d = dot3(a, b);
-        if (d > -0.25 && d < 0.75) { // medium-to-long haul only
-          arcs.push({ a, b, t: 0, spd: 0.004 + Math.random() * 0.005 });
+        const i = (Math.random() * cities.length) | 0;
+        const j = (Math.random() * cities.length) | 0;
+        const d = dot3(cities[i], cities[j]);
+        if (i !== j && d > -0.25 && d < 0.8) {
+          arcs.push({ a: cities[i], b: cities[j], t: 0, spd: 0.004 + Math.random() * 0.005, violet: Math.random() < 0.4 });
           return;
         }
       }
@@ -274,7 +354,7 @@ export default function SpaceBackdrop() {
       }
     };
 
-    /* ── The Globe ─────────────────────────────────────────────────── */
+    /* ── The Earth ─────────────────────────────────────────────────── */
     const drawGlobe = (t: number, scroll: number) => {
       const R = Math.min(W, H) * (isMob ? 0.44 : 0.36);
       const cx = isMob ? W * 0.72 : W * 0.80;
@@ -283,68 +363,65 @@ export default function SpaceBackdrop() {
       const dim = isMob ? 0.8 : 1;
 
       const view = (m: V3): V3 => rotZ(rotY(m, theta), TILT);
-      const project = (v: V3, radius = R): [number, number] => [cx + v[0] * radius, cy - v[1] * radius];
-
-      const N = globe.nodes.length;
-      const px = new Float32Array(N);
-      const py = new Float32Array(N);
-      const pz = new Float32Array(N);
-      const shade = new Float32Array(N);
-      for (let i = 0; i < N; i++) {
-        const v = view(globe.nodes[i]);
-        px[i] = cx + v[0] * R;
-        py[i] = cy - v[1] * R;
-        pz[i] = v[2];
-        shade[i] = dot3(v, LIGHT);
-      }
 
       /* Planet body */
       const body = ctx.createRadialGradient(cx - R * 0.4, cy - R * 0.3, R * 0.1, cx, cy, R);
-      body.addColorStop(0, `rgba(16,18,48,${0.78 * dim})`);
-      body.addColorStop(0.62, `rgba(9,10,34,${0.85 * dim})`);
-      body.addColorStop(1, `rgba(4,5,18,${0.92 * dim})`);
+      body.addColorStop(0, `rgba(18,22,58,${0.82 * dim})`);
+      body.addColorStop(0.62, `rgba(10,12,40,${0.88 * dim})`);
+      body.addColorStop(1, `rgba(5,6,22,${0.94 * dim})`);
       ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
       ctx.fillStyle = body; ctx.fill();
 
+      /* Inner ocean glow toward the lit side */
+      const ocean = ctx.createRadialGradient(cx - R * 0.5, cy - R * 0.35, 0, cx - R * 0.3, cy - R * 0.2, R * 1.15);
+      ocean.addColorStop(0, `rgba(56,90,220,${0.16 * dim})`);
+      ocean.addColorStop(0.55, `rgba(40,60,160,${0.06 * dim})`);
+      ocean.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU);
+      ctx.fillStyle = ocean; ctx.fill();
+
       /* Atmosphere + lit limb */
-      const atm = ctx.createRadialGradient(cx, cy, R * 0.92, cx, cy, R * 1.3);
+      const atm = ctx.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.32);
       atm.addColorStop(0, 'rgba(99,102,241,0)');
-      atm.addColorStop(0.28, `rgba(99,102,241,${0.10 * dim})`);
-      atm.addColorStop(0.55, `rgba(56,189,248,${0.05 * dim})`);
+      atm.addColorStop(0.26, `rgba(99,140,255,${0.13 * dim})`);
+      atm.addColorStop(0.55, `rgba(56,189,248,${0.06 * dim})`);
       atm.addColorStop(1, 'rgba(56,189,248,0)');
-      ctx.beginPath(); ctx.arc(cx, cy, R * 1.3, 0, TAU);
+      ctx.beginPath(); ctx.arc(cx, cy, R * 1.32, 0, TAU);
       ctx.fillStyle = atm; ctx.fill();
 
       const litAngle = Math.atan2(-LIGHT[1], LIGHT[0]);
-      ctx.beginPath(); ctx.arc(cx, cy, R - 1, litAngle - 1.5, litAngle + 1.5);
-      ctx.strokeStyle = `rgba(125,211,252,${0.28 * dim})`; ctx.lineWidth = 1.4; ctx.stroke();
-      ctx.beginPath(); ctx.arc(cx, cy, R - 2.5, litAngle - 1.1, litAngle + 1.1);
-      ctx.strokeStyle = `rgba(190,225,255,${0.12 * dim})`; ctx.lineWidth = 4; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R - 1, litAngle - 1.7, litAngle + 1.7);
+      ctx.strokeStyle = `rgba(125,211,252,${0.34 * dim})`; ctx.lineWidth = 1.6; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R - 3, litAngle - 1.2, litAngle + 1.2);
+      ctx.strokeStyle = `rgba(190,225,255,${0.14 * dim})`; ctx.lineWidth = 5; ctx.stroke();
 
-      /* Graticule */
-      const seg = 64;
-      const circles: V3[][] = [[], [], []];
-      for (let i = 0; i <= seg; i++) {
-        const a = (i / seg) * TAU;
-        circles[0].push([Math.cos(a), 0, Math.sin(a)]);
-        circles[1].push([Math.cos(a), Math.sin(a), 0]);
-        circles[2].push([0, Math.sin(a), Math.cos(a)]);
-      }
-      for (const circle of circles) {
+      /* Graticule — every 30° */
+      ctx.lineWidth = 0.7;
+      ctx.strokeStyle = `rgba(129,160,255,${0.11 * dim})`;
+      for (let latDeg = -60; latDeg <= 60; latDeg += 30) {
         ctx.beginPath();
         let pen = false;
-        for (const p0 of circle) {
-          const v = view(p0);
+        for (let i = 0; i <= 72; i++) {
+          const v = view(ll2v((i / 72) * 360 - 180, latDeg));
           if (v[2] < -0.02) { pen = false; continue; }
-          const [x, y] = project(v);
+          const x = cx + v[0] * R, y = cy - v[1] * R;
           if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
         }
-        ctx.strokeStyle = `rgba(129,140,248,${0.10 * dim})`;
-        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
+      for (let lonDeg = 0; lonDeg < 360; lonDeg += 30) {
+        ctx.beginPath();
+        let pen = false;
+        for (let i = 0; i <= 48; i++) {
+          const v = view(ll2v(lonDeg - 180, (i / 48) * 180 - 90));
+          if (v[2] < -0.02) { pen = false; continue; }
+          const x = cx + v[0] * R, y = cy - v[1] * R;
+          if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
+        }
         ctx.stroke();
       }
 
-      /* Radar sweep — a meridian of light orbiting the planet */
+      /* Radar sweep meridian */
       const sweepLon = (t * 0.00045) % TAU;
       ctx.beginPath();
       let pen = false;
@@ -353,98 +430,132 @@ export default function SpaceBackdrop() {
         const m: V3 = [Math.cos(lat) * Math.cos(sweepLon), Math.sin(lat), Math.cos(lat) * Math.sin(sweepLon)];
         const v = view(m);
         if (v[2] < 0.02) { pen = false; continue; }
-        const [x, y] = project(v);
+        const x = cx + v[0] * R, y = cy - v[1] * R;
         if (!pen) { ctx.moveTo(x, y); pen = true; } else ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = `rgba(125,211,252,${0.16 * dim})`;
+      ctx.strokeStyle = `rgba(125,211,252,${0.15 * dim})`;
       ctx.lineWidth = 1.1;
       ctx.stroke();
 
-      /* Network edges */
-      for (const [i, j] of globe.edges) {
-        const zAvg = (pz[i] + pz[j]) / 2;
-        if (zAvg < -0.15) continue;
-        const front = Math.min(1, Math.max(0, zAvg + 0.35));
-        const lum = Math.max(0, (shade[i] + shade[j]) / 2);
-        const a = (0.05 + lum * 0.14) * front * dim;
-        if (a < 0.015) continue;
-        ctx.strokeStyle = `rgba(129,140,248,${a})`;
-        ctx.lineWidth = 0.8;
-        ctx.beginPath();
-        ctx.moveTo(px[i], py[i]);
-        ctx.lineTo(px[j], py[j]);
-        ctx.stroke();
-      }
-
-      /* Nodes — with radar-sweep ignition */
-      for (let i = 0; i < N; i++) {
-        const front = pz[i] > 0;
-        const lum = Math.max(0, shade[i]);
-        const isLand = globe.land[i];
-        // wake: how recently did the sweep pass this node's longitude?
-        let dLon = (globe.lon[i] - sweepLon) % TAU;
+      /* ── LANDMASS DOTS — the actual Earth ── */
+      const nD = globe.dots.length;
+      for (let i = 0; i < nD; i++) {
+        const v = view(globe.dots[i]);
+        if (v[2] < -0.08) continue;
+        const x = cx + v[0] * R, y = cy - v[1] * R;
+        const lum = Math.max(0, dot3(v, LIGHT));
+        let dLon = (globe.dotLon[i] - sweepLon) % TAU;
         if (dLon > 0) dLon -= TAU;
-        const wake = front && dLon > -0.7 ? 1 + dLon / 0.7 : 0;
+        const wake = v[2] > 0 && dLon > -0.6 ? 1 + dLon / 0.6 : 0;
 
-        let a: number, r: number;
-        if (front) {
-          a = (isLand ? 0.22 + lum * 0.6 : 0.10 + lum * 0.22) * dim + wake * 0.5;
-          r = (isLand ? 1.1 + lum * 0.9 : 0.8) * (isMob ? 0.85 : 1) + wake * 1.1;
-        } else { a = 0.05 * dim; r = 0.7; }
-        ctx.beginPath();
-        ctx.arc(px[i], py[i], r, 0, TAU);
+        if (v[2] <= 0.02) {
+          ctx.fillStyle = `rgba(129,150,248,${0.05 * dim})`;
+          ctx.fillRect(x - 0.5, y - 0.5, 1, 1);
+          continue;
+        }
+        const a = (0.22 + lum * 0.62) * dim + wake * 0.4;
+        const sz = 1.1 + lum * 0.8 + wake * 0.9;
         ctx.fillStyle = wake > 0.25
-          ? `rgba(125,211,252,${Math.min(0.95, a)})`
-          : front && lum > 0.55 && isLand
-            ? `rgba(190,225,255,${a})`
-            : `rgba(165,180,252,${a})`;
-        ctx.fill();
+          ? `rgba(140,220,255,${Math.min(0.95, a)})`
+          : lum > 0.5
+            ? `rgba(150,190,255,${a})`
+            : `rgba(110,130,235,${a})`;
+        ctx.fillRect(x - sz / 2, y - sz / 2, sz, sz);
       }
 
-      /* City beacons — pulsing diffraction sparkles */
-      for (let c = 0; c < globe.cities.length; c++) {
-        const i = globe.cities[c];
-        if (pz[i] < 0.05) continue;
-        const pulse = 0.5 + 0.5 * Math.sin(t * 0.0022 + globe.cityPhase[c]);
-        const a = (0.25 + pulse * 0.55) * Math.min(1, pz[i] + 0.3) * dim;
-        const len = 3 + pulse * 3.5;
-        ctx.strokeStyle = `rgba(190,225,255,${a * 0.75})`;
+      /* ── COASTLINES — glowing vector strokes ── */
+      for (let pass = 0; pass < 2; pass++) {
+        ctx.lineWidth = pass === 0 ? 2.6 : 1;
+        for (const ring of globe.coasts) {
+          ctx.beginPath();
+          let pen2 = false;
+          let lumSum = 0, lumN = 0;
+          for (const p of ring) {
+            const v = view(p);
+            if (v[2] < 0.0) { pen2 = false; continue; }
+            const x = cx + v[0] * R, y = cy - v[1] * R;
+            lumSum += Math.max(0, dot3(v, LIGHT)); lumN++;
+            if (!pen2) { ctx.moveTo(x, y); pen2 = true; } else ctx.lineTo(x, y);
+          }
+          if (!lumN) continue;
+          const lum = lumSum / lumN;
+          ctx.strokeStyle = pass === 0
+            ? `rgba(80,160,255,${(0.05 + lum * 0.10) * dim})`
+            : `rgba(150,210,255,${(0.20 + lum * 0.42) * dim})`;
+          ctx.stroke();
+        }
+      }
+
+      /* City projections (computed once for beacons/edges/pulses/ripples) */
+      const nC = globe.cities.length;
+      const cpx = new Float32Array(nC);
+      const cpy = new Float32Array(nC);
+      const cpz = new Float32Array(nC);
+      for (let i = 0; i < nC; i++) {
+        const v = view(globe.cities[i]);
+        cpx[i] = cx + v[0] * R;
+        cpy[i] = cy - v[1] * R;
+        cpz[i] = v[2];
+      }
+
+      /* Ground network between cities */
+      for (const [i, j] of globe.edges) {
+        const zAvg = (cpz[i] + cpz[j]) / 2;
+        if (zAvg < 0.02) continue;
+        ctx.strokeStyle = `rgba(129,140,248,${(0.06 + zAvg * 0.14) * dim})`;
         ctx.lineWidth = 0.8;
         ctx.beginPath();
-        ctx.moveTo(px[i] - len, py[i]); ctx.lineTo(px[i] + len, py[i]);
-        ctx.moveTo(px[i], py[i] - len); ctx.lineTo(px[i], py[i] + len);
+        ctx.moveTo(cpx[i], cpy[i]);
+        ctx.lineTo(cpx[j], cpy[j]);
         ctx.stroke();
+      }
+
+      /* City beacons — cyan + violet like the reference */
+      for (let i = 0; i < nC; i++) {
+        if (cpz[i] < 0.05) continue;
+        const pulse = 0.5 + 0.5 * Math.sin(t * 0.0022 + globe.cityPhase[i]);
+        const a = (0.35 + pulse * 0.5) * Math.min(1, cpz[i] + 0.3) * dim;
+        const violet = globe.cityViolet[i];
+        const core = violet ? '217,70,239' : '125,211,252';
+        const len = 2.5 + pulse * 3;
+        ctx.strokeStyle = `rgba(${core},${a * 0.6})`;
+        ctx.lineWidth = 0.8;
         ctx.beginPath();
-        ctx.arc(px[i], py[i], 1.6 + pulse, 0, TAU);
-        ctx.fillStyle = `rgba(125,211,252,${a})`;
-        ctx.fill();
+        ctx.moveTo(cpx[i] - len, cpy[i]); ctx.lineTo(cpx[i] + len, cpy[i]);
+        ctx.moveTo(cpx[i], cpy[i] - len); ctx.lineTo(cpx[i], cpy[i] + len);
+        ctx.stroke();
+        ctx.beginPath(); ctx.arc(cpx[i], cpy[i], 1.5 + pulse * 0.8, 0, TAU);
+        ctx.fillStyle = `rgba(${core},${a})`; ctx.fill();
+        ctx.beginPath(); ctx.arc(cpx[i], cpy[i], 5 + pulse * 3, 0, TAU);
+        ctx.fillStyle = `rgba(${core},${a * 0.12})`; ctx.fill();
       }
 
       if (!reduced) {
-        /* Surface ripples — tangent-plane transmission rings */
-        if (t - lastRipple > 2100 && globe.cities.length) {
-          const frontCities = globe.cities.filter(i => pz[i] > 0.25);
-          if (frontCities.length) {
+        /* Tangent-plane ripples */
+        if (t - lastRipple > 2100) {
+          const front: number[] = [];
+          for (let i = 0; i < nC; i++) if (cpz[i] > 0.25) front.push(i);
+          if (front.length) {
             lastRipple = t;
-            ripples.push({ node: frontCities[(Math.random() * frontCities.length) | 0], t: 0 });
+            ripples.push({ city: front[(Math.random() * front.length) | 0], t: 0 });
           }
         }
         ripples = ripples.filter(r => r.t < 1);
         for (const rip of ripples) {
           rip.t += 0.016;
-          const i = rip.node;
-          if (pz[i] < 0) continue;
+          const i = rip.city;
+          if (cpz[i] < 0) continue;
           const rr = rip.t * 20;
-          const a = (1 - rip.t) * 0.4 * Math.min(1, pz[i] + 0.2) * dim;
-          const ang = Math.atan2(py[i] - cy, px[i] - cx);
+          const a = (1 - rip.t) * 0.4 * Math.min(1, cpz[i] + 0.2) * dim;
+          const ang = Math.atan2(cpy[i] - cy, cpx[i] - cx);
           ctx.beginPath();
-          ctx.ellipse(px[i], py[i], rr, rr * Math.max(0.3, pz[i]), ang, 0, TAU);
+          ctx.ellipse(cpx[i], cpy[i], rr, rr * Math.max(0.3, cpz[i]), ang, 0, TAU);
           ctx.strokeStyle = `rgba(125,211,252,${a})`;
           ctx.lineWidth = 1;
           ctx.stroke();
         }
 
-        /* Great-circle traffic arcs */
+        /* Great-circle traffic arcs between real cities */
         while (arcs.length < (isMob ? 3 : 6)) spawnArc();
         arcs = arcs.filter(a => a.t < 1.6);
         for (const arc of arcs) {
@@ -452,6 +563,7 @@ export default function SpaceBackdrop() {
           const head = Math.min(1, arc.t);
           const tail = Math.max(0, arc.t - 0.55);
           if (tail >= 1) continue;
+          const col = arc.violet ? '217,70,239' : '103,232,249';
           const steps = 26;
           let prev: [number, number] | null = null;
           let prevZ = 0;
@@ -460,12 +572,12 @@ export default function SpaceBackdrop() {
             const m = slerp(arc.a, arc.b, f);
             const lift = 1 + Math.sin(f * Math.PI) * 0.22;
             const v = view(m);
-            const [x, y] = project(v, R * lift);
+            const x = cx + v[0] * R * lift, y = cy - v[1] * R * lift;
             if (prev && (v[2] > -0.05 || prevZ > -0.05)) {
               const prog = s / steps;
               const a = Math.sin(prog * Math.PI * 0.9 + 0.1) * 0.5 * Math.min(1, v[2] + 0.55) * dim;
               if (a > 0.02) {
-                ctx.strokeStyle = `rgba(103,232,249,${a})`;
+                ctx.strokeStyle = `rgba(${col},${a})`;
                 ctx.lineWidth = prog > 0.85 ? 1.4 : 0.9;
                 ctx.beginPath();
                 ctx.moveTo(prev[0], prev[1]);
@@ -475,36 +587,29 @@ export default function SpaceBackdrop() {
             }
             prev = [x, y]; prevZ = v[2];
           }
-          // luminous head
           if (head < 1 && prev) {
-            ctx.beginPath();
-            ctx.arc(prev[0], prev[1], 1.8, 0, TAU);
-            ctx.fillStyle = `rgba(190,225,255,${0.8 * dim})`;
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(prev[0], prev[1], 4.6, 0, TAU);
-            ctx.fillStyle = 'rgba(56,189,248,0.16)';
-            ctx.fill();
+            ctx.beginPath(); ctx.arc(prev[0], prev[1], 1.8, 0, TAU);
+            ctx.fillStyle = `rgba(190,225,255,${0.8 * dim})`; ctx.fill();
+            ctx.beginPath(); ctx.arc(prev[0], prev[1], 4.6, 0, TAU);
+            ctx.fillStyle = `rgba(${col},0.16)`; ctx.fill();
           }
         }
 
-        /* Data pulses on the ground network */
-        while (pulses.length < (isMob ? 5 : 11) && globe.edges.length) {
+        /* Pulses on the city network */
+        while (pulses.length < (isMob ? 4 : 8) && globe.edges.length) {
           pulses.push({ edge: (Math.random() * globe.edges.length) | 0, t: 0, spd: 0.006 + Math.random() * 0.012 });
         }
         pulses = pulses.filter(p => p.t <= 1);
         for (const p of pulses) {
           p.t += p.spd;
           const [i, j] = globe.edges[p.edge];
-          const zAvg = (pz[i] + pz[j]) / 2;
+          const zAvg = (cpz[i] + cpz[j]) / 2;
           if (zAvg < 0) continue;
-          const x = px[i] + (px[j] - px[i]) * p.t;
-          const y = py[i] + (py[j] - py[i]) * p.t;
+          const x = cpx[i] + (cpx[j] - cpx[i]) * p.t;
+          const y = cpy[i] + (cpy[j] - cpy[i]) * p.t;
           const a = Math.sin(p.t * Math.PI) * (0.35 + zAvg * 0.55) * dim;
           ctx.beginPath(); ctx.arc(x, y, 1.6, 0, TAU);
           ctx.fillStyle = `rgba(125,211,252,${a})`; ctx.fill();
-          ctx.beginPath(); ctx.arc(x, y, 4.2, 0, TAU);
-          ctx.fillStyle = `rgba(56,189,248,${a * 0.18})`; ctx.fill();
         }
       }
 
@@ -512,7 +617,7 @@ export default function SpaceBackdrop() {
       {
         const v = view(MARRAKECH);
         if (v[2] > 0.12) {
-          const [x, y] = project(v);
+          const x = cx + v[0] * R, y = cy - v[1] * R;
           const a = Math.min(1, v[2] + 0.25) * dim;
           const spin = t * 0.001;
           const blink = 0.6 + 0.4 * Math.sin(t * 0.004);
@@ -550,41 +655,82 @@ export default function SpaceBackdrop() {
         ctx.fill();
       }
 
-      /* Tick-ring system with counter-rotating markers */
+      /* Ring system — tick rings + magenta orbital ellipses */
       for (let ri = 0; ri < globe.rings.length; ri++) {
         const ring = globe.rings[ri];
         const drift = t * 0.00003 * ring.dir + scroll * 0.0001 * ring.dir;
-        for (let k = 0; k < ring.ticks; k++) {
-          const a2 = (k / ring.ticks) * TAU + drift;
-          const m: V3 = [
-            ring.basisU[0] * Math.cos(a2) + ring.basisW[0] * Math.sin(a2),
-            ring.basisU[1] * Math.cos(a2) + ring.basisW[1] * Math.sin(a2),
-            ring.basisU[2] * Math.cos(a2) + ring.basisW[2] * Math.sin(a2),
-          ];
-          const v = rotZ(m, TILT);
-          const x = cx + v[0] * R * ring.r, y = cy - v[1] * R * ring.r;
-          const behind = v[2] < 0 && Math.hypot(x - cx, y - cy) < R;
-          const major = k % 8 === 0;
-          const a = (behind ? 0.025 : major ? 0.22 : 0.09) * dim;
+
+        if (ring.magenta) {
+          /* Solid magenta orbit — like the reference image */
           ctx.beginPath();
-          ctx.arc(x, y, major ? 1.1 : 0.6, 0, TAU);
-          ctx.fillStyle = `rgba(${ri === 0 ? '129,140,248' : '125,211,252'},${a})`;
-          ctx.fill();
-        }
-        // orbiting marker on each ring
-        const ma = t * 0.00035 * ring.dir + ri * 2;
-        const mm: V3 = [
-          ring.basisU[0] * Math.cos(ma) + ring.basisW[0] * Math.sin(ma),
-          ring.basisU[1] * Math.cos(ma) + ring.basisW[1] * Math.sin(ma),
-          ring.basisU[2] * Math.cos(ma) + ring.basisW[2] * Math.sin(ma),
-        ];
-        const mv = rotZ(mm, TILT);
-        const mx2 = cx + mv[0] * R * ring.r, my2 = cy - mv[1] * R * ring.r;
-        const mBehind = mv[2] < 0 && Math.hypot(mx2 - cx, my2 - cy) < R;
-        if (!mBehind) {
-          ctx.strokeStyle = `rgba(125,211,252,${0.5 * dim})`;
-          ctx.lineWidth = 0.9;
-          ctx.strokeRect(mx2 - 2.4, my2 - 2.4, 4.8, 4.8);
+          let pen3 = false;
+          let firstFront: [number, number] | null = null;
+          for (let k = 0; k <= 90; k++) {
+            const a2 = (k / 90) * TAU + drift;
+            const m: V3 = [
+              ring.u[0] * Math.cos(a2) + ring.w[0] * Math.sin(a2),
+              ring.u[1] * Math.cos(a2) + ring.w[1] * Math.sin(a2),
+              ring.u[2] * Math.cos(a2) + ring.w[2] * Math.sin(a2),
+            ];
+            const v = rotZ(m, TILT);
+            const x = cx + v[0] * R * ring.r, y = cy - v[1] * R * ring.r;
+            const behind = v[2] < 0 && Math.hypot(x - cx, y - cy) < R;
+            if (behind) { pen3 = false; continue; }
+            if (!pen3) { ctx.moveTo(x, y); pen3 = true; if (!firstFront) firstFront = [x, y]; }
+            else ctx.lineTo(x, y);
+          }
+          ctx.strokeStyle = `rgba(217,70,239,${0.28 * dim})`;
+          ctx.lineWidth = 1.1;
+          ctx.stroke();
+          /* glowing tracer riding the orbit */
+          const ta = t * 0.0004 * ring.dir + ri;
+          const tm: V3 = [
+            ring.u[0] * Math.cos(ta) + ring.w[0] * Math.sin(ta),
+            ring.u[1] * Math.cos(ta) + ring.w[1] * Math.sin(ta),
+            ring.u[2] * Math.cos(ta) + ring.w[2] * Math.sin(ta),
+          ];
+          const tv = rotZ(tm, TILT);
+          const tx2 = cx + tv[0] * R * ring.r, ty2 = cy - tv[1] * R * ring.r;
+          const tBehind = tv[2] < 0 && Math.hypot(tx2 - cx, ty2 - cy) < R;
+          if (!tBehind) {
+            ctx.beginPath(); ctx.arc(tx2, ty2, 1.8, 0, TAU);
+            ctx.fillStyle = `rgba(240,171,252,${0.9 * dim})`; ctx.fill();
+            ctx.beginPath(); ctx.arc(tx2, ty2, 5.5, 0, TAU);
+            ctx.fillStyle = 'rgba(217,70,239,0.18)'; ctx.fill();
+          }
+        } else {
+          /* Tick rings */
+          for (let k = 0; k < ring.ticks; k++) {
+            const a2 = (k / ring.ticks) * TAU + drift;
+            const m: V3 = [
+              ring.u[0] * Math.cos(a2) + ring.w[0] * Math.sin(a2),
+              ring.u[1] * Math.cos(a2) + ring.w[1] * Math.sin(a2),
+              ring.u[2] * Math.cos(a2) + ring.w[2] * Math.sin(a2),
+            ];
+            const v = rotZ(m, TILT);
+            const x = cx + v[0] * R * ring.r, y = cy - v[1] * R * ring.r;
+            const behind = v[2] < 0 && Math.hypot(x - cx, y - cy) < R;
+            const major = k % 8 === 0;
+            const a = (behind ? 0.025 : major ? 0.22 : 0.09) * dim;
+            ctx.beginPath();
+            ctx.arc(x, y, major ? 1.1 : 0.6, 0, TAU);
+            ctx.fillStyle = `rgba(${ri === 0 ? '129,140,248' : '125,211,252'},${a})`;
+            ctx.fill();
+          }
+          const ma = t * 0.00035 * ring.dir + ri * 2;
+          const mm: V3 = [
+            ring.u[0] * Math.cos(ma) + ring.w[0] * Math.sin(ma),
+            ring.u[1] * Math.cos(ma) + ring.w[1] * Math.sin(ma),
+            ring.u[2] * Math.cos(ma) + ring.w[2] * Math.sin(ma),
+          ];
+          const mv = rotZ(mm, TILT);
+          const mx2 = cx + mv[0] * R * ring.r, my2 = cy - mv[1] * R * ring.r;
+          const mBehind = mv[2] < 0 && Math.hypot(mx2 - cx, my2 - cy) < R;
+          if (!mBehind) {
+            ctx.strokeStyle = `rgba(125,211,252,${0.5 * dim})`;
+            ctx.lineWidth = 0.9;
+            ctx.strokeRect(mx2 - 2.4, my2 - 2.4, 4.8, 4.8);
+          }
         }
       }
 
