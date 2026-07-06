@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 
 /**
- * Drafting-grid particle field. A lattice of ink points breathes with a slow
- * sine drift; within the pointer's radius, points are pushed away along the
- * displacement vector and tinted vermilion by proximity. Canvas 2D, DPR-capped,
- * paused off-screen, static under prefers-reduced-motion.
+ * Constellation grid. A lattice of starlight points breathes with a slow
+ * sine drift; within the pointer's radius points displace outward, ignite
+ * cyan, and link to their neighbours with luminous constellation lines.
+ * Canvas 2D, DPR-capped, paused off-screen, static under reduced-motion.
  */
 export default function HeroField({ className }: { className?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -21,7 +21,9 @@ export default function HeroField({ className }: { className?: string }) {
     let raf = 0;
     let running = true;
     let w = 0, h = 0;
+    let gap = 27;
     let pts: { x: number; y: number }[] = [];
+    let cols = 0;
     const mouse = { x: -9999, y: -9999, tx: -9999, ty: -9999 };
 
     const build = () => {
@@ -34,50 +36,79 @@ export default function HeroField({ className }: { className?: string }) {
       canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const gap = w < 640 ? 34 : 27;
+      gap = w < 640 ? 36 : 28;
       pts = [];
+      cols = 0;
+      for (let x = gap / 2; x < w; x += gap) cols++;
       for (let y = gap / 2; y < h; y += gap)
         for (let x = gap / 2; x < w; x += gap)
           pts.push({ x, y });
     };
 
-    const ink  = getComputedStyle(document.documentElement).getPropertyValue('--ink').trim() || '#171310';
+    const R = 160;
 
     const draw = (t: number) => {
       ctx.clearRect(0, 0, w, h);
-      // pointer easing
       mouse.x += (mouse.tx - mouse.x) * 0.12;
       mouse.y += (mouse.ty - mouse.y) * 0.12;
 
-      const R = 150;
       const time = t * 0.00042;
+      // displaced positions + activation, so lines can reuse them
+      const px = new Float32Array(pts.length);
+      const py = new Float32Array(pts.length);
+      const act = new Float32Array(pts.length);
 
       for (let i = 0; i < pts.length; i++) {
         const p = pts[i];
-        // ambient drift
-        const dxA = Math.sin(time + p.y * 0.011) * 2.4;
-        const dyA = Math.cos(time * 0.8 + p.x * 0.009) * 2.4;
-
-        let x = p.x + dxA, y = p.y + dyA;
-        let r = 1.05, alpha = 0.16, warm = 0;
+        let x = p.x + Math.sin(time + p.y * 0.011) * 2.6;
+        let y = p.y + Math.cos(time * 0.8 + p.x * 0.009) * 2.6;
 
         const dx = x - mouse.x, dy = y - mouse.y;
         const d2 = dx * dx + dy * dy;
+        let f = 0;
         if (d2 < R * R) {
           const d = Math.sqrt(d2) || 1;
-          const f = (1 - d / R);
-          const push = f * f * 30;
+          f = 1 - d / R;
+          const push = f * f * 26;
           x += (dx / d) * push;
           y += (dy / d) * push;
-          r = 1.05 + f * 1.7;
-          alpha = 0.16 + f * 0.6;
-          warm = f;
         }
+        px[i] = x; py[i] = y; act[i] = f;
 
+        const r = 1 + f * 1.8;
+        const alpha = 0.13 + f * 0.75;
         ctx.beginPath();
         ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = warm > 0.24 ? `rgba(224,67,13,${alpha})` : hexToRgba(ink, alpha);
+        ctx.fillStyle = f > 0.18
+          ? `rgba(125,211,252,${alpha})`
+          : `rgba(238,241,255,${alpha})`;
         ctx.fill();
+        if (f > 0.5) {
+          ctx.beginPath();
+          ctx.arc(x, y, r * 3.4, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(56,189,248,${f * 0.09})`;
+          ctx.fill();
+        }
+      }
+
+      // constellation lines between activated neighbours (right + down)
+      for (let i = 0; i < pts.length; i++) {
+        const a = act[i];
+        if (a < 0.14) continue;
+        const right = (i + 1) % cols !== 0 ? i + 1 : -1;
+        const down  = i + cols < pts.length ? i + cols : -1;
+        for (const j of [right, down]) {
+          if (j < 0) continue;
+          const b = act[j];
+          if (b < 0.14) continue;
+          const s = Math.min(a, b);
+          ctx.strokeStyle = `rgba(129,140,248,${s * 0.55})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(px[i], py[i]);
+          ctx.lineTo(px[j], py[j]);
+          ctx.stroke();
+        }
       }
     };
 
@@ -85,11 +116,6 @@ export default function HeroField({ className }: { className?: string }) {
       if (!running) return;
       draw(t);
       raf = requestAnimationFrame(loop);
-    };
-
-    const hexToRgba = (hex: string, a: number) => {
-      const n = parseInt(hex.replace('#', ''), 16);
-      return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
     };
 
     const onMove = (e: MouseEvent) => {

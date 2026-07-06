@@ -24,7 +24,7 @@ export default function Work() {
   }, []);
 
   return (
-    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
+    <div style={{ background: 'transparent', color: 'var(--fg)', overflowX: 'hidden' }}>
 
       {/* ═══ HERO ════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative flex flex-col" style={{ minHeight: '62svh', paddingTop: '6rem' }}>
@@ -36,7 +36,7 @@ export default function Work() {
           </div>
 
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
-            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 380 }}>
+            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 800 }}>
               <span className="mask-line"><span style={{ fontSize: 'var(--fs-hero)' }}>{t('work.h1')}</span></span>
               <span className="mask-line">
                 <span style={{ fontSize: 'var(--fs-hero)' }}>
@@ -66,7 +66,7 @@ export default function Work() {
             <p className="reveal o-label" style={{ marginBottom: '1.1rem' }}>
               <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('work.cta.l')}
             </p>
-            <h2 className="reveal font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 400,
+            <h2 className="reveal font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 600,
               lineHeight: 1, letterSpacing: '-0.02em', maxWidth: '14ch' }}>
               {t('work.cta.h')} <em className="it" style={{ color: 'var(--verm)' }}>{t('work.cta.h2')}</em>
             </h2>

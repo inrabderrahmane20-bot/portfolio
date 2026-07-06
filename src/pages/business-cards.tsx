@@ -12,7 +12,7 @@ export default function BusinessCards() {
           position:   'fixed',
           inset:      0,
           top:        68,
-          background: '#171310',
+          background: '#04071a',
           zIndex:     150,
         }}
       >

@@ -12,7 +12,8 @@ export default function Footer() {
 
   return (
     <footer data-theme="ink"
-      style={{ background: 'var(--bg)', color: 'var(--fg)', position: 'relative', overflow: 'hidden' }}>
+      style={{ background: 'rgba(8,8,31,0.9)', color: 'var(--fg)', position: 'relative', overflow: 'hidden',
+        borderTop: '1px solid var(--line)' }}>
 
       {/* CTA block */}
       <div className="container" style={{ paddingTop: 'clamp(4rem, 9vw, 9rem)', paddingBottom: 'clamp(3rem, 6vw, 6rem)' }}>
@@ -22,7 +23,7 @@ export default function Footer() {
               <span style={{ color: 'var(--acc)' }}>{'//'}</span> {t('footer.label')}
             </p>
             <h2 className="font-serif" style={{
-              fontSize: 'clamp(2.6rem, 8vw, 8.5rem)', fontWeight: 380,
+              fontSize: 'clamp(2.6rem, 8vw, 8.5rem)', fontWeight: 800,
               lineHeight: 0.98, letterSpacing: '-0.025em' }}>
               {t('footer.cta1')}{' '}
               <em className="it" style={{ color: 'var(--acc)' }}>{t('footer.cta2')}</em>
@@ -34,8 +35,8 @@ export default function Footer() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-8" style={{ marginTop: 'clamp(2rem, 4vw, 3.5rem)' }}>
           <Magnetic>
             <a href={`mailto:${contactData.email}`} className="btn-slab" data-cursor={t('ui.write')}
-              style={{ background: 'var(--paper)', color: 'var(--ink)' }}>
-              <span>{contactData.email}</span>
+              style={{ fontSize: 'clamp(0.52rem, 2.5vw, 0.7rem)', letterSpacing: '0.16em' }}>
+              <span style={{ wordBreak: 'keep-all', whiteSpace: 'nowrap' }}>{contactData.email}</span>
               <span className="arr" aria-hidden>↗</span>
             </a>
           </Magnetic>
@@ -123,10 +124,10 @@ export default function Footer() {
       <div aria-hidden className="select-none pointer-events-none"
         style={{ position: 'absolute', bottom: '-0.14em', left: 0, right: 0,
           textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden',
-          fontFamily: 'Fraunces, serif', fontWeight: 500,
+          fontFamily: 'Syne, sans-serif', fontWeight: 800,
           fontSize: 'clamp(4rem, 16vw, 19rem)', lineHeight: 1,
           letterSpacing: '-0.03em', color: 'transparent',
-          WebkitTextStroke: '1px rgba(239,235,226,0.09)' }}>
+          WebkitTextStroke: '1px rgba(238,241,255,0.09)' }}>
         CHARAK
       </div>
     </footer>

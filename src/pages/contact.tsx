@@ -64,7 +64,7 @@ export default function Contact() {
   const heads = t('con.heads').split('|').filter(Boolean);
 
   return (
-    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
+    <div style={{ background: 'transparent', color: 'var(--fg)', overflowX: 'hidden' }}>
 
       {/* ═══ HERO ════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative flex flex-col" style={{ minHeight: '58svh', paddingTop: '6rem' }}>
@@ -81,7 +81,7 @@ export default function Contact() {
           </div>
 
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
-            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 380 }}>
+            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 800 }}>
               {heads.map((w, i) => (
                 <span key={w} className="mask-line">
                   <span style={{ fontSize: 'var(--fs-hero)' }}>
@@ -153,7 +153,7 @@ export default function Contact() {
             {submitted ? (
               <div className="reveal is-visible flex flex-col items-start gap-4" style={{ minHeight: 220 }}>
                 <span className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.26em',
-                  background: 'var(--verm)', color: '#FFF7F2', padding: '0.5rem 0.9rem' }}>
+                  background: 'var(--verm)', color: '#FFFFFF', padding: '0.5rem 0.9rem' }}>
                   {t('con.ok.tag')}
                 </span>
                 <p className="font-serif" style={{ fontSize: 'clamp(1.8rem,3.4vw,2.8rem)', fontWeight: 400, lineHeight: 1.05 }}>
@@ -180,8 +180,8 @@ export default function Contact() {
                             display: 'inline-flex', alignItems: 'center', gap: 8,
                             padding: '0.8rem 1.3rem', fontSize: '0.62rem', letterSpacing: '0.22em',
                             textTransform: 'uppercase',
-                            background: active ? 'var(--ink)' : 'transparent',
-                            color: active ? 'var(--paper)' : 'var(--fg-2)',
+                            background: active ? 'linear-gradient(135deg, #6366F1, #38BDF8)' : 'transparent',
+                            color: active ? '#FFFFFF' : 'var(--fg-2)',
                             transition: 'background 0.25s ease, color 0.25s ease',
                           }}>
                           {m === 'email' ? <IconEmail /> : <IconWhatsApp />}
@@ -229,7 +229,7 @@ export default function Contact() {
                             padding: '0.7rem 1.1rem', fontSize: '0.62rem', letterSpacing: '0.18em',
                             border: '1px solid var(--line-2)',
                             background: active ? 'var(--verm)' : 'transparent',
-                            color: active ? '#FFF7F2' : 'var(--fg-2)',
+                            color: active ? '#FFFFFF' : 'var(--fg-2)',
                             borderColor: active ? 'var(--verm)' : 'var(--line-2)',
                             transition: 'all 0.25s ease',
                           }}>

@@ -9,6 +9,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import CustomCursor from '@/components/CustomCursor';
 import Preloader from '@/components/Preloader';
+import SpaceBackdrop from '@/components/SpaceBackdrop';
 
 /* ── IntersectionObserver scroll reveal ─────────────────────────────── */
 function setupReveal(): { disconnect: () => void } {
@@ -160,7 +161,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <meta name="theme-color" content="#EFEBE2" />
+        <meta name="theme-color" content="#030308" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="Abderrahmane Charak — Software Engineer" />
         <meta property="og:description" content="Full-stack web & mobile products, engineered end to end — Marrakech, Morocco." />
@@ -171,16 +172,19 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="twitter:image" content="/android-chrome-512x512.png" />
       </Head>
       <LanguageProvider>
-        <div className="relative min-h-screen" style={{ backgroundColor: 'var(--paper)', color: 'var(--ink)' }}>
-          {/* Architectural hairlines + film grain */}
+        <div className="relative min-h-screen" style={{ backgroundColor: '#030308', color: 'var(--starlight)' }}>
+          {/* Deep-field backdrop: starfield + aurora, then hairlines + grain */}
+          <SpaceBackdrop />
           <div className="page-rules" aria-hidden><i /><i /><i /><i /><i /></div>
           <div className="grain" aria-hidden />
 
-          {/* Reading progress — hairline vermilion */}
+          {/* Reading progress — indigo→cyan hairline */}
           <div className="pointer-events-none fixed inset-x-0 top-0 z-[1000] h-[2px]">
             <div className="h-full" style={{
               transform: `scaleX(${scrollProgress})`, transformOrigin: 'left',
-              background: 'var(--verm)', transition: 'transform 0.1s linear' }} />
+              background: 'linear-gradient(90deg, #818CF8, #38BDF8)',
+              boxShadow: '0 0 12px rgba(99,102,241,0.6)',
+              transition: 'transform 0.1s linear' }} />
           </div>
 
           <CustomCursor />

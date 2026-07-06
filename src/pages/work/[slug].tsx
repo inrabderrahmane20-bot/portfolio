@@ -40,7 +40,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
   }, []);
 
   return (
-    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
+    <div style={{ background: 'transparent', color: 'var(--fg)', overflowX: 'hidden' }}>
 
       {/* ═══ HERO ════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative flex flex-col" style={{ minHeight: '64svh', paddingTop: '6rem' }}>
@@ -56,7 +56,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
           </div>
 
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
-            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.96, fontWeight: 380 }}>
+            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.96, fontWeight: 800 }}>
               {t(item.titleKey).split(' ').map((w, i, arr) => (
                 <span key={`${w}-${i}`} className="mask-line">
                   <span style={{ fontSize: 'var(--fs-hero)' }}>
@@ -79,7 +79,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
             ))}
             {item.metric && (
               <span className="font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.2em',
-                textTransform: 'uppercase', background: 'var(--verm)', color: '#FFF7F2', padding: '0.5rem 0.85rem' }}>
+                textTransform: 'uppercase', background: 'var(--verm)', color: '#FFFFFF', padding: '0.5rem 0.85rem' }}>
                 {item.metric}
               </span>
             )}
@@ -96,7 +96,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
       </section>
 
       {/* ═══ PLATE ═══════════════════════════════════════════════════ */}
-      <div style={{ borderTop: '1px solid var(--line)', background: 'var(--ink)', padding: 'clamp(0.6rem,2vw,1.4rem)' }}>
+      <div style={{ borderTop: '1px solid var(--line)', background: 'var(--bg-2)', padding: 'clamp(0.6rem,2vw,1.4rem)' }}>
         <img src={item.image} alt={t(item.titleKey)}
           style={{ width: '100%', aspectRatio: '21/9', objectFit: 'cover', objectPosition: 'top' }} />
       </div>
@@ -112,14 +112,14 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
             {t(item.summaryKey)}
           </p>
         </div>
-        <blockquote className="reveal font-serif" style={{ fontSize: 'clamp(1.5rem,3.2vw,3rem)', fontWeight: 400,
+        <blockquote className="reveal font-serif" style={{ fontSize: 'clamp(1.5rem,3.2vw,3rem)', fontWeight: 600,
           lineHeight: 1.18, letterSpacing: '-0.015em' }}>
           {t(details.introKey)}
         </blockquote>
       </section>
 
       {/* ═══ DOSSIER GRID ════════════════════════════════════════════ */}
-      <section data-theme="ink" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
+      <section data-theme="ink" style={{ background: 'rgba(8,8,31,0.88)', color: 'var(--fg)' }}>
         <div className="container" style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
           <div className="reveal-group grid grid-cols-1 md:grid-cols-2" style={{ border: '1px solid var(--line)' }}>
             {SECTIONS.map(({ key, label }, idx) => (
@@ -156,7 +156,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
                 <img src={src} alt={`${t(item.titleKey)} — ${i + 1}`}
                   loading="lazy"
                   style={{ width: '100%', objectFit: 'cover', objectPosition: 'top',
-                    aspectRatio: wide ? '16/9' : '4/4.4', display: 'block' }} />
+                    aspectRatio: wide ? '16/9' : '16/10', display: 'block' }} />
               </div>
             );
           })}
@@ -171,7 +171,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
             <p className="reveal o-label" style={{ marginBottom: '1.1rem' }}>
               <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {nextItem ? t('cs.next') : t('cs.back')}
             </p>
-            <h2 className="reveal font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 400,
+            <h2 className="reveal font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 600,
               lineHeight: 1, letterSpacing: '-0.02em' }}>
               {nextItem ? t(nextItem.titleKey) : t('cs.btn.a')}
             </h2>

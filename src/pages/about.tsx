@@ -30,7 +30,7 @@ export default function About() {
   const heads = t('about.heads').split('|').filter(Boolean);
 
   return (
-    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
+    <div style={{ background: 'transparent', color: 'var(--fg)', overflowX: 'hidden' }}>
 
       {/* ═══ HERO ════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative flex flex-col" style={{ minHeight: '72svh', paddingTop: '6rem' }}>
@@ -42,7 +42,7 @@ export default function About() {
           </div>
 
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
-            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 380 }}>
+            <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.94, fontWeight: 800 }}>
               {heads.map((w, i) => (
                 <span key={w} className="mask-line">
                   <span style={{ fontSize: 'var(--fs-hero)' }}>
@@ -128,7 +128,7 @@ export default function About() {
               {languageSkills.map(l => (
                 <div key={l.label} className="flex justify-between items-center"
                   style={{ padding: '0.8rem 0', borderBottom: '1px solid var(--line)' }}>
-                  <span className="font-serif" style={{ fontSize: '1.15rem', fontWeight: 470 }}>{l.label}</span>
+                  <span className="font-serif" style={{ fontSize: '1.15rem', fontWeight: 700 }}>{l.label}</span>
                   <span className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.24em',
                     textTransform: 'uppercase', color: 'var(--acc-text)' }}>
                     {t(l.levelKey)}
@@ -154,7 +154,7 @@ export default function About() {
       </div>
 
       {/* ═══ EXPERIENCE — ink dossier ════════════════════════════════ */}
-      <section data-theme="ink" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
+      <section data-theme="ink" style={{ background: 'rgba(8,8,31,0.88)', color: 'var(--fg)' }}>
         <div className="container" style={{ paddingTop: 'var(--section-y)', paddingBottom: 'var(--section-y)' }}>
           <p className="reveal o-label" style={{ marginBottom: '2.5rem' }}>
             <span style={{ color: 'var(--acc)' }}>{'//'}</span> {t('about.exp')}
@@ -174,7 +174,7 @@ export default function About() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-serif" style={{ fontSize: 'clamp(1.4rem,2.6vw,2.2rem)', fontWeight: 400,
+                  <h3 className="font-serif" style={{ fontSize: 'clamp(1.4rem,2.6vw,2.2rem)', fontWeight: 600,
                     lineHeight: 1.08, letterSpacing: '-0.015em' }}>
                     {exp.org}
                   </h3>
@@ -213,7 +213,7 @@ export default function About() {
               {educationItems.map(e => (
                 <div key={e.id} className="reveal-item" style={{ padding: '1.4rem 0', borderBottom: '1px solid var(--line)' }}>
                   <div className="flex items-baseline justify-between gap-4 flex-wrap">
-                    <h3 className="font-serif" style={{ fontSize: 'clamp(1.15rem,2vw,1.5rem)', fontWeight: 450, lineHeight: 1.15 }}>
+                    <h3 className="font-serif" style={{ fontSize: 'clamp(1.15rem,2vw,1.5rem)', fontWeight: 700, lineHeight: 1.15 }}>
                       {t(e.titleKey)}
                     </h3>
                     <span className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.16em', color: 'var(--acc-text)' }}>

@@ -30,8 +30,8 @@ function LangRow({ inverted = false }: { inverted?: boolean }) {
             fontSize: '0.62rem', letterSpacing: '0.22em', textTransform: 'uppercase',
             padding: '0.4rem 0.55rem', minWidth: 0, minHeight: 0,
             color: lang === l
-              ? (inverted ? '#FF5A1F' : 'currentColor')
-              : (inverted ? 'rgba(239,235,226,0.4)' : 'currentColor'),
+              ? (inverted ? '#38BDF8' : 'currentColor')
+              : (inverted ? 'rgba(238,241,255,0.4)' : 'currentColor'),
             opacity: lang === l ? 1 : (inverted ? 1 : 0.45),
             textDecoration: lang === l ? 'underline' : 'none',
             textUnderlineOffset: 4,
@@ -71,8 +71,8 @@ export default function Navbar() {
     <>
       {/* Skip link */}
       <a href="#main" className="font-mono"
-        style={{ position: 'fixed', top: -60, left: 16, zIndex: 500, background: 'var(--ink)',
-          color: 'var(--paper)', padding: '0.6rem 1rem', fontSize: '0.65rem',
+        style={{ position: 'fixed', top: -60, left: 16, zIndex: 500, background: '#EEF1FF',
+          color: '#08081F', padding: '0.6rem 1rem', fontSize: '0.65rem',
           letterSpacing: '0.2em', transition: 'top 0.2s ease' }}
         onFocus={e => (e.currentTarget.style.top = '12px')}
         onBlur={e => (e.currentTarget.style.top = '-60px')}>
@@ -86,7 +86,7 @@ export default function Navbar() {
           style={{ paddingTop: '1.1rem', paddingBottom: '1.1rem' }}>
 
           <Link href="/" aria-label="Home" data-cursor={t('ui.home')} className="flex items-baseline gap-2">
-            <span className="font-serif" style={{ fontSize: '1.28rem', fontWeight: 560, letterSpacing: '-0.01em' }}>
+            <span className="font-serif" style={{ fontSize: '1.28rem', fontWeight: 700, letterSpacing: '-0.01em' }}>
               Charak
             </span>
             <span className="font-mono" style={{ fontSize: '0.55rem', letterSpacing: '0.26em' }}>
@@ -126,12 +126,13 @@ export default function Navbar() {
             exit={{ clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-[200] flex flex-col"
-            style={{ background: 'var(--ink)', color: 'var(--paper)', overflowY: 'auto' }}>
+            style={{ background: 'linear-gradient(160deg, #08081F 0%, #030308 100%)',
+              color: '#EEF1FF', overflowY: 'auto' }}>
 
             {/* Top row */}
             <div className="container flex items-center justify-between flex-shrink-0"
               style={{ paddingTop: '1.1rem', paddingBottom: '1.1rem' }}>
-              <span className="font-serif" style={{ fontSize: '1.28rem', fontWeight: 560 }}>Charak</span>
+              <span className="font-serif" style={{ fontSize: '1.28rem', fontWeight: 700 }}>Charak</span>
               <button onClick={() => setOpen(false)} aria-label="Close menu"
                 className="font-mono touch-target"
                 style={{ fontSize: '0.66rem', letterSpacing: '0.3em', gap: '0.6rem', display: 'inline-flex' }}>
@@ -159,16 +160,16 @@ export default function Navbar() {
                       animate={{ y: 0, opacity: 1 }}
                       transition={{ delay: 0.18 + i * 0.07, duration: 0.7, ease: [0.19, 1, 0.22, 1] }}>
                       <Link href={item.href} className="group flex items-baseline gap-5 py-2"
-                        style={{ borderBottom: '1px solid rgba(239,235,226,0.14)' }}>
+                        style={{ borderBottom: '1px solid rgba(238,241,255,0.14)' }}>
                         <span className="font-mono"
                           style={{ fontSize: '0.62rem', letterSpacing: '0.24em',
-                            color: active ? '#FF5A1F' : 'rgba(239,235,226,0.4)' }}>
+                            color: active ? '#38BDF8' : 'rgba(238,241,255,0.4)' }}>
                           {String(i + 1).padStart(2, '0')}
                         </span>
-                        <span className="font-serif transition-all duration-300 group-hover:italic group-hover:translate-x-3"
-                          style={{ fontSize: 'clamp(2.6rem, 8vw, 6rem)', fontWeight: 400,
+                        <span className="font-serif transition-all duration-300 group-hover:translate-x-3 group-hover:[text-shadow:0_0_44px_rgba(129,140,248,0.65)]"
+                          style={{ fontSize: 'clamp(2.6rem, 8vw, 6rem)', fontWeight: 700,
                             lineHeight: 1.14, letterSpacing: '-0.02em',
-                            color: active ? '#FF5A1F' : 'var(--paper)',
+                            color: active ? '#38BDF8' : '#EEF1FF',
                             display: 'inline-block' }}>
                           {t(item.key)}
                         </span>
@@ -184,7 +185,7 @@ export default function Navbar() {
                       transition={{ delay: 0.42 + i * 0.06, duration: 0.6, ease: [0.19, 1, 0.22, 1] }}>
                       <Link href={item.href} className="font-mono u-sweep"
                         style={{ fontSize: '0.68rem', letterSpacing: '0.26em', textTransform: 'uppercase',
-                          color: 'rgba(239,235,226,0.66)' }}>
+                          color: 'rgba(238,241,255,0.66)' }}>
                         {t(item.key)} ↗
                       </Link>
                     </motion.div>
@@ -200,30 +201,30 @@ export default function Navbar() {
                 className="flex flex-col gap-7">
                 <div>
                   <p className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.3em',
-                    textTransform: 'uppercase', color: 'rgba(239,235,226,0.4)', marginBottom: '0.7rem' }}>
+                    textTransform: 'uppercase', color: 'rgba(238,241,255,0.4)', marginBottom: '0.7rem' }}>
                     {t('menu.direct')}
                   </p>
                   <a href={`mailto:${contactData.email}`} className="u-sweep font-sans"
                     style={{ fontSize: 'clamp(0.95rem, 1.6vw, 1.15rem)' }}>
                     {contactData.email}
                   </a>
-                  <p className="font-sans" style={{ fontSize: '0.9rem', color: 'rgba(239,235,226,0.6)', marginTop: '0.5rem' }}>
+                  <p className="font-sans" style={{ fontSize: '0.9rem', color: 'rgba(238,241,255,0.6)', marginTop: '0.5rem' }}>
                     {contactData.phones[0]}
                   </p>
                 </div>
                 <div>
                   <p className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.3em',
-                    textTransform: 'uppercase', color: 'rgba(239,235,226,0.4)', marginBottom: '0.7rem' }}>
+                    textTransform: 'uppercase', color: 'rgba(238,241,255,0.4)', marginBottom: '0.7rem' }}>
                     {t('menu.elsewhere')}
                   </p>
                   <a href={identity.githubUrl} target="_blank" rel="noreferrer" className="u-sweep font-sans"
-                    style={{ fontSize: '0.9rem', color: 'rgba(239,235,226,0.8)' }}>
+                    style={{ fontSize: '0.9rem', color: 'rgba(238,241,255,0.8)' }}>
                     GitHub ↗
                   </a>
                 </div>
                 <div>
                   <p className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.3em',
-                    textTransform: 'uppercase', color: 'rgba(239,235,226,0.4)', marginBottom: '0.7rem' }}>
+                    textTransform: 'uppercase', color: 'rgba(238,241,255,0.4)', marginBottom: '0.7rem' }}>
                     {t('menu.lang')}
                   </p>
                   <LangRow inverted />
@@ -233,15 +234,15 @@ export default function Navbar() {
 
             {/* Bottom strip */}
             <div className="container flex items-center justify-between flex-wrap gap-3 flex-shrink-0 safe-bottom"
-              style={{ borderTop: '1px solid rgba(239,235,226,0.14)', paddingTop: '1rem', paddingBottom: '1.2rem' }}>
+              style={{ borderTop: '1px solid rgba(238,241,255,0.14)', paddingTop: '1rem', paddingBottom: '1.2rem' }}>
               <span className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.24em',
-                color: 'rgba(239,235,226,0.45)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                color: 'rgba(238,241,255,0.45)', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
                 <i className="status-dot" style={{ width: 6, height: 6, borderRadius: '50%',
-                  background: '#FF5A1F', display: 'inline-block' }} />
+                  background: '#38BDF8', display: 'inline-block' }} />
                 {t('nav.available')}
               </span>
               <span className="font-mono" style={{ fontSize: '0.58rem', letterSpacing: '0.24em',
-                color: 'rgba(239,235,226,0.45)' }}>
+                color: 'rgba(238,241,255,0.45)' }}>
                 {identity.coords}
               </span>
               <LocalTime className="font-mono"

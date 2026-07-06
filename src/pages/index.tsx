@@ -100,7 +100,7 @@ export default function Home() {
   const philWords = t('phil.quote').split(' ');
 
   return (
-    <div style={{ background: 'var(--paper)', color: 'var(--ink)', overflowX: 'hidden' }}>
+    <div style={{ background: 'transparent', color: 'var(--fg)', overflowX: 'hidden' }}>
 
       {/* ═══ HERO ════════════════════════════════════════════════════ */}
       <section ref={heroRef} className="relative flex flex-col"
@@ -124,7 +124,7 @@ export default function Home() {
           {/* Name */}
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,4rem) 0' }}>
             <div className="relative">
-              <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.92, fontWeight: 380 }}>
+              <h1 className="font-serif" style={{ letterSpacing: '-0.03em', lineHeight: 0.92, fontWeight: 800 }}>
                 <span className="mask-line">
                   <span style={{ fontSize: 'var(--fs-mega)' }}>ABDERRAHMANE</span>
                 </span>
@@ -177,7 +177,7 @@ export default function Home() {
 
       {/* ═══ MARQUEE ═════════════════════════════════════════════════ */}
       <div style={{ borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)',
-        padding: '1.1rem 0', background: 'var(--paper)' }}>
+        padding: '1.1rem 0', background: 'rgba(3,3,8,0.55)' }}>
         <Marquee duration={34}>
           {marqueeTokens.map((token, i) => (
             <span key={i} style={{ display: 'inline-flex', alignItems: 'center', gap: '2.2rem', paddingRight: '2.2rem' }}>
@@ -200,7 +200,7 @@ export default function Home() {
             <p className="o-label" style={{ marginBottom: '1.1rem' }}>
               <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('work.label')} — 001–{String(workItems.length).padStart(3, '0')}
             </p>
-            <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 400,
+            <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 600,
               lineHeight: 0.98, letterSpacing: '-0.02em' }}>
               {t('work.h1')} <em className="it" style={{ color: 'var(--verm)' }}>{t('work.h2')}</em>
             </h2>
@@ -220,7 +220,7 @@ export default function Home() {
             <p className="o-label" style={{ marginBottom: '1.1rem' }}>
               <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('cap.label')}
             </p>
-            <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 400,
+            <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 600,
               lineHeight: 0.98, letterSpacing: '-0.02em', maxWidth: '16ch' }}>
               {t('cap.h1')} <em className="it" style={{ color: 'var(--verm)' }}>{t('cap.h2')}</em>
             </h2>
@@ -235,7 +235,7 @@ export default function Home() {
                   color: 'var(--mut)', transition: 'color 0.35s ease' }}>
                   {cap.num}
                 </span>
-                <h3 className="font-serif" style={{ fontSize: 'clamp(1.5rem,3vw,2.6rem)', fontWeight: 430,
+                <h3 className="font-serif" style={{ fontSize: 'clamp(1.5rem,3vw,2.6rem)', fontWeight: 700,
                   lineHeight: 1.05, letterSpacing: '-0.015em', whiteSpace: 'pre-line' }}>
                   {t(`${cap.id}.title`)}
                 </h3>
@@ -255,7 +255,7 @@ export default function Home() {
       </section>
 
       {/* ═══ CAREER LEDGER — pinned horizontal scroll ════════════════ */}
-      <section data-theme="ink" style={{ background: 'var(--bg)', color: 'var(--fg)' }}>
+      <section data-theme="ink" style={{ background: 'rgba(8,8,31,0.88)', color: 'var(--fg)' }}>
         <div ref={pinRef} style={{ overflow: 'hidden' }}>
           <div className="container" style={{ paddingTop: 'clamp(3rem,6vw,5rem)', paddingBottom: '1rem' }}>
             <div className="flex items-end justify-between flex-wrap gap-4">
@@ -263,7 +263,7 @@ export default function Home() {
                 <p className="o-label" style={{ marginBottom: '1.1rem' }}>
                   <span style={{ color: 'var(--acc)' }}>{'//'}</span> {t('ledger.label')}
                 </p>
-                <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 380,
+                <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 800,
                   lineHeight: 0.98, letterSpacing: '-0.02em' }}>
                   {t('ledger.h1')} <em className="it" style={{ color: 'var(--acc)' }}>2022 → 2026</em>
                 </h2>
@@ -289,7 +289,7 @@ export default function Home() {
                     {exp.place.toUpperCase()}
                   </span>
                 </div>
-                <h3 className="font-serif" style={{ fontSize: 'clamp(1.6rem,2.6vw,2.4rem)', fontWeight: 400,
+                <h3 className="font-serif" style={{ fontSize: 'clamp(1.6rem,2.6vw,2.4rem)', fontWeight: 600,
                   lineHeight: 1.05, letterSpacing: '-0.015em', marginBottom: '0.6rem' }}>
                   {exp.org}
                 </h3>
@@ -314,12 +314,14 @@ export default function Home() {
             {/* End card → resume */}
             <Link href="/resume" data-cursor={t('ui.open')}
               className="flex flex-col items-start justify-between md:w-[min(60vw,420px)] flex-shrink-0 group"
-              style={{ border: '1px solid var(--line-2)', background: 'var(--acc)', color: '#FFF7F2',
+              style={{ border: '1px solid var(--line-2)',
+                background: 'linear-gradient(135deg, #6366F1 0%, #38BDF8 100%)', color: '#FFFFFF',
+                boxShadow: '0 0 44px rgba(99,102,241,0.35)',
                 padding: 'clamp(1.4rem,3vw,2.4rem)', minHeight: 'min(58vh, 460px)' }}>
               <span className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.24em' }}>
                 {t('ledger.cv.label')}
               </span>
-              <span className="font-serif" style={{ fontSize: 'clamp(1.9rem,3.4vw,3rem)', fontWeight: 400,
+              <span className="font-serif" style={{ fontSize: 'clamp(1.9rem,3.4vw,3rem)', fontWeight: 600,
                 lineHeight: 1.02, letterSpacing: '-0.02em' }}>
                 {t('ledger.cv.title')}
                 <span className="inline-block transition-transform duration-300 group-hover:translate-x-2 group-hover:-translate-y-2"
@@ -334,7 +336,7 @@ export default function Home() {
           <div className="reveal-group grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-8">
             {ledgerFacts.map(f => (
               <div key={f.labelKey} className="reveal-item">
-                <p className="font-serif" style={{ fontSize: 'clamp(1.7rem,3vw,2.6rem)', fontWeight: 380,
+                <p className="font-serif" style={{ fontSize: 'clamp(1.7rem,3vw,2.6rem)', fontWeight: 800,
                   lineHeight: 1, letterSpacing: '-0.02em', fontVariantNumeric: 'tabular-nums' }}>
                   {f.value}
                 </p>
@@ -358,15 +360,13 @@ export default function Home() {
         <p className="o-label" style={{ marginBottom: '2rem' }}>
           <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('phil.label')}
         </p>
-        <blockquote className="font-serif" style={{ fontSize: 'clamp(1.7rem,4.6vw,4.4rem)', fontWeight: 400,
+        <blockquote className="font-serif" style={{ fontSize: 'clamp(1.7rem,4.6vw,4.4rem)', fontWeight: 600,
           lineHeight: 1.14, letterSpacing: '-0.02em', maxWidth: '24ch' }}>
           {philWords.map((w, i) => {
             const emph = w.startsWith('*') && w.endsWith('*');
             const clean = emph ? w.slice(1, -1) : w;
             return (
-              <span key={i} className="phil-w" style={emph
-                ? { fontStyle: 'italic', color: 'var(--verm)' }
-                : undefined}>
+              <span key={i} className={emph ? 'phil-w text-gradient' : 'phil-w'}>
                 {clean}{' '}
               </span>
             );

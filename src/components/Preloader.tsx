@@ -57,34 +57,34 @@ export default function Preloader({ onDone }: { onDone?: () => void }) {
         transition: 'transform 0.75s cubic-bezier(0.76, 0, 0.24, 1)',
       }}>
       {/* Manifest */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.45rem', position: 'relative' }}>
         {manifest.map(([k, v], i) => (
           <p key={k} className="font-mono"
             style={{
               fontSize: '0.62rem', letterSpacing: '0.26em',
-              color: 'rgba(239,235,226,0.55)',
+              color: 'rgba(238,241,255,0.55)',
               opacity: pct > i * 12 ? 1 : 0.12,
               transition: 'opacity 0.3s ease',
             }}>
-            <span style={{ color: '#FF5A1F' }}>{k}</span>
+            <span style={{ color: '#38BDF8' }}>{k}</span>
             {'  //  '}{v}
           </p>
         ))}
       </div>
 
       {/* Counter */}
-      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem' }}>
-        <p className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.3em', color: 'rgba(239,235,226,0.4)' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', position: 'relative' }}>
+        <p className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.3em', color: 'rgba(238,241,255,0.4)' }}>
           LOADING&nbsp;ASSETS
         </p>
         <span className="font-serif"
           style={{
             fontSize: 'clamp(5rem, 18vw, 13rem)', lineHeight: 0.8,
-            fontWeight: 320, fontVariantNumeric: 'tabular-nums',
+            fontWeight: 800, fontVariantNumeric: 'tabular-nums',
             letterSpacing: '-0.04em',
           }}>
           {pct}
-          <span style={{ fontSize: '0.22em', fontStyle: 'italic', color: '#FF5A1F' }}>%</span>
+          <span className="text-gradient" style={{ fontSize: '0.22em' }}>%</span>
         </span>
       </div>
     </div>

@@ -75,9 +75,9 @@ export default function WorkIndex({ items = workItems }: { items?: Item[] }) {
             </span>
 
             {/* Title */}
-            <span className="font-serif"
-              style={{ fontSize: 'clamp(1.7rem, 4.6vw, 4.2rem)', fontWeight: 420,
-                lineHeight: 1.02, letterSpacing: '-0.02em' }}>
+            <span className="idx-title font-serif"
+              style={{ fontSize: 'clamp(1.7rem, 4.6vw, 4.2rem)', fontWeight: 700,
+                lineHeight: 1.02, letterSpacing: '-0.02em', transition: 'text-shadow 0.35s ease' }}>
               {t(item.titleKey)}
             </span>
 
@@ -116,8 +116,9 @@ export default function WorkIndex({ items = workItems }: { items?: Item[] }) {
           opacity: 0, willChange: 'transform',
           transition: 'opacity 0.3s ease',
         }}>
-        <div style={{ position: 'relative', background: 'var(--ink)', padding: 10,
-          boxShadow: '0 30px 80px rgba(23,19,16,0.35)' }}>
+        <div style={{ position: 'relative', background: 'rgba(10,10,36,0.94)',
+          border: '1px solid rgba(129,140,248,0.4)', padding: 10,
+          boxShadow: '0 30px 80px rgba(3,3,8,0.8), 0 0 44px rgba(99,102,241,0.28)' }}>
           <div style={{ position: 'relative', width: '100%', aspectRatio: '16/10', overflow: 'hidden' }}>
             {items.map((item, i) => (
               <img key={item.slug} src={item.image} alt=""
@@ -133,7 +134,7 @@ export default function WorkIndex({ items = workItems }: { items?: Item[] }) {
           <span className="font-mono"
             style={{
               position: 'absolute', top: -1, right: -1, zIndex: 2,
-              background: 'var(--verm)', color: '#FFF7F2',
+              background: 'linear-gradient(135deg, #818CF8, #38BDF8)', color: '#FFFFFF',
               fontSize: '0.56rem', letterSpacing: '0.26em', padding: '0.45rem 0.8rem',
             }}>
             {active !== null ? String(active + 1).padStart(3, '0') : ''}

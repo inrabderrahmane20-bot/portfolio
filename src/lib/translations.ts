@@ -327,6 +327,9 @@ export const T: Record<Lang, Record<string, string>> = {
     'edu.cpge.title': 'Classes Préparatoires (CPGE)',
     'edu.bac.title':  'Baccalauréat Scientifique',
 
+    'workItem.marrakech-privee.title':    'Marrakech Privée',
+    'workItem.marrakech-privee.category': 'Expérience Web',
+    'workItem.marrakech-privee.summary':  'Site ultra-premium pour une agence privée de conciergerie et d’événementiel à Marrakech — événements sur mesure, services VIP et séjours privés, portés par une identité de luxe éditoriale, une animation GSAP et une i18n en quatre langues (EN/FR/ES/DE).',
     'workItem.select-emc.title':    'Select by EMC',
     'workItem.select-emc.category': 'Plateforme Web',
     'workItem.select-emc.summary':  'Plateforme multi-services complète pour une agence de conciergerie et d’événementiel de luxe à Marrakech — conciergerie, organisation d’événements et services VIP, avec ~50 utilisateurs par jour. Un build Next.js rapide, optimisé SEO, multilingue et multi-devises, avec une architecture de contenu évolutive sur des dizaines de pages.',
@@ -355,6 +358,11 @@ export const T: Record<Lang, Record<string, string>> = {
     'cs.btn.a':     'Tous les projets',
     'cs.live':      'Voir le site en ligne',
 
+    'cs.marrakech-privee.intro':     'Une adresse digitale sur invitation pour les plus belles expériences de Marrakech — où la retenue, la typographie et le mouvement parlent d’eux-mêmes.',
+    'cs.marrakech-privee.challenge': 'Se démarquer des clichés or-sur-noir des sites de voyage de luxe — communiquer la discrétion et le savoir-faire en quatre langues sans ralentir l’expérience.',
+    'cs.marrakech-privee.goal':      'Concevoir et construire une expérience de luxe éditoriale — demandes d’événements sur mesure, activités choisies et services VIP — avec un mouvement cinématique et une localisation EN/FR/ES/DE.',
+    'cs.marrakech-privee.process':   'Design system sur mesure à typographie serif, langage de mouvement GSAP + Lenis, transitions de page en rideau, parcours de demande bespoke, et build Next.js 15 avec changement de langue côté client.',
+    'cs.marrakech-privee.result':    'Un vaisseau amiral digital distinctif pour l’agence — une expérience qui positionne Marrakech Privée tout en haut de son marché.',
     'cs.select-emc.intro':     'Une présence digitale premium pour un service de conciergerie exclusif — où chaque interaction communique un luxe discret et un service sans effort.',
     'cs.select-emc.challenge': 'Transmettre l’exclusivité d’une marque de conciergerie haut de gamme sur des dizaines de pages de services — sans paraître froid ni transactionnel, et sans sacrifier la vitesse ou le SEO.',
     'cs.select-emc.goal':      'Livrer une plateforme multi-services couvrant conciergerie, événementiel et services VIP — multilingue, multi-devises et structurée pour évoluer.',
@@ -522,6 +530,9 @@ export const T: Record<Lang, Record<string, string>> = {
     'edu.cpge.title': 'Ciclo Preparatorio (CPGE)',
     'edu.bac.title':  'Bachillerato Científico',
 
+    'workItem.marrakech-privee.title':    'Marrakech Privée',
+    'workItem.marrakech-privee.category': 'Experiencia Web',
+    'workItem.marrakech-privee.summary':  'Sitio ultra-premium para una agencia privada de conserjería y eventos en Marrakech — eventos a medida, servicios VIP y estancias privadas, con una identidad de lujo editorial, animación GSAP e i18n en cuatro idiomas (EN/FR/ES/DE).',
     'workItem.select-emc.title':    'Select by EMC',
     'workItem.select-emc.category': 'Plataforma Web',
     'workItem.select-emc.summary':  'Plataforma multiservicio completa para una agencia de conserjería y eventos de lujo en Marrakech — conserjería, organización de eventos y servicios VIP, con ~50 usuarios al día. Un build Next.js rápido, optimizado para SEO, multilingüe y multidivisa, con una arquitectura de contenido escalable en decenas de páginas.',
@@ -550,6 +561,11 @@ export const T: Record<Lang, Record<string, string>> = {
     'cs.btn.a':     'Todos los proyectos',
     'cs.live':      'Ver sitio en vivo',
 
+    'cs.marrakech-privee.intro':     'Una dirección digital solo por invitación para las mejores experiencias de Marrakech — donde la contención, la tipografía y el movimiento hablan por sí mismos.',
+    'cs.marrakech-privee.challenge': 'Diferenciarse de los clichés dorado-sobre-negro de los sitios de viajes de lujo — comunicando discreción y oficio en cuatro idiomas sin ralentizar la experiencia.',
+    'cs.marrakech-privee.goal':      'Diseñar y construir una experiencia de lujo editorial — solicitudes de eventos a medida, actividades seleccionadas y servicios VIP — con movimiento cinematográfico y localización EN/FR/ES/DE.',
+    'cs.marrakech-privee.process':   'Design system a medida con tipografía serif, lenguaje de movimiento GSAP + Lenis, transiciones de página tipo telón, flujo de solicitudes bespoke y build en Next.js 15 con cambio de idioma en el cliente.',
+    'cs.marrakech-privee.result':    'Un buque insignia digital distintivo para la agencia — una experiencia que sitúa a Marrakech Privée en lo más alto de su mercado.',
     'cs.select-emc.intro':     'Una presencia digital premium para un servicio de conserjería exclusivo — donde cada interacción comunica lujo discreto y servicio sin esfuerzo.',
     'cs.select-emc.challenge': 'Transmitir la exclusividad de una marca de conserjería de alto nivel en decenas de páginas de servicios — sin sentirse frío ni transaccional, y sin sacrificar velocidad ni SEO.',
     'cs.select-emc.goal':      'Entregar una plataforma multiservicio que abarque conserjería, eventos y servicios VIP — multilingüe, multidivisa y estructurada para crecer.',
