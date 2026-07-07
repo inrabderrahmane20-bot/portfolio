@@ -171,7 +171,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <meta name="twitter:image" content="/android-chrome-512x512.png" />
       </Head>
       <LanguageProvider>
-        <div className="relative min-h-screen" style={{ backgroundColor: '#030308', color: 'var(--starlight)' }}>
+        {/* Root stays transparent — the body paints #030308 and the fixed
+            backdrop lives at z-index -1, below ALL page content. */}
+        <div className="relative min-h-screen" style={{ backgroundColor: 'transparent', color: 'var(--starlight)' }}>
           {/* Deep-field backdrop: starfield + aurora, then hairlines + grain */}
           <SpaceBackdrop />
           <div className="page-rules" aria-hidden><i /><i /><i /><i /><i /></div>

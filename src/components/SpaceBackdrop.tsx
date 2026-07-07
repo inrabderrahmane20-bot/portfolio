@@ -773,7 +773,7 @@ export default function SpaceBackdrop() {
   }, []);
 
   return (
-    <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+    <div aria-hidden style={{ position: 'fixed', inset: 0, zIndex: -1, pointerEvents: 'none', overflow: 'hidden' }}>
       <canvas ref={canvasRef} style={{ display: 'block' }} />
       <div className="aurora aurora-1" />
       <div className="aurora aurora-2" />
