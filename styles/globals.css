@@ -467,11 +467,30 @@ a, button { -webkit-tap-highlight-color: transparent; }
    RESPONSIVE + ACCESSIBILITY
 ═══════════════════════════════════════════════════════════════════════ */
 @media (max-width: 639px) {
-  body { font-size: 15px; line-height: 1.6; }
+  body { font-size: 15px; line-height: 1.6; text-rendering: optimizeSpeed; }
   .grain { opacity: 0.3; }
+  /* Let long words break on narrow screens instead of overflowing/colliding */
+  h1, h2, h3, h4 { overflow-wrap: break-word; word-break: normal; }
 }
 @media (max-width: 380px) {
   :root { --pad: 1rem; }
+}
+
+/* ─── iOS hardening ──────────────────────────────────────────────────────
+   Two Safari-specific fixes:
+   1. background-clip:text drops out inside transforms on iOS, leaving the
+      accent word invisible. Below coarse-pointer / small screens, fall back
+      to a solid accent color so text is NEVER missing.
+   2. The grain overlay (mix-blend-mode + filter on a fixed 200% layer) is a
+      per-frame compositing bomb on mobile GPUs — drop it on touch devices.
+═══════════════════════════════════════════════════════════════════════════ */
+@media (pointer: coarse), (max-width: 639px) {
+  .it, .text-gradient {
+    background: none !important;
+    /* currentColor picks up each element's own (often inline) accent color */
+    -webkit-text-fill-color: currentColor !important;
+  }
+  .grain { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

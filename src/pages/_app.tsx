@@ -156,6 +156,8 @@ export default function App({ Component, pageProps }: AppProps) {
         <title>Abderrahmane Charak — Software Engineer</title>
         <meta name="description" content="Abderrahmane Charak — state-certified software engineer building full-stack web and mobile products end to end, from Marrakech, Morocco." />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
         <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png" />
