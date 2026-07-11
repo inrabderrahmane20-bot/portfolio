@@ -1,6 +1,21 @@
 import Head from 'next/head';
+import { useEffect } from 'react';
 
 export default function Resume() {
+  /* Full-screen card viewer: hide the global footer so nothing but the site's
+     fixed space backdrop sits behind the transparent iframe. With the footer
+     hidden (and no spacer) the page content fits the viewport, so there is
+     nothing to scroll — no scrollbar, and no footer sliding in behind the card.
+     (We deliberately avoid `overflow:hidden` on <html>, which forces the iframe
+     onto its own compositing layer and can break the see-through backdrop.) */
+  useEffect(() => {
+    const footer = document.querySelector<HTMLElement>('footer');
+    if (!footer) return;
+    const prev = footer.style.display;
+    footer.style.display = 'none';
+    return () => { footer.style.display = prev; };
+  }, []);
+
   return (
     <>
       <Head>
@@ -28,8 +43,6 @@ export default function Resume() {
           }}
         />
       </div>
-      {/* Spacer so Next.js layout doesn't collapse */}
-      <div style={{ height: '100vh' }} aria-hidden />
     </>
   );
 }
