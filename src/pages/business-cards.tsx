@@ -12,7 +12,7 @@ export default function BusinessCards() {
           position:   'fixed',
           inset:      0,
           top:        68,
-          background: '#04071a',
+          background: 'transparent',
           zIndex:     150,
         }}
       >
@@ -24,6 +24,7 @@ export default function BusinessCards() {
             height: '100%',
             border: 'none',
             display: 'block',
+            background: 'transparent',
           }}
         />
       </div>

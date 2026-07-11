@@ -48,11 +48,16 @@ document.addEventListener('DOMContentLoaded', function() {
 html, body {
   width: 100%; height: 100%;
   overflow: hidden;
-  background: var(--navy);
+  background: transparent;
   font-family: 'JetBrains Mono', monospace;
   -webkit-font-smoothing: antialiased;
   cursor: crosshair;
 }
+
+/* Ambient page background removed — the site's space backdrop shows through
+   the transparent iframe instead. */
+#grid-layer, #matrix-canvas, #float-canvas, #circuit-layer,
+#glow-layer, #scanline { display: none !important; }
 
 #grid-layer {
   position: fixed; inset: 0; z-index: 1;
