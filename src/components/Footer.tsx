@@ -120,12 +120,14 @@ export default function Footer() {
         </button>
       </div>
 
-      {/* Watermark name */}
+      {/* Watermark name — sized so the whole word always fits the screen width.
+          "CHARAK" is ~7.25em wide in Syne 800, so 12vw keeps it at ~87% of the
+          viewport on any device (fully visible, never clipped). */}
       <div aria-hidden className="select-none pointer-events-none"
         style={{ position: 'absolute', bottom: '-0.14em', left: 0, right: 0,
           textAlign: 'center', whiteSpace: 'nowrap', overflow: 'hidden',
           fontFamily: 'Syne, sans-serif', fontWeight: 800,
-          fontSize: 'clamp(4rem, 16vw, 19rem)', lineHeight: 1,
+          fontSize: 'min(12vw, 19rem)', lineHeight: 1,
           letterSpacing: '-0.03em', color: 'transparent',
           WebkitTextStroke: '1px rgba(238,241,255,0.09)' }}>
         CHARAK

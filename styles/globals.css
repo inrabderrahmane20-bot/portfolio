@@ -469,8 +469,9 @@ a, button { -webkit-tap-highlight-color: transparent; }
 @media (max-width: 639px) {
   body { font-size: 15px; line-height: 1.6; text-rendering: optimizeSpeed; }
   .grain { opacity: 0.3; }
-  /* Let long words break on narrow screens instead of overflowing/colliding */
-  h1, h2, h3, h4 { overflow-wrap: break-word; word-break: normal; }
+  /* Keep display words intact (never chop mid-word). Only genuinely
+     unbreakable strings (URLs/emails, handled below) are allowed to break. */
+  h1, h2, h3, h4 { overflow-wrap: normal; word-break: keep-all; hyphens: none; }
 }
 @media (max-width: 380px) {
   :root { --pad: 1rem; }
