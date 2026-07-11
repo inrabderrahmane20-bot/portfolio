@@ -32,7 +32,7 @@ export default function Work() {
           <div className="hero-meta flex items-center justify-between flex-wrap gap-3"
             style={{ borderBottom: '1px solid var(--line)', paddingBottom: '0.9rem' }}>
             <ScrambleText className="o-label" text={t('work.file')} />
-            <span className="o-label">{String(workItems.length).padStart(3, '0')} — {t('work.count')}</span>
+            <span className="o-label">{String(workItems.length).padStart(3, '0')} - {t('work.count')}</span>
           </div>
 
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>

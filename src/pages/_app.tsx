@@ -153,8 +153,8 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <title>Abderrahmane Charak — Software Engineer</title>
-        <meta name="description" content="Abderrahmane Charak — state-certified software engineer building full-stack web and mobile products end to end, from Marrakech, Morocco." />
+        <title>Abderrahmane Charak - Software Engineer</title>
+        <meta name="description" content="Abderrahmane Charak - state-certified software engineer building full-stack web and mobile products end to end, from Marrakech, Morocco." />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -164,12 +164,12 @@ export default function App({ Component, pageProps }: AppProps) {
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#030308" />
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Abderrahmane Charak — Software Engineer" />
-        <meta property="og:description" content="Full-stack web & mobile products, engineered end to end — Marrakech, Morocco." />
+        <meta property="og:title" content="Abderrahmane Charak - Software Engineer" />
+        <meta property="og:description" content="Full-stack web & mobile products, engineered end to end - Marrakech, Morocco." />
         <meta property="og:image" content="/android-chrome-512x512.png" />
         <meta name="twitter:card" content="summary" />
-        <meta name="twitter:title" content="Abderrahmane Charak — Software Engineer" />
-        <meta name="twitter:description" content="Full-stack web & mobile products, engineered end to end — Marrakech, Morocco." />
+        <meta name="twitter:title" content="Abderrahmane Charak - Software Engineer" />
+        <meta name="twitter:description" content="Full-stack web & mobile products, engineered end to end - Marrakech, Morocco." />
         <meta name="twitter:image" content="/android-chrome-512x512.png" />
       </Head>
       <LanguageProvider>

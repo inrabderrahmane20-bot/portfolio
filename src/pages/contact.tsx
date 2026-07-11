@@ -50,12 +50,12 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const budget = budgetKey ? t(`con.${budgetKey}`) : '—';
+    const budget = budgetKey ? t(`con.${budgetKey}`) : '-';
     const msg = `Name: ${name}\nEmail: ${email}\nBudget: ${budget}\n\nProject brief:\n${brief}`;
     if (method === 'whatsapp') {
       window.open(`https://wa.me/${contactData.whatsapp}?text=${encodeURIComponent(msg)}`, '_blank');
     } else {
-      const subject = encodeURIComponent(`Portfolio inquiry — ${name}`);
+      const subject = encodeURIComponent(`Portfolio inquiry - ${name}`);
       window.location.href = `mailto:${contactData.email}?subject=${subject}&body=${encodeURIComponent(msg)}`;
     }
     setSubmitted(true);

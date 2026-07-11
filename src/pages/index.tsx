@@ -163,7 +163,7 @@ export default function Home() {
               <div className="hero-meta hidden xl:block"
                 style={{ position: 'absolute', right: '1vw', top: '-4.5rem' }}>
                 <Stamp size={132}
-                  text={`${identity.name.toUpperCase()} — ${identity.role.toUpperCase()} — MARRAKECH — `} />
+                  text={`${identity.name.toUpperCase()} - ${identity.role.toUpperCase()} - MARRAKECH - `} />
               </div>
             </div>
           </div>
@@ -211,7 +211,7 @@ export default function Home() {
         <div className="reveal flex items-end justify-between gap-6 flex-wrap" style={{ marginBottom: 'clamp(2rem,4vw,4rem)' }}>
           <div>
             <p className="o-label" style={{ marginBottom: '1.1rem' }}>
-              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('work.label')} — 001–{String(workItems.length).padStart(3, '0')}
+              <span style={{ color: 'var(--acc-text)' }}>{'//'}</span> {t('work.label')} - 001–{String(workItems.length).padStart(3, '0')}
             </p>
             <h2 className="font-serif" style={{ fontSize: 'var(--fs-h2)', fontWeight: 600,
               lineHeight: 0.98, letterSpacing: '-0.02em' }}>
@@ -362,7 +362,7 @@ export default function Home() {
           </div>
           <p className="reveal font-mono" style={{ fontSize: '0.6rem', letterSpacing: '0.2em',
             color: 'var(--mut)', marginTop: '2.4rem', textTransform: 'uppercase' }}>
-            {t('ledger.clients')} — {clients.join(' · ')}
+            {t('ledger.clients')} - {clients.join(' · ')}
           </p>
         </div>
       </section>

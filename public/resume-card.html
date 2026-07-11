@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <link rel="icon" type="image/x-icon" href="favicon.ico"/>
 <meta name="theme-color" content="#04071a"/>
-<title>R&eacute;sum&eacute; &mdash; Abderrahmane Charak</title>
+<title>R&eacute;sum&eacute; - Abderrahmane Charak</title>
 </head>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -14,9 +14,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (userLang.startsWith('fr')) lang = 'fr';
   if (userLang.startsWith('es')) lang = 'es';
   const TXT = {
-    en: { title: 'Résumé — Abderrahmane Charak', label: '// résumé', dim: 'curriculum.vitae', hint: 'drag to flip', dl: 'Download PDF', p1: 'loading page 1…', p2: 'loading page 2…' },
-    fr: { title: 'CV — Abderrahmane Charak', label: '// cv', dim: 'curriculum.vitae', hint: 'glisser pour tourner', dl: 'Télécharger le PDF', p1: 'chargement page 1…', p2: 'chargement page 2…' },
-    es: { title: 'CV — Abderrahmane Charak', label: '// cv', dim: 'curriculum.vitae', hint: 'arrastra para girar', dl: 'Descargar PDF', p1: 'cargando página 1…', p2: 'cargando página 2…' },
+    en: { title: 'Résumé - Abderrahmane Charak', label: '// résumé', dim: 'curriculum.vitae', hint: 'drag to flip', dl: 'Download PDF', p1: 'loading page 1…', p2: 'loading page 2…' },
+    fr: { title: 'CV - Abderrahmane Charak', label: '// cv', dim: 'curriculum.vitae', hint: 'glisser pour tourner', dl: 'Télécharger le PDF', p1: 'chargement page 1…', p2: 'chargement page 2…' },
+    es: { title: 'CV - Abderrahmane Charak', label: '// cv', dim: 'curriculum.vitae', hint: 'arrastra para girar', dl: 'Descargar PDF', p1: 'cargando página 1…', p2: 'cargando página 2…' },
   };
   const t = TXT[lang] || TXT.en;
   document.title = t.title;
@@ -54,12 +54,13 @@ document.addEventListener('DOMContentLoaded', function() {
   --radius: calc(var(--card-w) * 0.035);
 }
 
-html { height: 100%; }
+html { height: 100%; color-scheme: dark; }
 body {
   width: 100%;
   height: 100dvh;
   overflow: hidden;
   background: transparent;
+  color-scheme: dark;
   font-family: 'JetBrains Mono', monospace;
   -webkit-font-smoothing: antialiased;
   cursor: crosshair;
@@ -368,13 +369,13 @@ body {
 
       <div class="card-face card-face--front">
         <div class="img-placeholder" id="phFront">loading page 1&hellip;</div>
-        <img id="imgFront" alt="Résumé — page 1"/>
+        <img id="imgFront" alt="Résumé - page 1"/>
         <div class="gloss" id="glossFront"></div>
       </div>
 
       <div class="card-face card-face--back">
         <div class="img-placeholder" id="phBack">loading page 2&hellip;</div>
-        <img id="imgBack" alt="Résumé — page 2"/>
+        <img id="imgBack" alt="Résumé - page 2"/>
         <div class="gloss" id="glossBack"></div>
       </div>
 
@@ -580,7 +581,7 @@ function loadDriveImage(imgEl, placeholderEl, fileId) {
       try { await tryUrl(url); imgEl.src = url; imgEl.onload = () => placeholderEl.classList.add('loaded'); return; }
       catch {}
     }
-    placeholderEl.textContent = '— image unavailable —';
+    placeholderEl.textContent = '- image unavailable -';
   })();
 }
 
@@ -677,7 +678,7 @@ loadDriveImage(document.getElementById('imgBack'),  document.getElementById('phB
 
   wrapper.setAttribute('tabindex','0');
   wrapper.setAttribute('role','button');
-  wrapper.setAttribute('aria-label','Résumé — drag or use arrow keys to flip between page 1 and page 2');
+  wrapper.setAttribute('aria-label','Résumé - drag or use arrow keys to flip between page 1 and page 2');
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft'  || e.key === 'a') velocity -= 3;
     if (e.key === 'ArrowRight' || e.key === 'd') velocity += 3;

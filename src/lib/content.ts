@@ -10,7 +10,7 @@ export const identity = {
   name:      'Abderrahmane Charak',
   role:      'Software Engineer',
   location:  'Marrakech, Morocco',
-  coords:    '31.6295°N — 7.9811°W',
+  coords:    '31.6295°N - 7.9811°W',
   timezone:  'Africa/Casablanca',
   github:    'github.com/inrabderrahmane20-bot',
   githubUrl: 'https://github.com/inrabderrahmane20-bot',
@@ -144,7 +144,7 @@ export const experienceItems = [
     id: '212',
     org: '212 Communication',
     place: 'Marrakech',
-    period: 'Apr 2025 — Jan 2026',
+    period: 'Apr 2025 - Jan 2026',
     roleKey: 'exp.212.role',
     descKey: 'exp.212.desc',
     stack: ['AngularJS', 'JavaScript', 'Cordova', 'Symfony', 'WordPress', 'jQuery'],
@@ -153,16 +153,16 @@ export const experienceItems = [
     id: 'ocp',
     org: 'OCP Group',
     place: 'Benguerir',
-    period: 'Mar — Jul 2024',
+    period: 'Mar - Jul 2024',
     roleKey: 'exp.ocp.role',
     descKey: 'exp.ocp.desc',
     stack: ['Python', 'Flask', 'NLP', 'NLTK', 'TensorFlow', 'Spring', 'Node.js'],
   },
   {
     id: 'rma',
-    org: 'RMA — Royale Marocaine d’Assurance',
+    org: 'RMA - Royale Marocaine d’Assurance',
     place: 'Marrakech',
-    period: 'Jul — Sep 2023',
+    period: 'Jul - Sep 2023',
     roleKey: 'exp.rma.role',
     descKey: 'exp.rma.desc',
     stack: ['Django', 'React.js', 'AWS', 'MySQL'],
@@ -171,7 +171,7 @@ export const experienceItems = [
     id: 'geant',
     org: 'Géant Computer S.A.R.L. AU',
     place: 'Marrakech',
-    period: 'Jul — Sep 2022',
+    period: 'Jul - Sep 2022',
     roleKey: 'exp.geant.role',
     descKey: 'exp.geant.desc',
     stack: ['Flutter', 'Java', 'Laravel', 'MySQL'],
@@ -181,8 +181,8 @@ export const experienceItems = [
 /* ─── Education — CV verified ────────────────────────────────────────── */
 export const educationItems = [
   { id: 'emsi', year: '2024',        titleKey: 'edu.emsi.title', org: 'École Marocaine des Sciences de l’Ingénieur (EMSI)' },
-  { id: 'cpge', year: '2018 — 2020', titleKey: 'edu.cpge.title', org: 'CPGE — Marrakech Prépas' },
-  { id: 'bac',  year: '2018',        titleKey: 'edu.bac.title',  org: 'Lycée Al Omam — Marrakech' },
+  { id: 'cpge', year: '2018 - 2020', titleKey: 'edu.cpge.title', org: 'CPGE - Marrakech Prépas' },
+  { id: 'bac',  year: '2018',        titleKey: 'edu.bac.title',  org: 'Lycée Al Omam - Marrakech' },
 ];
 
 /* ─── Certifications — CV verified ───────────────────────────────────── */
@@ -230,7 +230,7 @@ export const clients = [
   'RMA Assurance',
   '212 Communication',
   'Géant Computer',
-  'EMC — Select',
+  'EMC - Select',
 ];
 
 /* ─── Case Studies ───────────────────────────────────────────────────── */

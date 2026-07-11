@@ -44,7 +44,7 @@ export default function Footer() {
             className="font-mono u-sweep"
             style={{ fontSize: '0.68rem', letterSpacing: '0.26em', textTransform: 'uppercase',
               color: 'var(--fg-2)', alignSelf: 'flex-start', padding: '0.8rem 0' }}>
-            WhatsApp — {contactData.phones[0]}
+            WhatsApp - {contactData.phones[0]}
           </a>
         </div>
       </div>

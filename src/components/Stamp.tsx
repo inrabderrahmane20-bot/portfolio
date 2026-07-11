@@ -1,6 +1,6 @@
 /** Rotating circular text stamp — pure SVG, CSS animation. */
 export default function Stamp({
-  text = 'ABDERRAHMANE CHARAK — SOFTWARE ENGINEER — MARRAKECH — ',
+  text = 'ABDERRAHMANE CHARAK - SOFTWARE ENGINEER - MARRAKECH - ',
   size = 150,
   className,
 }: {

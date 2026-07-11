@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <link rel="icon" type="image/x-icon" href="favicon.ico"/>
 <meta name="theme-color" content="#04071a"/>
-<title>Carte de visite &mdash; Software Development Engineer</title>
+<title>Carte de visite - Software Development Engineer</title>
 </head>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let lang = 'en';
   if (userLang.startsWith('fr')) lang = 'fr';
   if (lang === 'fr') {
-    document.title = 'Carte de visite — Ingénieur en développement logiciel';
+    document.title = 'Carte de visite - Ingénieur en développement logiciel';
     const hud = document.getElementById('hud-tl');
     if (hud) {
       const label = hud.querySelector('.hud-label');
@@ -49,6 +49,7 @@ html, body {
   width: 100%; height: 100%;
   overflow: hidden;
   background: transparent;
+  color-scheme: dark;
   font-family: 'JetBrains Mono', monospace;
   -webkit-font-smoothing: antialiased;
   cursor: crosshair;
@@ -544,7 +545,7 @@ function loadDriveImage(imgEl, placeholderEl, fileId) {
       try { await tryUrl(url); imgEl.src = url; imgEl.onload = () => placeholderEl.classList.add('loaded'); return; }
       catch {}
     }
-    placeholderEl.textContent = '— place image here —';
+    placeholderEl.textContent = '- place image here -';
   })();
 }
 
@@ -646,7 +647,7 @@ loadDriveImage(document.getElementById('imgBack'),  document.getElementById('phB
 
   wrapper.setAttribute('tabindex','0');
   wrapper.setAttribute('role','button');
-  wrapper.setAttribute('aria-label','Business card — drag or use arrow keys to rotate');
+  wrapper.setAttribute('aria-label','Business card - drag or use arrow keys to rotate');
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowLeft'  || e.key === 'a') velocity -= 3;
     if (e.key === 'ArrowRight' || e.key === 'd') velocity += 3;

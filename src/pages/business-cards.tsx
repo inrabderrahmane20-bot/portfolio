@@ -19,7 +19,7 @@ export default function BusinessCards() {
   return (
     <>
       <Head>
-        <title>Business Card — AC</title>
+        <title>Business Card - AC</title>
       </Head>
       {/* Full-screen iframe below the fixed navbar (~68px tall) */}
       <div
@@ -33,7 +33,7 @@ export default function BusinessCards() {
       >
         <iframe
           src="/business-card.html"
-          title="Carte de visite — Abderrahmane Charak"
+          title="Carte de visite - Abderrahmane Charak"
           style={{
             width:  '100%',
             height: '100%',

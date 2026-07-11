@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { identity } from '@/lib/content';
 
 /** Live clock, pinned to Marrakech time. Renders a placeholder until mounted. */
-export default function LocalTime({ className, suffix = ' — MRK' }: { className?: string; suffix?: string }) {
+export default function LocalTime({ className, suffix = ' - MRK' }: { className?: string; suffix?: string }) {
   const [time, setTime] = useState('--:--:--');
 
   useEffect(() => {

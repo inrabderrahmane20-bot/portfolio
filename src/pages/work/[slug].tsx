@@ -52,7 +52,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
               <span aria-hidden>/</span>
               <span style={{ color: 'var(--acc-text)' }}>{t(item.categoryKey)}</span>
             </span>
-            <ScrambleText className="o-label" text={`FILE ${String(index + 1).padStart(3, '0')} — ${item.year}`} />
+            <ScrambleText className="o-label" text={`FILE ${String(index + 1).padStart(3, '0')} - ${item.year}`} />
           </div>
 
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,3.5rem) 0' }}>
@@ -153,7 +153,7 @@ export default function CaseStudy({ item, details, nextItem, index }: Props) {
             return (
               <div key={src + i} className={`reveal-item ${wide ? 'sm:col-span-2' : ''}`}
                 style={{ border: '1px solid var(--line-2)', background: 'var(--paper-2)', padding: 8 }}>
-                <img src={src} alt={`${t(item.titleKey)} — ${i + 1}`}
+                <img src={src} alt={`${t(item.titleKey)} - ${i + 1}`}
                   loading="lazy"
                   style={{ width: '100%', objectFit: 'cover', objectPosition: 'top',
                     aspectRatio: wide ? '16/9' : '16/10', display: 'block' }} />

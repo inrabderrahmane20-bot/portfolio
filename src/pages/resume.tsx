@@ -19,7 +19,7 @@ export default function Resume() {
   return (
     <>
       <Head>
-        <title>Résumé — AC</title>
+        <title>Résumé - AC</title>
       </Head>
       {/* Full-screen iframe below the fixed navbar (~68px tall) */}
       <div
@@ -33,7 +33,7 @@ export default function Resume() {
       >
         <iframe
           src="/resume-card.html"
-          title="Résumé — Abderrahmane Charak"
+          title="Résumé - Abderrahmane Charak"
           style={{
             width:  '100%',
             height: '100%',

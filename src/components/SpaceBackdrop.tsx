@@ -598,7 +598,7 @@ export default function SpaceBackdrop() {
             ctx.beginPath(); ctx.moveTo(x + 8, y - 8); ctx.lineTo(lx, ly); ctx.lineTo(lx + 12, ly); ctx.stroke();
             ctx.font = "9px 'JetBrains Mono', monospace";
             ctx.fillStyle = `rgba(165,180,252,${0.8 * a})`;
-            ctx.fillText('MRK — 31.6295°N / 7.9811°W', lx + 16, ly + 3);
+            ctx.fillText('MRK - 31.6295°N / 7.9811°W', lx + 16, ly + 3);
           }
         }
       }

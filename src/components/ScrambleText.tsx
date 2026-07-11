@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#/\\*+·—';
+const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#/\\*+·';
 
 /**
  * Mono label that decodes into place — scrambles once when it enters

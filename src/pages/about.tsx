@@ -180,7 +180,7 @@ export default function About() {
                   </h3>
                   <p className="font-mono" style={{ fontSize: '0.62rem', letterSpacing: '0.24em',
                     textTransform: 'uppercase', color: 'var(--fg-2)', margin: '0.6rem 0 1rem' }}>
-                    {t(exp.roleKey)} — {exp.place}
+                    {t(exp.roleKey)} - {exp.place}
                   </p>
                   <p className="font-sans" style={{ fontSize: 'var(--fs-small)', lineHeight: 1.75,
                     color: 'var(--fg-2)', maxWidth: '62ch' }}>
