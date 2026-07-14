@@ -127,7 +127,7 @@ export default function Home() {
             <div className="relative">
               <h1 aria-label="Abderrahmane Charak">
                 <span className="mask-line">
-                  <svg viewBox="0 0 1200 122" preserveAspectRatio="none"
+                  <svg viewBox="0 0 1220 122" preserveAspectRatio="none"
                     style={{ display: 'block', width: '100%', height: 'auto', overflow: 'visible' }} aria-hidden>
                     <text x="0" y="112" textLength="1200" lengthAdjust="spacingAndGlyphs"
                       style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 148,
@@ -138,7 +138,7 @@ export default function Home() {
                 </span>
                 <span className="mask-line" style={{ marginTop: '0.6vw' }}>
                   <span style={{ display: 'flex', alignItems: 'baseline', gap: '1.4vw' }}>
-                    <svg viewBox="0 0 620 122" preserveAspectRatio="none"
+                    <svg viewBox="0 0 640 122" preserveAspectRatio="none"
                       style={{ display: 'block', width: '51.7%', height: 'auto', overflow: 'visible', flexShrink: 0 }} aria-hidden>
                       <defs>
                         <linearGradient id="name-grad" x1="0" y1="0" x2="1" y2="1">
