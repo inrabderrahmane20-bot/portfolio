@@ -46,20 +46,6 @@ export default function App({ Component, pageProps }: AppProps) {
   const curtainRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  /* ── Zoom lock ─────────────────────────────────────────────────────── */
-  useEffect(() => {
-    const blockPinch = (e: TouchEvent) => { if (e.touches.length > 1) e.preventDefault(); };
-    const blockGesture = (e: Event) => e.preventDefault();
-    document.addEventListener('touchmove', blockPinch, { passive: false });
-    document.addEventListener('gesturestart', blockGesture, { passive: false });
-    document.addEventListener('gesturechange', blockGesture, { passive: false });
-    return () => {
-      document.removeEventListener('touchmove', blockPinch);
-      document.removeEventListener('gesturestart', blockGesture);
-      document.removeEventListener('gesturechange', blockGesture);
-    };
-  }, []);
-
   /* ── Route curtain — ink wipe between pages ────────────────────────── */
   useEffect(() => {
     const el = curtainRef.current;
@@ -155,7 +141,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Head>
         <title>Abderrahmane Charak - Software Engineer</title>
         <meta name="description" content="Abderrahmane Charak - state-certified software engineer building full-stack web and mobile products end to end, from Marrakech, Morocco." />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="icon" href="/favicon.ico" sizes="any" />
