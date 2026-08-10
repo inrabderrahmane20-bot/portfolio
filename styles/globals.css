@@ -76,7 +76,7 @@
 
 html {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--void);
   scroll-behavior: auto;
   -webkit-text-size-adjust: 100%;
@@ -85,7 +85,7 @@ html {
 
 body {
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   background: var(--void);
   color: var(--starlight);
   line-height: 1.55;
@@ -98,7 +98,7 @@ body {
   touch-action: manipulation;
 }
 
-#__next { max-width: 100%; overflow-x: hidden; isolation: isolate; }
+#__next { max-width: 100%; overflow-x: clip; isolation: isolate; }
 
 ::selection { background: rgba(129, 140, 248, 0.32); color: #fff; }
 
