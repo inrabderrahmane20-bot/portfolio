@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import { Lang, T } from '@/lib/translations';
 
 interface LangCtx {
@@ -15,6 +16,7 @@ const Ctx = createContext<LangCtx>({
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>('en');
+  const router = useRouter();
 
   /* Restore saved preference */
   useEffect(() => {
@@ -22,6 +24,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const saved = localStorage.getItem('ac-lang') as Lang | null;
     if (saved && ['en', 'fr', 'es'].includes(saved)) setLangState(saved);
   }, []);
+
+  useEffect(() => {
+    const pathname = new URL(router.asPath, window.location.origin).pathname;
+    const locale = pathname.match(/^\/(fr|es|ar)(?:\/|$)/)?.[1];
+    document.documentElement.lang = locale ?? lang;
+    document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr';
+  }, [lang, router.asPath]);
 
   const setLang = useCallback((l: Lang) => {
     setLangState(l);

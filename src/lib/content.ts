@@ -18,7 +18,7 @@ export const identity = {
 
 /* ─── Contact ────────────────────────────────────────────────────────── */
 export const contactData = {
-  email:        'inr.abderrahmane.20@gmail.com',
+  email:        'support@devariam.com',
   location:     'Marrakech, Morocco',
   phones:       ['+212 711 374 861'],
   whatsapp:     '212711374861',

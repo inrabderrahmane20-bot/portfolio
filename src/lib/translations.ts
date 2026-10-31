@@ -5,6 +5,7 @@ export const T: Record<Lang, Record<string, string>> = {
   en: {
     /* Nav + menu */
     'nav.work':      'Work',
+    'nav.services':  'Services',
     'nav.about':     'About',
     'nav.contact':   'Contact',
     'nav.resume':    'Résumé',
@@ -230,6 +231,7 @@ export const T: Record<Lang, Record<string, string>> = {
   /* ═══════════════════════════ FRANÇAIS ═════════════════════════════ */
   fr: {
     'nav.work':      'Travaux',
+    'nav.services':  'Services',
     'nav.about':     'À propos',
     'nav.contact':   'Contact',
     'nav.resume':    'CV',
@@ -441,6 +443,7 @@ export const T: Record<Lang, Record<string, string>> = {
   /* ═══════════════════════════ ESPAÑOL ══════════════════════════════ */
   es: {
     'nav.work':      'Trabajos',
+    'nav.services':  'Servicios',
     'nav.about':     'Sobre mí',
     'nav.contact':   'Contacto',
     'nav.resume':    'CV',

@@ -1,0 +1,42 @@
+# Devariam
+
+> Devariam is the professional portfolio of Abderrahmane Charak, a state-certified software engineer and product designer based in Marrakech, Morocco. He is available for remote freelance projects.
+
+## Professional profile
+
+Abderrahmane Charak builds web and mobile products and works across web interfaces, backend APIs, product design, and applied AI/NLP. His documented education is a Software Engineering State Engineer Degree from EMSI. The main portfolio interface has English, French, and Spanish translations; the services page is also available in English, French, Spanish, and Arabic. Abderrahmane speaks Arabic, English, and French.
+
+## Services and capabilities
+
+- Web platforms and interfaces with React, Next.js, and TypeScript.
+- Backend development and REST APIs with Django, Flask, and Node.js.
+- Product design and UX systems using Figma.
+- Applied AI and natural language processing using Python, TensorFlow, and NLTK.
+
+## Selected published projects
+
+- [Marrakech Privée](/work/marrakech-privee)
+- [CRM Platform](/work/crm)
+- [Select by EMC](/work/select-emc)
+- [Travel To…](/work/travel-to)
+- [Atlassia Rent](/work/atlassia-rent)
+- [Riad Marrakech](/work/riad-marrakech)
+- [Auto École](/work/driving-school)
+
+## Site pages
+
+- [Home](/)
+- [About](/about)
+- [Services](/services)
+- [Services in French](/fr/services)
+- [Services in Spanish](/es/services)
+- [Services in Arabic](/ar/services)
+- [Selected work](/work)
+- [Résumé](/resume)
+- [Contact](/contact)
+
+## Contact
+
+- Email: support@devariam.com
+- [Contact page](/contact)
+- Location: Marrakech, Morocco

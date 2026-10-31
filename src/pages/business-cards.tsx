@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useEffect } from 'react';
 
 export default function BusinessCards() {
@@ -18,9 +17,6 @@ export default function BusinessCards() {
 
   return (
     <>
-      <Head>
-        <title>Business Card - AC</title>
-      </Head>
       {/* Full-screen iframe below the fixed navbar (~68px tall) */}
       <div
         style={{

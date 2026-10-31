@@ -6,7 +6,8 @@ import Magnetic from '@/components/Magnetic';
 import Stamp from '@/components/Stamp';
 
 export default function Footer() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const servicesHref = lang === 'fr' ? '/fr/services' : lang === 'es' ? '/es/services' : '/services';
 
   const toTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
@@ -57,6 +58,7 @@ export default function Footer() {
           <div className="flex flex-col gap-2.5">
             {[
               { key: 'nav.work', href: '/work' },
+              { key: 'nav.services', href: servicesHref },
               { key: 'nav.about', href: '/about' },
               { key: 'nav.contact', href: '/contact' },
             ].map(({ key, href }) => (

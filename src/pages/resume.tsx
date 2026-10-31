@@ -1,4 +1,3 @@
-import Head from 'next/head';
 import { useEffect } from 'react';
 
 export default function Resume() {
@@ -18,9 +17,6 @@ export default function Resume() {
 
   return (
     <>
-      <Head>
-        <title>Résumé - AC</title>
-      </Head>
       {/* Full-screen iframe below the fixed navbar (~68px tall) */}
       <div
         style={{
