@@ -368,6 +368,46 @@ button { border: 0; background: none; color: inherit; cursor: pointer; }
 .mask-line { display: block; overflow: hidden; }
 .mask-line > span { display: block; will-change: transform; }
 
+/* Native text avoids Safari clipping SVG textLength during the hero reveal. */
+.hero-name-container { container-type: inline-size; }
+.hero-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 11vw;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.hero-name-line { display: block; }
+.mask-line > .hero-name-row { display: flex; align-items: baseline; gap: 1.4vw; }
+.hero-name-secondary { display: block; flex: 0 0 51.7%; min-width: 0; }
+.hero-name-text {
+  display: block;
+  width: max-content;
+  transform-origin: left center;
+}
+.hero-name-text--primary { transform: scaleX(0.53); color: #eef1ff; }
+.hero-name-text--secondary {
+  transform: scaleX(0.56);
+  color: #818cf8;
+  background: linear-gradient(135deg, #818cf8 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+@supports (font-size: 1cqw) {
+  .hero-name { font-size: 14cqw; }
+  .hero-name-text--primary { transform: scaleX(0.47); }
+  .hero-name-text--secondary { transform: scaleX(0.5); }
+}
+@media (pointer: coarse) {
+  .hero-name-text--secondary {
+    background: none;
+    -webkit-text-fill-color: currentColor;
+    color: #60a5fa;
+  }
+}
+
 /* ═══════════════════════════════════════════════════════════════════════
    CURSOR — crosshair + comet dot (fine pointers only)
 ═══════════════════════════════════════════════════════════════════════ */

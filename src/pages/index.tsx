@@ -121,37 +121,24 @@ export default function Home() {
             <ScrambleText className="o-label hidden md:block" text={identity.coords} />
           </div>
 
-          {/* Name — SVG stretched to the exact container width: cannot clip,
-              regardless of viewport, scrollbar width, zoom or font metrics. */}
+          {/* Name — responsive native text keeps both lines intact across browsers. */}
           <div className="flex-1 flex flex-col justify-center" style={{ padding: 'clamp(2rem,4vw,4rem) 0' }}>
-            <div className="relative">
-              <h1 aria-label="Abderrahmane Charak">
+            <div className="relative hero-name-container">
+              <h1 className="hero-name" aria-label="Abderrahmane Charak">
                 <span className="mask-line">
-                  <svg viewBox="0 -30 1200 186" preserveAspectRatio="none"
-                    style={{ display: 'block', width: '100%', height: 'auto', overflow: 'visible' }} aria-hidden>
-                    <text x="0" y="112" textLength="1200" lengthAdjust="spacingAndGlyphs"
-                      style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 148,
-                        fill: '#EEF1FF', letterSpacing: '-0.02em' }}>
+                  <span className="hero-name-line">
+                    <span className="hero-name-text hero-name-text--primary" aria-hidden="true">
                       ABDERRAHMANE
-                    </text>
-                  </svg>
+                    </span>
+                  </span>
                 </span>
                 <span className="mask-line" style={{ marginTop: '0.6vw' }}>
-                  <span style={{ display: 'flex', alignItems: 'baseline', gap: '1.4vw' }}>
-                    <svg viewBox="0 -30 620 186" preserveAspectRatio="none"
-                      style={{ display: 'block', width: '51.7%', height: 'auto', overflow: 'visible', flexShrink: 0 }} aria-hidden>
-                      <defs>
-                        <linearGradient id="name-grad" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="#818CF8" />
-                          <stop offset="100%" stopColor="#38BDF8" />
-                        </linearGradient>
-                      </defs>
-                      <text x="0" y="112" textLength="620" lengthAdjust="spacingAndGlyphs"
-                        style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 148,
-                          fill: 'url(#name-grad)', letterSpacing: '-0.02em' }}>
+                  <span className="hero-name-row">
+                    <span className="hero-name-secondary">
+                      <span className="hero-name-text hero-name-text--secondary" aria-hidden="true">
                         CHARAK
-                      </text>
-                    </svg>
+                      </span>
+                    </span>
                     <span className="font-mono hidden sm:inline" style={{
                       fontSize: 'clamp(0.6rem, 1vw, 0.85rem)', letterSpacing: '0.3em',
                       color: 'var(--mut)' }}>
